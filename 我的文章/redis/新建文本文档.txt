@@ -1,1 +1,0 @@
-linux   redis安装直接去下载包  解压后 make    然后拷贝 redis-server 到usr/sbin/目录下   配置项  copy至/etc/redis.conf
