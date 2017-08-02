@@ -5,7 +5,7 @@ import sys
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-listOver = ['_config.yml', 'gitBush', 'dirToJson.py', 'index.html', '.idea', '.git']
+listOver = ['_config.yml', 'gitBush', 'dirToJson.py', 'index.html', '.idea', '.git','.dir.md','dir.js']
 def thefileTree(mm):
     a = {}
     mm1 = os.listdir(mm)

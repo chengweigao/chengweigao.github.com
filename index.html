@@ -9,29 +9,29 @@
 <body>
 
 
-<ul id="list">
-    <li>
-        <a href="./yum占用拯救.md">yum占用拯救</a>
-    </li>
-</ul>
+<div  id="list">
+
+</div>
 
 <script>
 
     function writeUl(a) {
-        var str = '';
+        var str = '<ul>';
         $.each(a, function (x, y) {
 
             if ((typeof(y))== "string") {
 
                 str += '<li><a href="' + x + '">' + y + '</a></li>';
             } else {
+
+                str += '<li><p>' + x + '</p></li>';
                 str += writeUl(y);
 
             }
         })
+        str+="</ul>";
         return str
     }
-    console.log(a);
     var liList=writeUl(a);
 
     $("#list").html(liList);
