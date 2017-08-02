@@ -1,13 +1,57 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>chengweigao'S Pages</title>
+    <script src="dir.md"></script>
+    <script src="https://code.jquery.com/jquery-2.0.0.min.js"></script>
     <script src="https://cdn.bootcss.com/pagedown/1.0/Markdown.Converter.js"></script>
 </head>
 <body>
-<iframe src="top.html" frameborder="0" id="top" name="top" scrolling=""  height="100px" width="100%" style="border: 1px solid"></iframe>
-<iframe src="left.html" frameborder="0"  height="500px"  id="left" name="left" width="15%" style="border: 1px solid;float: left;"></iframe>
-<iframe src="right.html" frameborder="0"  height="500px" id="right"  name="right" width="80%" style="border: 1px solid;float: right;"></iframe>
+
+
+<div  id="list">
+
+</div>
+
+<div id="myDiv">
+
+</div>
+
+<script>
+
+    function writeUl(a) {
+        var str = '<ul>';
+        $.each(a, function (x, y) {
+
+            if ((typeof(y))== "string") {
+
+                str += '<li><a onclick="dothe('+"'" + x +"'"+ ')" target="right">' + y + '</a></li>';
+            } else {
+
+                str += '<li><p>' + x + '</p></li>';
+                str += writeUl(y);
+
+            }
+
+
+
+        })
+        str+="</ul>";
+        return str
+    }
+    var liList=writeUl(a);
+function dothe(x){
+    htmlobj=$.ajax({url:x,async:false});
+    var converter = new Markdown.Converter();
+    var htm = converter.makeHtml(htmlobj.responseText);
+    $('#myDiv').html(htm);
+
+
+}
+    $("#list").html(liList);
+
+</script>
+
 </body>
 </html>
