@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>chengweigao'S Pages</title>
+    <script src="dir.md"></script>
+    <script src="https://code.jquery.com/jquery-2.0.0.min.js"></script>
+</head>
+<body>
+
+
+<div  id="list">
+
+</div>
+
+<div id="myDiv">
+
+</div>
+
+<script>
+
+    function writeUl(a) {
+        var str = '<ul>';
+        $.each(a, function (x, y) {
+
+            if ((typeof(y))== "string") {
+
+                str += '<li><a onclick="dothe('+"'" + x +"'"+ ')" target="right">' + y + '</a></li>';
+            } else {
+
+                str += '<li><p>' + x + '</p></li>';
+                str += writeUl(y);
+
+            }
+
+
+
+        })
+        str+="</ul>";
+        return str
+    }
+    var liList=writeUl(a);
+function dothe(x){
+    var fso=new ActiveXObject(Scripting.FileSystemObject);
+    var f=fso.opentextfile(x,1,true);
+    s = f.ReadLine();
+    $("#myDiv").html(s);
+}
+    $("#list").html(liList);
+
+</script>
+<script id="last"></script>
+</body>
+</html>

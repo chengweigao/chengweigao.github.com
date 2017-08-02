@@ -1,43 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>chengweigao'S Pages</title>
-    <script src="dir.md"></script>
-    <script src="https://code.jquery.com/jquery-2.0.0.min.js"></script>
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/pagedown/1.0/Markdown.Converter.js"></script>
 </head>
 <body>
-
-
-<div  id="list">
-
-</div>
-
-<script>
-
-    function writeUl(a) {
-        var str = '<ul>';
-        $.each(a, function (x, y) {
-
-            if ((typeof(y))== "string") {
-
-                str += '<li><a href="' + x + '">' + y + '</a></li>';
-            } else {
-
-                str += '<li><p>' + x + '</p></li>';
-                str += writeUl(y);
-
-            }
-        })
-        str+="</ul>";
-        return str
-    }
-    var liList=writeUl(a);
-
-    $("#list").html(liList);
-
-</script>
-
-
+<iframe src="top.html" frameborder="0" id="top" name="top" scrolling=""  height="100px" width="100%" style="border: 1px solid"></iframe>
+<iframe src="left.html" frameborder="0"  height="500px"  id="left" name="left" width="15%" style="border: 1px solid;float: left;"></iframe>
+<iframe src="right.html" frameborder="0"  height="500px" id="right"  name="right" width="80%" style="border: 1px solid;float: right;"></iframe>
 </body>
 </html>
