@@ -26,10 +26,8 @@ def thefileTree(mm):
 
 def writeToFile(mm):
     jsonStr = json.dumps(mm)
-    print jsonStr
-    print mm
-    # f = open('dir.js', 'w')
-    # f.write("var a=" + jsonStr)
+    f = open('dir.js', 'w')
+    f.write("var a=" + jsonStr)
 xx = thefileTree('./')
 # print xx
 writeToFile(xx)
