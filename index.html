@@ -25,10 +25,10 @@
 
 
 <div class="row">
-    <div id="list" class="col-md-2" style="min-height: calc(100%);">
+    <div id="list" class="col-md-2" style="overflow: auto">
 
     </div>
-    <div id="myDiv" class="col-md-10" style="background: yellow">
+    <div id="myDiv" class="col-md-10"  style="background: yellow;overflow: auto">
 
     </div>
 </div>
@@ -85,7 +85,11 @@
     }
     //    展示列表
     $("#list").html(liList);
+   $(function(){
+       $("#myDiv").css('height',window.screen.availHeight);
+       $("#list").css('height',window.screen.availHeight);
 
+   })
 </script>
 
 </body>
