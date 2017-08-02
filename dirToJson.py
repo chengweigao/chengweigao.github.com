@@ -20,8 +20,8 @@ def thefileTree(mm):
             dirname = mm + i + '/'
             a[dirname] = (thefileTree(dirname))
         else:
-
-            a[i] = i
+            dirname = mm + i + '/'
+            a[dirname+i] = i
 
     return a
 def writeToFile(mm):
