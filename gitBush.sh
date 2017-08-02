@@ -4,6 +4,11 @@
 python dirToJson.py;
 #git提交文件
 git add -A;
+#定义提交备注
+DATEFORMATTYPE1=$(date +%Y%m%d%H%M);
+git commit -m "${DATEFORMATTYPE1}";
+#推送提交
+git push;
 git add .;
 #定义提交备注
 DATEFORMATTYPE1=$(date +%Y%m%d%H%M);
