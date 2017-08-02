@@ -1,3 +1,4 @@
+
 **centos7下yum升级被PackageKit锁定**
 
 新安装centos7后，第一次升级出现下面的错误：
@@ -16,3 +17,4 @@ centos7下，
 ok，
 
 在执行sudo yum update,就不会被锁定了。
+<h1><a href='/'>回到首页</a></h1>

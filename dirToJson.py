@@ -2,8 +2,10 @@
 import os
 import json
 import sys
+
 reload(sys)
 sys.setdefaultencoding('utf8')
+listOver = ['_config.yml', 'gitBush', 'dirToJson.py', 'index.html', '.idea', '.git']
 def thefileTree(mm):
     a = {}
     mm1 = os.listdir(mm)
@@ -12,7 +14,7 @@ def thefileTree(mm):
 
         print type(i)
         print i
-        if i == '.idea' or i == '.git':
+        if i in listOver:
             continue
         if os.path.isdir(mm + i + '/'):
             dirname = mm + i + '/'
@@ -22,12 +24,12 @@ def thefileTree(mm):
             a[i] = i
 
     return a
-
-
 def writeToFile(mm):
     jsonStr = json.dumps(mm)
     f = open('dir.js', 'w')
     f.write("var a=" + jsonStr)
+
+
 xx = thefileTree('./')
 # print xx
 writeToFile(xx)
