@@ -3,52 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <title>chengweigao'S Pages</title>
+    <!--读取文档json-->
     <script src="dir.md"></script>
     <script src="https://code.jquery.com/jquery-2.0.0.min.js"></script>
     <script src="https://cdn.bootcss.com/pagedown/1.0/Markdown.Converter.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
 </head>
 <body>
 
 
-<div  id="list">
+<div class="row">
+    <div id="list" class="col-md-2" style="min-height: calc(100%);">
 
+    </div>
+    <div id="myDiv" class="col-md-10" style="background: yellow">
+
+    </div>
 </div>
 
-<div id="myDiv">
-
-</div>
 
 <script>
+    /*将文档做成列表*/
+    function writeUl(a, ax) {
+        if (!ax) {
 
-    function writeUl(a) {
-        var str = '<ul>';
+            var str = '<ul class="sidebar-menu list-group">';
+        } else {
+            var str = '<ul class="treeview-menu" style="display: none">';
+        }
+
         $.each(a, function (x, y) {
-
-            if ((typeof(y))== "string") {
-
-                str += '<li><a onclick="dothe('+"'" + x +"'"+ ')" target="right">' + y + '</a></li>';
+            if ((typeof(y)) == "string") {
+                str += '<li class="list-group-item" onclick="dothe(' + "'" + x + "'" + ',this)" >' + y + '</li>';
             } else {
-
-                str += '<li><p>' + x + '</p></li>';
-                str += writeUl(y);
-
+                str += '<li class="list-group-item" value="0" onclick="doSeeSon(this)">' + x;
+                str += writeUl(y, 1);
+                str += "</li>";
             }
-
-
-
         })
-        str+="</ul>";
+        str += "</ul>";
         return str
     }
-    var liList=writeUl(a);
-function dothe(x){
-    htmlobj=$.ajax({url:x,async:false});
-    var converter = new Markdown.Converter();
-    var htm = converter.makeHtml(htmlobj.responseText);
-    $('#myDiv').html(htm);
+    var liList = writeUl(a);
+    /*点击展示列表内容*/
+    function dothe(x,a) {
+
+        if($(a).parent().parent().attr('value')==1){
+            $(a).parent().parent().attr('value',0);
+        }
 
 
-}
+        htmlobj = $.ajax({url: x, async: false});
+        var converter = new Markdown.Converter();
+        var htm = converter.makeHtml(htmlobj.responseText);
+        $('#myDiv').html(htm);
+
+
+    }
+    function doSeeSon(a){
+
+        if($(a).attr("value")!=1){
+            $(a).attr("value",1);
+            $(a).children("ul").show(500);
+        }else{
+            $(a).attr("value",0);
+            $(a).children("ul").hide(500);
+        }
+
+    }
+    //    展示列表
     $("#list").html(liList);
 
 </script>

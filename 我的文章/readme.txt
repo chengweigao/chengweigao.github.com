@@ -1,0 +1,1 @@
+﻿大家好：我想做个个人首页，却又不想申请服务器，所以我通过python js html  git markdown实现了这个 静态博客
