@@ -28,7 +28,7 @@
     <div id="list" class="col-md-2" style="overflow: auto">
 
     </div>
-    <div id="myDiv" class="col-md-10"  style="background: yellow;overflow: auto">
+    <div id="myDiv" class="col-md-10"  style="overflow: auto;border: 2px dotted black;padding: 20px; border-radius:20px ">
 
     </div>
 </div>
@@ -63,7 +63,7 @@
         if($(a).parent().parent().attr('value')==1){
             $(a).parent().parent().attr('value',0);
         }
-
+        document.title= x+"来自chengweigao'S Pages";
 
         htmlobj = $.ajax({url: x, async: false});
         var converter = new Markdown.Converter();
