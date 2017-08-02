@@ -1,5 +1,7 @@
-大家好：我想做个个人首页，却又不想申请服务器，所以我通过linux python js html  github markdown实现了这个 静态博客
-<a href="https://chengweigao.github.io">https://chengweigao.github.io</a>
+大家好：我想做个静态在线个人笔记，却又不想申请服务器，所以我通过linux python js html  github markdown实现了这个
+
+静态个人笔记<a href="https://chengweigao.github.io">https://chengweigao.github.io</a>
+
 先谈必须，
 
 1，首先linux 系统不限本地虚拟机 系统上必须环境  git  python
@@ -14,10 +16,10 @@
 
 6，远端根据json会自动更新
 
+
+
 使用的时候只需将markdown文档上传到git仓库目录   并执行git自动提交bash脚本
-
 参照脚本
-
 
 <a href="https://chengweigao.github.io/我的文章/静态github个人首页制作密集.md">静态github个人首页制作密集.md</a>
 

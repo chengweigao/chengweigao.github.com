@@ -1,4 +1,5 @@
-﻿大家好：我想做个个人首页，却又不想申请服务器，所以我通过linux python js html  github markdown实现了这个 静态博客
+﻿大家好：我想做个静态在线个人笔记，却又不想申请服务器，所以我通过linux python js html  github markdown实现了这个 静态个人笔记
+
 <a href="https://chengweigao.github.io">https://chengweigao.github.io</a>
 先谈必须，
 1，首先linux 系统不限本地虚拟机 系统上必须环境  git  python
