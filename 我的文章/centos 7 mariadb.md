@@ -14,3 +14,5 @@
 
 `[php] view plain copy
 mysql:[root@localhost ~]# yum -y install mariadb*`  
+启动sql服务器
+systemctl start mariadb
