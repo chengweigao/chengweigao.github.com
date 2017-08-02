@@ -8,8 +8,9 @@
 5，建立git脚本  掉用python脚本，并提交推送文档到远端
 6，远端根据json会自动更新
 
-
+使用的时候只需将markdown文档上传到git仓库目录   并执行git自动提交bash脚本
 参照脚本
 
-<a href="https://chengweigao.github.io/静态github个人首页制作密集.md">静态github个人首页制作密集.md</a>
+<a href="https://chengweigao.github.io/我的文章/静态github个人首页制作密集.md">静态github个人首页制作密集.md</a>
 
+<a href="https://github.com/chengweigao/chengweigao.github.com">仓库地址</a>
