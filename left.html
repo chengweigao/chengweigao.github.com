@@ -41,14 +41,13 @@
     }
     var liList=writeUl(a);
 function dothe(x){
-    var fso=new ActiveXObject(Scripting.FileSystemObject);
-    var f=fso.opentextfile(x,1,true);
-    s = f.ReadLine();
-    $("#myDiv").html(s);
+    htmlobj=$.ajax({url:x,async:false});
+    $("#myDiv").html(htmlobj.responseText);
+
 }
     $("#list").html(liList);
 
 </script>
-<script id="last"></script>
+
 </body>
 </html>
