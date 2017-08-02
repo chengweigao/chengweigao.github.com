@@ -1,16 +1,42 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>chengweigao'S  Pages</title>
+    <meta charset="UTF-8">
+    <title>chengweigao'S Pages</title>
+    <script src="dir.js"></script>
+    <script src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
 </head>
 <body>
 
-<ul>
-  <li>
-    <a href="./yum占用拯救.md">yum占用拯救</a>
-</li>
+
+<ul id="list">
+    <li>
+        <a href="./yum占用拯救.md">yum占用拯救</a>
+    </li>
 </ul>
+
+<script>
+
+    function writeUl(a) {
+        var str = '';
+        $.each(a, function (x, y) {
+
+            if ((typeof(y))== "string") {
+
+                str += '<li><a href="' + x + '">' + y + '</a></li>';
+            } else {
+                str += writeUl(y);
+
+            }
+        })
+        return str
+    }
+    console.log(a);
+    var liList=writeUl(a);
+
+    $("#list").html(liList);
+
+</script>
 
 
 </body>
