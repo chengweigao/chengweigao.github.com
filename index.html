@@ -111,7 +111,12 @@
         }
         var str = '<div>';
          $.each(a, function (x, y) {
+
             if ((typeof(y)) == "string") {
+                if(!(y.substr(y.length-2,2)=='md'||y.substr(y.length-2,2)=='js')){
+                    return true;
+
+                }
                 str += '<div class="alert alert-success" style="text-indent: '+level+'em;overflow: hidden" onclick="dothe(' + "'" + x + "'" + ',this,event)" >' + y + '</div>';
             } else {
                 str += '<div class="alert alert-success" style="text-indent: '+level+'em;overflow: hidden" >' + x;
