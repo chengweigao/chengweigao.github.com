@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=480, user-scalable=no">
+    <META NAME="MobileOptimized" CONTENT="240">
     <title>chengweigao'S Pages</title>
     <!--读取文档json-->
     <script src="dir.md"></script>
@@ -20,77 +23,153 @@
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
 
+    <style>
+        #list ul li {
+            display: block;
+            float: left;
+        }
+        #myDiv img{
+            max-width: 100% !important;
+        }
+    </style>
 </head>
 <body>
 
-<a href="https://chengweigao.github.io/080220322695.html">个人简历</a>
-    <img src="https://chengweigao.github.io/简历.png" alt="">
-<div class="row">
-    <div id="list" class="col-md-2" style="overflow: auto">
-
-    </div>
-    <div id="myDiv" class="col-md-10"  style="overflow: auto;border: 2px dotted black;padding: 20px; border-radius:20px ">
-
-    </div>
+<div id="box-status"
+     style="width: 100%;height: 100%;background:#ffffff;position: absolute;vertical-align:middle;text-align: center;z-index: 2">
+    <img src="status.gif" style="margin-top:10%;" alt="">
 </div>
+<div id="showbody" style="display: none" class="container-fluid">
+    <div class="row">
+        <nav class="navbar navbar-default" style="position: fixed;width:100%;top:0;z-index: 999999">
+            <div class="container-fluid">
+                <div class="navbar-header"  style="width: 100%">
+                    <a class="navbar-brand glyphicon glyphicon-tasks" href="javascript:;" onclick="$('#list').show();$('#close').show()">
+
+                    </a>
+                    <a href="/" class="navbar-brand" style="">程伟高的个人笔记</a>
+                    <a href="javascript:;" class="navbar-brand" id="close" style="float: right;display: none" onclick="$('#list').hide();$(this).hide()">关闭</a>
+                </div>
+            </div>
+        </nav>
+        <div style="height:60px">
+
+        </div>
+        <div id="list" class="" style="position: relative;display: none">
+
+        </div>
+        <div id="myDiv" class=""
+             style="overflow: auto;word-break:break-all;border: 2px dotted black;padding: 20px; border-radius:20px ">
+            <div style="margin: 0 auto;text-align: center">
+                <table class="table table-bordered">
+                 <tr>
+                     <td> <a href="https://chengweigao.github.io/080220322695.html" target="_blank">个人简历</a></td>
+                     <td>   <img src="https://chengweigao.github.io/简历.png" width="200" alt=""></td>
+
+                 </tr>
+                    <tr>
+                        <td>电话 </td>
+                        <td>13067820750/18518760750
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> QQ</td>
+                        <td>  <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=448215986&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:448215986:51" alt="点击这里给我发消息" title="点击这里给我发消息"/></a></td>
+
+                    </tr>
+                    <tr>
+                        <td>邮箱 </td>
+                        <td><a target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=Ow8PAwkKDgIDDXtKShVYVFY" style="text-decoration:none;"><img src="http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_22.png"/></a>
+                            <br>448215986@qq.com
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> 微信</td>
+                        <td><img src="weixin.png" alt=""></td>
+
+                    </tr>
+
+                </table>
 
 
+                <br>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
 <script>
+    $('body').scrollTop(0);
     /*将文档做成列表*/
-    function writeUl(a, ax) {
-        if (!ax) {
+    function writeUl(a,level) {
 
-            var str = '<ul class="sidebar-menu list-group">';
-        } else {
-            var str = '<ul class="treeview-menu" style="display: none">';
+
+        if(!level){
+            var level=0;
         }
-
-        $.each(a, function (x, y) {
+        var str = '<div>';
+         $.each(a, function (x, y) {
             if ((typeof(y)) == "string") {
-                str += '<li class="list-group-item" onclick="dothe(' + "'" + x + "'" + ',this)" >' + y + '</li>';
+                str += '<div class="alert alert-success" style="text-indent: '+level+'em;overflow: hidden" onclick="dothe(' + "'" + x + "'" + ',this,event)" >' + y + '</div>';
             } else {
-                str += '<li class="list-group-item" value="0" onclick="doSeeSon(this)">' + x;
-                str += writeUl(y, 1);
-                str += "</li>";
+                str += '<div class="alert alert-success" style="text-indent: '+level+'em;overflow: hidden" >' + x;
+                str += writeUl(y,level+1);
+                level=level;
+                str += "</div>";
             }
         })
-        str += "</ul>";
+        str += "</div>";
         return str
     }
     var liList = writeUl(a);
     /*点击展示列表内容*/
-    function dothe(x,a) {
+    function dothe(x, a,event) {
 
-        if($(a).parent().parent().attr('value')==1){
-            $(a).parent().parent().attr('value',0);
-        }
-        document.title= x+"来自chengweigao'S Pages";
+//        event.stopPropagation();//不会打印1，但是页面会跳转；
+        document.title = x + "来自chengweigao'S Pages";
 
         htmlobj = $.ajax({url: x, async: false});
         var converter = new Markdown.Converter();
         var htm = converter.makeHtml(htmlobj.responseText);
+//        window.screenTop=0;
+        $('body').scrollTop(0);
         $('#myDiv').html(htm);
-
-
-    }
-    function doSeeSon(a){
-
-        if($(a).attr("value")!=1){
-            $(a).attr("value",1);
-            $(a).children("ul").show(500);
-        }else{
-            $(a).attr("value",0);
-            $(a).children("ul").hide(500);
-        }
+        $("#list").hide();
+       $('#close').hide();
 
     }
+//    function doSeeSon(a) {
+//
+//        if ($(a).attr("value") != 1&&$(a).children('ul')) {
+//            $(a).attr("value", 1);
+//            $(a).children("ul").show(500);
+//        } else {
+//            $(a).attr("value", 0);
+//            $(a).children("ul").hide(500);
+//        }
+//
+//    }
     //    展示列表
     $("#list").html(liList);
-   $(function(){
-       $("#myDiv").css('height',window.screen.availHeight);
+
+    $(function () {
+        $("#myDiv").css('height', window.screen.availHeight);
        $("#list").css('height',window.screen.availHeight);
 
-   })
+    })
+    $(document).ready(function() {
+
+// 任何需要执行的js特效
+        setTimeout(function(){
+
+            $("#box-status").hide();
+            $("#showbody").show();
+
+        },1500)
+
+    });
 </script>
 
 </body>
