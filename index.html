@@ -28,7 +28,8 @@
             display: block;
             float: left;
         }
-        #myDiv img{
+
+        #myDiv img {
             max-width: 100% !important;
         }
     </style>
@@ -43,12 +44,13 @@
     <div class="row">
         <nav class="navbar navbar-default" style="position: fixed;width:100%;top:0;z-index: 999999">
             <div class="container-fluid">
-                <div class="navbar-header"  style="width: 100%">
-                    <a class="navbar-brand glyphicon glyphicon-tasks" href="javascript:;" onclick="$('#list').show();$('#close').show()">
+                <div class="navbar-header" style="width: 100%">
+                    <a class="navbar-brand glyphicon glyphicon-tasks" href="javascript:;" onclick="doshow(1)">
 
                     </a>
                     <a href="/" class="navbar-brand" style="">程伟高的个人笔记</a>
-                    <a href="javascript:;" class="navbar-brand" id="close" style="float: right;display: none" onclick="$('#list').hide();$(this).hide()">关闭</a>
+                    <a href="javascript:;" class="navbar-brand" id="close" style="float: right;display: none"
+                       onclick="doshow()">关闭</a>
                 </div>
             </div>
         </nav>
@@ -62,24 +64,29 @@
              style="overflow: auto;word-break:break-all;border: 2px dotted black;padding: 20px; border-radius:20px ">
             <div style="margin: 0 auto;text-align: center">
                 <table class="table table-bordered">
-                 <tr>
-                     <td> <a href="https://chengweigao.github.io/080220322695.html" target="_blank">个人简历</a></td>
-                     <td>   <img src="https://chengweigao.github.io/简历.png" width="200" alt=""></td>
-
-                 </tr>
                     <tr>
-                        <td>电话 </td>
+                        <td><a href="https://chengweigao.github.io/080220322695.html" target="_blank">个人简历</a></td>
+                        <td><img src="https://chengweigao.github.io/简历.png" width="200" alt=""></td>
+
+                    </tr>
+                    <tr>
+                        <td>电话</td>
                         <td>13067820750/18518760750
                         </td>
                     </tr>
                     <tr>
                         <td> QQ</td>
-                        <td>  <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=448215986&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:448215986:51" alt="点击这里给我发消息" title="点击这里给我发消息"/></a></td>
+                        <td><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=448215986&site=qq&menu=yes"><img
+                                border="0" src="http://wpa.qq.com/pa?p=2:448215986:51" alt="点击这里给我发消息"
+                                title="点击这里给我发消息"/></a></td>
 
                     </tr>
                     <tr>
-                        <td>邮箱 </td>
-                        <td><a target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=Ow8PAwkKDgIDDXtKShVYVFY" style="text-decoration:none;"><img src="http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_22.png"/></a>
+                        <td>邮箱</td>
+                        <td><a target="_blank"
+                               href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=Ow8PAwkKDgIDDXtKShVYVFY"
+                               style="text-decoration:none;"><img
+                                src="http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_22.png"/></a>
                             <br>448215986@qq.com
                         </td>
                     </tr>
@@ -103,35 +110,63 @@
 <script>
     $('body').scrollTop(0);
     /*将文档做成列表*/
-    function writeUl(a,level) {
+    var arr = [];
+    function writeUl(a, level) {
 
-
-        if(!level){
-            var level=0;
+        console.log(a);
+        if (!level) {
+            var level = 0;
         }
-        var str = '<div>';
-         $.each(a, function (x, y) {
+        var str = '<div style="background: #ffffff">';
+        $.each(a, function (x, y) {
 
             if ((typeof(y)) == "string") {
-                if(!(y.substr(y.length-2,2)=='md'||y.substr(y.length-2,2)=='js')){
+                if (!(y.substr(y.length - 2, 2) == 'md' || y.substr(y.length - 2, 2) == 'js')) {
                     return true;
 
                 }
-                str += '<div class="alert alert-success" style="text-indent: '+level+'em;overflow: hidden" onclick="dothe(' + "'" + x + "'" + ',this,event)" >' + y + '</div>';
+                str += '<div class="alert alert-success" style="text-indent: ' + level + 'em;overflow: hidden" onclick="dothe(' + "'" + x + "'" + ',this,event)" >' + y + '</div>';
             } else {
-                str += '<div class="alert alert-success" style="text-indent: '+level+'em;overflow: hidden" >' + x;
-                str += writeUl(y,level+1);
-                level=level;
+
+                arr[x] = y;
+                str += '<div class="alert alert-success"  style="text-indent: ' + level + 'em;overflow: hidden"  onclick="showSon(\'' + x + '\')" >' + x;
+                // str += writeUl(y,level+1);
+
                 str += "</div>";
             }
         })
         str += "</div>";
         return str
     }
+    function showSon(y) {
+        $('body').scrollTop(0);
+        console.log(arr);
+        var liList = writeUl(arr[y]);
+        $("#list").html(liList);
+
+    }
+    function doshow(x) {
+        $('body').scrollTop(0);
+        if (x) {
+
+            $('#list').show(500);
+            $('#close').show(500);
+            var liList = writeUl(a);
+            $("#list").html(liList);
+
+            $("#myDiv").hide(500);
+        } else {
+
+            $("#myDiv").show(500);
+            $('#list').hide(500);
+            $('#close').hide(500);
+        }
+
+    }
     var liList = writeUl(a);
     /*点击展示列表内容*/
-    function dothe(x, a,event) {
-
+    function dothe(x, a, event) {
+        $('body').scrollTop(0);
 //        event.stopPropagation();//不会打印1，但是页面会跳转；
         document.title = x + "来自chengweigao'S Pages";
 
@@ -139,40 +174,41 @@
         var converter = new Markdown.Converter();
         var htm = converter.makeHtml(htmlobj.responseText);
 //        window.screenTop=0;
-        $('body').scrollTop(0);
+
         $('#myDiv').html(htm);
-        $("#list").hide();
-       $('#close').hide();
+        $("#list").hide(500);
+        $('#close').hide(500);
+        $("#myDiv").show(500);
 
     }
-//    function doSeeSon(a) {
-//
-//        if ($(a).attr("value") != 1&&$(a).children('ul')) {
-//            $(a).attr("value", 1);
-//            $(a).children("ul").show(500);
-//        } else {
-//            $(a).attr("value", 0);
-//            $(a).children("ul").hide(500);
-//        }
-//
-//    }
+    //    function doSeeSon(a) {
+    //
+    //        if ($(a).attr("value") != 1&&$(a).children('ul')) {
+    //            $(a).attr("value", 1);
+    //            $(a).children("ul").show(500);
+    //        } else {
+    //            $(a).attr("value", 0);
+    //            $(a).children("ul").hide(500);
+    //        }
+    //
+    //    }
     //    展示列表
-    $("#list").html(liList);
+
 
     $(function () {
         $("#myDiv").css('height', window.screen.availHeight);
-       $("#list").css('height',window.screen.availHeight);
+        $("#list").css('height', window.screen.availHeight);
 
     })
-    $(document).ready(function() {
-
+    $(document).ready(function () {
+        $("#list").html(liList);
 // 任何需要执行的js特效
-        setTimeout(function(){
+        setTimeout(function () {
 
-            $("#box-status").hide();
-            $("#showbody").show();
+            $("#box-status").hide(500);
+            $("#showbody").show(500);
 
-        },1500)
+        }, 1500)
 
     });
 </script>
