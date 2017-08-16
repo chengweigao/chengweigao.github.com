@@ -257,9 +257,9 @@
     　　指定跳转到标签，找到标签后，程序将处理从下一行开始的命令。
     　　语法：
     　　goto label （label是参数，指定所要转向的批处理程序中的行。） 
-    　　Sample： 
-    　　if {%1}=={} goto noparms 
-    　　if {%2}=={} goto noparms（如果这里的if、%1、%2你不明白的话，先跳过去，后面会有详细的解释。） 
+    　	> 　Sample： 
+		>        	if {%1}=={} goto noparms 
+		>     　　if {%2}=={} goto noparms（如果这里的if、%1、%2你不明白的话，先跳过去，后面会有详细的解释。） 
     　　@Rem check parameters if null show usage 
     　　:noparms 
     　　echo Usage: monitor.bat ServerIP PortNumber 
@@ -269,7 +269,7 @@
     　　注释命令，在C语言中相当与/*--------*/,它并不会被执行，只是起一个注释的作用，便于别人阅读和你自己日后修改。
     　　Rem Message 
     　　Sample：@Rem Here is the description.?
-    >5. Pause 命令
+   	 >5. Pause 命令
     　　运行 Pause 命令时，将显示下面的消息：
     　　Press any key to continue . . . 
     　　Sample： 
