@@ -258,8 +258,8 @@
     　　语法：
     　　goto label （label是参数，指定所要转向的批处理程序中的行。） 
     　	> 　Sample： 
-		>        	if {   %1  }=={} goto noparms 
-		>     　　if { %2 }=={} goto noparms（如果这里的if、%1、%2你不明白的话，先跳过去，后面会有详细的解释。） 
+		>if {   "%1"  }=={} goto noparms 
+		>if { "%2" }=={} goto noparms（如果这里的if、%1、%2你不明白的话，先跳过去，后面会有详细的解释。） 
     　　@Rem check parameters if null show usage 
     　　:noparms 
     　　echo Usage: monitor.bat ServerIP PortNumber 
