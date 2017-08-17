@@ -233,7 +233,8 @@
         if(htmlobj.status!=200){
             window.location.href = host;
         }else{
-            if(x.substring(-2)=='md'){
+
+            if(x.substr(-2)=='md'){
                 var converter = new Markdown.Converter();
                 var htm = converter.makeHtml(htmlobj.responseText);
             }else{
