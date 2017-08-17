@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="target-densitydpi=device-dpi, width=480, user-scalable=no">
     <META NAME="MobileOptimized" CONTENT="240">
-
+    <meta name="uyan_auth" content="71d4441ac0" />
     <title>chengweigao'S Pages</title>
     <!--读取文档json-->
     <script src="dir.md"></script>
@@ -100,7 +100,13 @@
 					<td>仓库地址</td>
 					<td><a  href='https://github.com/chengweigao/chengweigao.github.com'>https://github.com/chengweigao/chengweigao.github.com</a></td>
 					</tr>			
+                    <tr>
+                        <td>访客地图</td>
+                        <td>
+                            <script type="text/javascript" src="//rf.revolvermaps.com/0/0/6.js?i=5dxlhgsm3gu&amp;m=7&amp;c=e63100&amp;cr1=ffffff&amp;f=arial&amp;l=0&amp;bv=90&amp;lx=-420&amp;ly=420&amp;hi=20&amp;he=7&amp;hc=a8ddff&amp;rs=80" async="async"></script>
 
+                        </td>
+                    </tr>
                 </table>
 
 
@@ -112,7 +118,23 @@
     </div>
 
 </div>
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2141797"></script>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+    var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=2141797" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+<!-- UJian Button BEGIN -->
+<script type="text/javascript" src="http://v1.ujian.cc/code/ujian.js?type=slide"></script>
+<!-- UJian Button END -->
+<!-- UY END -->
 <script>
+    var host='https://chengweigao.github.io';
+   // host="http://aa.com";
     $('body').scrollTop(0);
     /*将文档做成列表*/
     var arr = [];
@@ -130,7 +152,7 @@
                     return true;
 
                 }
-                str += '<div class="alert alert-success" style="text-indent: ' + level + 'em;overflow: hidden" onclick="dothe(' + "'" + x + "'" + ',this,event)" >' + y + '</div>';
+                str += '<div class="alert alert-success" style="text-indent: ' + level + 'em;overflow: hidden"  onclick="dothe1(' + "'" +x + "'" + ',this,event)" >' + y + '</div>';
             } else {
 
                 arr[x] = y;
@@ -176,6 +198,7 @@
         document.title = x + "来自chengweigao'S Pages";
 
         htmlobj = $.ajax({url: x, async: false});
+        console.log(htmlobj);
         var converter = new Markdown.Converter();
         var htm = converter.makeHtml(htmlobj.responseText);
 //        window.screenTop=0;
@@ -184,6 +207,12 @@
         $("#list").hide(500);
         $('#close').hide(500);
         $("#myDiv").show(500);
+
+    }
+    function dothe1(x,a) {
+
+        window.location.href=host+"/index.html?url="+ encodeURI(encodeURI(x));
+//
 
     }
     //    function doSeeSon(a) {
@@ -199,7 +228,14 @@
     //    }
     //    展示列表
 
-
+    function getQueryString(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return unescape(r[2]);
+        }
+        return null;
+    }
     $(function () {
         $("#myDiv").css('height', window.screen.availHeight);
         $("#list").css('height', window.screen.availHeight);
@@ -214,9 +250,17 @@
             $("#showbody").show(500);
 
         }, 1500)
+        if(getQueryString("url")){
 
+            dothe(getQueryString("url"));
+
+
+        }
     });
+
+    // 这样调用：
+
+
 </script>
-<script type="text/javascript" src="//rf.revolvermaps.com/0/0/6.js?i=5dxlhgsm3gu&amp;m=7&amp;c=e63100&amp;cr1=ffffff&amp;f=arial&amp;l=0&amp;bv=90&amp;lx=-420&amp;ly=420&amp;hi=20&amp;he=7&amp;hc=a8ddff&amp;rs=80" async="async"></script>
 </body>
 </html>
