@@ -26,6 +26,10 @@
             crossorigin="anonymous"></script>
 
     <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
         #list ul li {
             display: block;
             float: left;
@@ -62,7 +66,7 @@
 
         </div>
         <div id="myDiv" class=""
-             style="word-break:break-all;border: 2px dotted black;padding: 20px; border-radius:20px ">
+             style="word-break:break-all;border: 2px dotted black;padding: 20px; border-radius:20px ;position: relative">
             <div style="margin: 0 auto;text-align: center">
                 <table class="table table-bordered" style="width: 80%;margin: 0 auto;">
                     <tr>
@@ -225,14 +229,24 @@
 //        event.stopPropagation();//不会打印1，但是页面会跳转；
         document.title = x + "来自chengweigao'S Pages";
         htmlobj = $.ajax({url: x, async: false});
-   
+
         if(htmlobj.status!=200){
             window.location.href = host;
         }else{
-            var converter = new Markdown.Converter();
-            var htm = converter.makeHtml(htmlobj.responseText);
+            if(x.substring(-2)=='md'){
+                var converter = new Markdown.Converter();
+                var htm = converter.makeHtml(htmlobj.responseText);
+            }else{
+                var htm = '<iframe src="'+x+'" width="100%" height="100%"></iframe>';
+                $('#myDiv').css('height',window.screen.availHeight-window.screen.availHeight/4+"px");
+                $('#myDiv').css('padding','0');
+                $('#myDiv').css('padding-right','9px');
+                $('#myDiv').css('border','0');
+            }
+
 //        window.screenTop=0;
             $('#myDiv').html(htm);
+
             $("#list").hide(500);
             $('#close').hide(500);
             $("#myDiv").show(500);
@@ -275,12 +289,12 @@
     $(document).ready(function () {
         $("#list").html(liList);
 // 任何需要执行的js特效
-        setTimeout(function () {
+
 
             $("#box-status").hide(500);
             $("#showbody").show(500);
 
-        }, 1500)
+
         if (getQueryString("url")) {
 
             dothe(getQueryString("url"));
