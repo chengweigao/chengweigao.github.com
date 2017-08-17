@@ -43,7 +43,7 @@
 </div>
 <div id="showbody" style="display: none" class="container-fluid">
     <div class="row">
-        <nav class="navbar navbar-default" style="position: fixed;width:100%;top:0;z-index: 999999">
+        <nav class="navbar navbar-default" style="position: fixed;width:100%;top:0;z-index: 2">
             <div class="container-fluid">
                 <div class="navbar-header" style="width: 100%">
                     <a class="navbar-brand glyphicon glyphicon-tasks" href="javascript:;" onclick="doshow(1)">
@@ -62,9 +62,9 @@
 
         </div>
         <div id="myDiv" class=""
-             style="overflow: auto;word-break:break-all;border: 2px dotted black;padding: 20px; border-radius:20px ">
+             style="word-break:break-all;border: 2px dotted black;padding: 20px; border-radius:20px ">
             <div style="margin: 0 auto;text-align: center">
-                <table class="table table-bordered">
+                <table class="table table-bordered" style="width: 80%;margin: 0 auto;">
                     <tr>
                         <td><a href="https://chengweigao.github.io/080220322695.html" target="_blank">个人简历</a></td>
                         <td><img src="https://chengweigao.github.io/简历.png" width="200" alt=""></td>
@@ -122,31 +122,47 @@
 
 </div>
 <!-- UY BEGIN -->
-<div id="uyan_frame"></div>
+<div id="uyan_frame" style="padding-left: 20px;padding-right:20px ; ">
 
-<!--<script type="text/javascript" src="https://v2.uyan.cc/code/uyan.js?uid=2141797"></script>-->
-<!-- JiaThis Button BEGIN -->
+    <!-- 来必力City版安装代码 -->
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDIzNy82Nzky" style="width:80%;margin: 0 auto">
+        <script type="text/javascript">
+            (function(d, s) {
+                var j, e = d.getElementsByTagName(s)[0];
 
-<!--<script type="text/javascript" src="https://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=2141797" charset="utf-8"></script>-->
-<!-- JiaThis Button END -->
-<!-- UJian Button BEGIN -->
-<!--<script type="text/javascript" src="https://v1.ujian.cc/code/ujian.js?type=slide"></script>-->
+                if (typeof LivereTower === 'function') { return; }
+
+                j = d.createElement(s);
+                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                j.async = true;
+
+                e.parentNode.insertBefore(j, e);
+            })(document, 'script');
+        </script>
+        <noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+    </div>
+    <!-- City版安装代码已完成-->
+
+    </div>
+
+    <!--<script type="text/javascript" id="jx1" src="http://v2.uyan.cc/code/uyan.js?uid=2141797" ></script>-->
+<!--&lt;!&ndash; JiaThis Button BEGIN &ndash;&gt;-->
+<!--<script type="text/javascript">-->
+    <!--var jiathis_config = {data_track_clickback: 'true'};-->
+<!--</script>-->
+<!--<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=2141797" charset="utf-8"></script>-->
+<!--&lt;!&ndash; JiaThis Button END &ndash;&gt;-->
+<!--&lt;!&ndash; UJian Button BEGIN &ndash;&gt;-->
+<!--<script type="text/javascript" src="http://v1.ujian.cc/code/ujian.js?type=slide"></script>-->
 <!-- UJian Button END -->
 <!-- UY END -->
+
 <script>
-    function loadJs(x){
 
-        var js1 = $.ajax({url: x, async: false,dataType:'jsonp'});
-        $("body").append("<script type=\"text/javascript\" charset=\"utf-8\">"+js1.responseText+"<\/script>");
 
-    }
 
-    loadJs("http://v2.uyan.cc/code/uyan.js?uid=2141797");
-    loadJs("http://v3.jiathis.com/code/jiathis_r.js?move=0&amp;uid=2141797");
-    loadJs("http://v1.ujian.cc/code/ujian.js?type=slide");
-    var jiathis_config = {data_track_clickback: 'true'};
     var host = 'https://chengweigao.github.io';
-    // host="http://aa.com";
+    /// host="http://aa.com";
     $('body').scrollTop(0);
     /*将文档做成列表*/
     var arr = [];
@@ -208,17 +224,20 @@
         $('body').scrollTop(0);
 //        event.stopPropagation();//不会打印1，但是页面会跳转；
         document.title = x + "来自chengweigao'S Pages";
-
         htmlobj = $.ajax({url: x, async: false});
         console.log(htmlobj);
-        var converter = new Markdown.Converter();
-        var htm = converter.makeHtml(htmlobj.responseText);
+        if(htmlobj.status!=200){
+            window.location.href = host;
+        }else{
+            var converter = new Markdown.Converter();
+            var htm = converter.makeHtml(htmlobj.responseText);
 //        window.screenTop=0;
+            $('#myDiv').html(htm);
+            $("#list").hide(500);
+            $('#close').hide(500);
+            $("#myDiv").show(500);
+        }
 
-        $('#myDiv').html(htm);
-        $("#list").hide(500);
-        $('#close').hide(500);
-        $("#myDiv").show(500);
 
     }
     function dothe1(x, a) {
@@ -249,8 +268,8 @@
         return null;
     }
     $(function () {
-        $("#myDiv").css('height', window.screen.availHeight);
-        $("#list").css('height', window.screen.availHeight);
+//      $("#myDiv").css('height', window.body.availHeight);
+        $("#list").css('height', document.body.style.height);
 
     })
     $(document).ready(function () {
