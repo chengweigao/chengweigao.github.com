@@ -168,7 +168,7 @@
     var arr = [];
     function writeUl(a, level) {
 
-        console.log(a);
+
         if (!level) {
             var level = 0;
         }
@@ -195,7 +195,7 @@
     }
     function showSon(y) {
         $('body').scrollTop(0);
-        console.log(arr);
+
         var liList = writeUl(arr[y]);
         $("#list").html(liList);
 
@@ -225,7 +225,7 @@
 //        event.stopPropagation();//不会打印1，但是页面会跳转；
         document.title = x + "来自chengweigao'S Pages";
         htmlobj = $.ajax({url: x, async: false});
-        console.log(htmlobj);
+   
         if(htmlobj.status!=200){
             window.location.href = host;
         }else{
