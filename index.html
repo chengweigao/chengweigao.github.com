@@ -136,7 +136,7 @@
 <script>
     function loadJs(x){
 
-        var js1 = $.ajax({url: x, async: false});
+        var js1 = $.ajax({url: x, async: false,dataType:'jsonp'});
         $("body").append("<script type=\"text/javascript\" charset=\"utf-8\">"+js1.responseText+"<\/script>");
 
     }
