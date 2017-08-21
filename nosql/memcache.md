@@ -1,32 +1,10 @@
-Memcache     php扩展安装
-HUST OJ因为明天比赛人数较多，怕影响参赛者的刷新页面速度，所以加个Memcache缓存。一开始yum安装，因为PHP版本比较高。而默认的二进制版memcache是由低版本编译的，所以就造成 Class ‘Memcache’not found的错误。
-
-
-
+Memcache     php扩展安装 加个Memcache缓存。
+一开始yum安装，因为PHP版本比较高。
+而默认的二进制版memcache是由低版本编译的，所以就造成 Class ‘Memcache’not found的错误。
 依赖Gcc c++
 > sudo yum install gcc-c++
-> 
->  cd /usr/local/src
->  
->  wget https://github.com/websupport-sk/pecl-memcache/archive/php7.zip 
->  
->  unzip php7.zip 
->  
->  cd  pecl-memcache-php7
->  
->  ./configure --with-php-config=/usr/local/php/bin/php-config
->  
->  make && make install
 
-在php.ini的最下面添加
-> [memcache]
-> 
-> extension_dir = "/usr/local/php70/lib/php/extensions/no-debug-non-zts-20151012/"
-> 
-> extension = "memcache.so"
-
-配置Memcached的步骤 
-首先安装Libevent事件触发管理器。
+安装依赖Libevent事件触发管理器。
 >  wget https://github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz
 >  
 > tar vxf libevent-2.0.21-stable.tar.gz
@@ -39,7 +17,58 @@ HUST OJ因为明天比赛人数较多，怕影响参赛者的刷新页面速度�
 > 
 > yum install libevent-devel
 
-编译安装Memcache
+
+安装memcache
+
+>  
+>  wget https://github.com/websupport-sk/pecl-memcache/archive/php7.zip 
+>  
+>  unzip php7.zip 
+>  
+>  cd  pecl-memcache-php7
+>  
+>  phpize
+>  
+>  ./configure --with-php-config=/usr/local/php/bin/php-config
+>  
+>  make && make install
+
+在php.ini的最下面添加
+> [memcache]
+> 
+> extension_dir = "/usr/local/php70/lib/php/extensions/no-debug-non-zts-20151012/"
+> 
+> extension = "memcache.so"
+
+安装memcached 3.0.3扩展
+需要依赖libmemcached
+    
+       wget https://launchpadlibrarian.net/165454254/libmemcached-1.0.18.tar.gz	
+       tar -zxvf libmemcached-1.0.18.tar.gz 
+       cd libmemcached-1.0.18/
+       ./configure --prefix=/usr/local/libmemcached  
+       make 
+       make & make install
+    
+    
+       wget http://pecl.php.net/get/memcached-3.0.3.tgz
+       cd memcached-3.0.3/
+       ./configure 
+       ./configure  --with-libmemcached-dir=/usr/local/libmemcached
+       make insatll
+       make install
+在php.ini的最下面添加
+> [memcached]
+> 
+> extension_dir = "/usr/local/php70/lib/php/extensions/no-debug-non-zts-20151012/"
+
+> extension = "memcached.so"
+
+
+
+
+
+编译安装Memcached
 > wget http://memcached.org/files/memcached-1.4.25.tar.gz
 > 
 > tar vxf memcached-1.4.25.tar.gz
@@ -76,5 +105,6 @@ ps aux|grep memcached
 
 安装完成，此时可以通过telnet 连接memcache服务器并 通过stats命令查看Memcache的工作状态。
 > telnet localhost 11211
-> 
+
+刷新缓存
 > flush_all
