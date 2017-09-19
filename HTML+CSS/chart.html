@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,height=device-height, user-scalable=no,initial-scale=1, minimum-scale=1, maximum-scale=1,target-densitydpi=device-dpi ">
+    <title>Document</title>
+    <style>
+        div:hover{
+        border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <div style="border: 1px solid;padding-top: 10px; text-align: center">
+        <canvas id="myChartFive" width="280" height="200">111</canvas>
+
+    </div>
+</div>
+<div>
+    <div style="border: 1px solid;padding-top: 10px; text-align: center">
+        <canvas id="myChartFive1" width="280" height="200">111</canvas>
+
+    </div>
+</div>
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+<script src="chart.js"></script>
+<script>
+    var data = {
+        min: -5, max: 5,
+        title: '激素水平 -20~+20', array: [
+            {color: '#071183', name: '间质的促甲状腺激素', operation: '=', value: 10},
+            {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 20},
+            {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 100},
+            {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 100},
+            {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 20},
+        ]
+    };
+    var data1 = {
+        min:-20, max: 50,
+        title: '激素水平 -20~+20', array: [
+            {color: '#071183', name: '间质的促甲状腺激素', operation: '=', value: 10},
+            {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 20},
+            {color: '#b5bd63', name: '间质的脱氢表雄酮', operation: '=', value: -10},
+            {color: '#b98506', name: '间质的皮质醇', operation: '=', value: 10},
+            {color: '#026209', name: '醛固酮', operation: '=', value: -12},
+            {color: '#bb7d63', name: '肾上腺髓质激素分泌量', operation: '=', value: -8},
+            {color: '#9883cd', name: '间质的睾丸激素', operation: '=', value: -20},
+            {color: '#90008f', name: '胰岛素分泌量', operation: '=', value: -29},
+            {color: '#026209', name: '醛固酮', operation: '=', value: -12},
+            {color: '#bb7d63', name: '肾上腺髓质激素分泌量', operation: '=', value: -8},
+            {color: '#9883cd', name: '间质的睾丸激素', operation: '=', value: -20},
+            {color: '#90008f', name: '胰岛素分泌量', operation: '=', value: 60},
+
+        ]
+    };
+
+    Anm = new aNm;
+
+    Anm.doC('myChartFive', data);
+    Anm.doC('myChartFive1', data1);
+
+//     function getL(canvasId, evt) {
+//        var rect = document.getElementById(canvasId).getBoundingClientRect();
+//        return {
+//            x: evt.clientX - rect.left,
+//            y: evt.clientY - rect.top
+//        };
+//    };
+</script>
+
+</body>
+</html>
