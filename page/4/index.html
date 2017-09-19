@@ -6,11 +6,11 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://chengweigao.github.io">
-  <title>Archives: 2017/9 | Hexo</title>
+  <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="https://chengweigao.github.io/archives/2017/09/index.html">
+<meta property="og:url" content="https://chengweigao.github.io/page/4/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
@@ -146,232 +146,2186 @@
           <div id="js-content" class="content-ll">
             
   
-  
+    <article id="post-linux/2017-8-7vim" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code>**高级一些的编辑器，都会包含宏功能，vim当然不能缺少了，在vim中使用宏是非常方便的：
+
+:qx 开始记录宏，并将结果存入寄存器x
+:q 退出记录模式
+:@x 播放记录在x寄存器中的宏命令
+稍微解释一下，当在normal模式下输入:qx后，你对文本的所有编辑动作将会被记录下来，再次输入q即退出了记录模
+式，然后输入@x对刚才记录下来的命令进行重复，此命令后可跟数字，表示要重复多少次，比如@x20，可以重复20次。这个在文本的批处理中是非常有用的。
+同时编辑多个文件
+在vim众多的插件中，有一个叫minibuffer的插件，就是下面所说的标签页功能了，可以支持同时编辑多个文件。
+标签命令
+
+:tabe fn 在一个新的标签页中编辑文件fn
+gt 切换到下一个标签页
+gT 切换到上一个标签页
+:tabr 切换到第一个标签页
+:tabl 切换到最后一个标签页
+:tabm [N] 把当前tab移动到第N个tab之后
+对，正如你所想象的那样，跟eclipse, ue等的标签页是一个意思！
+窗口命令
+ctrl+w s 水平分割窗口
+ctrl+w w 切换窗口
+ctrl+w q 退出当前窗口(由于同时有多个文件，此命令不会影响其他窗口)
+ctrl+w v 垂直分割窗口
+其他
+vim在保存之前不会对文件做实际的修改，只是加载到缓冲区中，对文件的编辑其实是对缓冲区的编辑，直到:w时才会存入物理文件。
+
+:e file 把file加载到新的缓冲区中
+:bn 跳转到下一个缓冲区
+:bd 删除缓冲区(关闭文件)
+:sp fn 分割窗口，并将fn加载到新的窗口中
+退出编辑器
+
+:w 将缓冲区写入文件，即保存修改
+:wq 保存修改并退出
+:x 保存修改并退出
+:q 退出，如果对缓冲区进行过修改，则会提示
+:q! 强制退出，放弃修改
+查找替换
+/pattern 向后搜索字符串pattern
+?pattern 向前搜索字符串pattern
+n 下一个匹配(如果是/搜索，则是向下的下一个，?搜索则是向上的下一个)
+N 上一个匹配(同上)
+:%s/old/new/g 搜索整个文件，将所有的old替换为new
+:%s/old/new/gc 搜索整个文件，将所有的old替换为new，每次都要你确认是否替换
+复制粘贴
+dd 删除光标所在行
+dw 删除一个字(word)
+x 删除当前字符
+X 删除前一个字符
+D 删除到行末
+yy 复制一行，此命令前可跟数字，标识复制多行，如6yy，表示从当前行开始复制6行
+yw 复制一个字
+y$ 复制到行末
+p 粘贴粘贴板的内容到当前行的下面
+P 粘贴粘贴板的内容到当前行的上面
+]p 有缩进的粘贴，vim会自动调节代码的缩进
+&quot;a 将内容放入/存入a寄存器，可以支持多粘贴板
+附：比如常用的一个寄存器就是系统寄存器，名称为+，所以从系统粘贴板粘贴到vim中的命令为&quot;+p,注意此处的+不表示操作符，二十一个寄存器。
+移动光标
+在vim中移动光标跟其他的编辑器中有很大的区别，不过一旦学会了，就会飞速的在文本中移动了。
+
+h,j,k,l 上，下，左，右
+ctrl-f 上翻一页
+ctrl-b 下翻一页
+% 跳到与当前括号匹配的括号处，如当前在{，则跳转到与之匹配的}处
+w 跳到下一个字首，按标点或单词分割
+W 跳到下一个字首，长跳，如end-of-line被认为是一个字
+e 跳到下一个字尾
+E 跳到下一个字尾，长跳
+b 跳到上一个字
+B 跳到上一个字，长跳
+0 跳至行首，不管有无缩进，就是跳到第0个字符
+^ 跳至行首的第一个字符
+$ 跳至行尾
+gg 跳至文件的第一行
+gd 跳至当前光标所在的变量的声明处
+[N]G 跳到第N行，如0G，就等价于gg，100G就是第100行
+fx 在当前行中找x字符，找到了就跳转至
+; 重复上一个f命令，而不用重复的输入fx
+tx 与fx类似，但是只是跳转到x的前一个字符处
+Fx 跟fx的方向相反
+),( 跳转到上/下一个语句
+* 查找光标所在处的单词，向下查找
+# 查找光标所在处的单词，向上查找
+`. 跳转至上次编辑位置
+在屏幕上移动
+
+H 移动光标到当前屏幕上最上边的一行
+M 移动光标到当前屏幕上中间的一行
+L 移动光标到当前屏幕上最下边的一行
+书签
+ma 把当前位置存成标签a
+`a 跳转到标签a处
+编辑
+r 替换一个字符
+J 将下一行和当前行连接为一行
+cc 删除当前行并进入编辑模式
+cw 删除当前字，并进入编辑模式
+c$ 擦除从当前位置至行末的内容，并进入编辑模式
+s 删除当前字符并进入编辑模式
+S 删除光标所在行并进入编辑模式
+xp 交换当前字符和下一个字符
+u 撤销
+ctrl+r 重做
+. 重复上一个编辑命令
+~ 切换大小写，当前字符
+g~iw 切换当前字的大小写
+gUiw 将当前字变成大写
+guiw 将当前字变成小写
+&gt;将当前行右移一个单位
+&lt;&lt; 将当前行左移一个单位(一个tab符)
+== 自动缩进当前行
+&gt;插入模式
+i 从当前光标处进入插入模式
+I 进入插入模式，并置光标于行首
+a 追加模式，置光标于当前光标之后
+A 追加模式，置光标于行末
+o 在当前行之下新加一行，并进入插入模式
+O 在当前行之上新加一行，并进入插入模式
+Esc 退出插入模式
+可视模式
+标记文本
+v 进入可视模式，单字符模式
+V 进入可视模式，行模式
+ctrl+v 进入可视模式，列模式，类似于UE的列模式
+o 跳转光标到选中块的另一个端点
+U 将选中块中的内容转成大写
+O 跳转光标到块的另一个端点
+aw 选中一个字
+ab 选中括号中的所有内容，包括括号本身
+aB 选中{}括号中的所有内容
+ib 选中括号中的内容，不含括号
+iB 选中{}中的内容，不含{}
+
+对标记进行动作
+块右移
+&lt; 块左移
+y 复制块
+d 删除块
+~ 切换块中内容的大小写
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/js/base64/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.089Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/linux/2017-8-7vim/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/静态github个人首页制作密集/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.085Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JS/index" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .c {
+            float: left;
+
+        }
+    </style>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+
+<!--<div style="width: 186px;height: 186px;background: #ffffff;border: 1px solid;border-radius: 50%;">-->
+<!--<img src="./currentcode.png" alt="" style="position: relative">-->
+
+
+<!--</div>-->
+<!--<div style="margin:  0 auto;position: relative">-->
+
+
+<!--</div>-->
+<!--<div style="background: red;width:1px;border-bottom: 50px solid transparent;border-left: 50px solid transparent;border-right: 50px solid transparent">-->
+
+<!--</div>-->
+<!--
+<!--&ndash;&gt;-->
+<div style="position: relative;margin: 0 auto;width: 200px;box-sizing: content-box">
+    <canvas id="myCanvas" width="162" height="162" style="margin: 0 auto;height: 160px;width: 160px;border-radius: 50%;border: 1px solid; overflow: hidden;box-sizing: content-box;position: absolute;top:0;z-index: 3;">
+        Your browser does not support the canvas element.
+    </canvas>
+    <div style="position: absolute;height: 135px;width: 135px;border-radius: 50%;z-index:6;border: 1px solid;overflow: hidden;background: #ffffff;top:12px;left: 12px;">
+
+    </div>
+    <div style="height: 160px;width: 160px;border-radius: 50%; overflow: hidden;border: 1px solid;box-sizing: content-box;position: relative;z-index:2" id="box-show">
+
+
+        <div class="c">
+            <div id="c2" style="position: relative;width: 80px;height: 80px;background: -webkit-linear-gradient(  #5FACF7, #B583B7);
+    background: -moz-linear-gradient(  #5FACF7, #B583B7);
+    background: linear-gradient( #5FACF7, #B583B7);z-index: -1">
+
+            </div>
+
+            <div id="c1" style="position: relative;width: 80px;height: 80px;background: -webkit-linear-gradient(#B583B7, #FF646C);
+    background: -moz-linear-gradient( #B583B7, #FF646C);
+    background: linear-gradient( #B583B7, #FF646C);z-index: -1">
+
+            </div>
+        </div>
+        <div class="c">
+
+
+            <div id="c3" style="position: relative;width: 80px;height: 80px;background: -webkit-linear-gradient( #5FACF7, #3CCED6);
+    background: -moz-linear-gradient( #5FACF7, #3CCED6);
+    background: linear-gradient( #5FACF7, #3CCED6);z-index: -1">
+
+            </div>
+            <div id="c4" style="position: relative;width: 80px;height: 80px;background: -webkit-linear-gradient( #3CCED6, #29E9A5);
+    background: -moz-linear-gradient( #3CCED6, #29E9A5);
+    background: linear-gradient( #3CCED6, #29E9A5);z-index: -1">
+
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+
+    <form action="">
+        <label for="num">
+            比率
+            <input type="number" id="num" value="10" max="100" min="1">
+        </label>
+        <input type="button" id="submit" onclick="drawMove(cxt,$('#num').val());" value="设置">
+    </form>
+</div>
+
+
+<script type="text/javascript">
+    var c = document.getElementById("myCanvas");
+    var cxt = c.getContext("2d");
+    cxt.fillStyle = "red";
+    cxt.beginPath();
+    /*旋转画布做处理画园*/
+    cxt.translate(80, 80);
+    cxt.rotate(90 * Math.PI / 180);
+    cxt.translate(-80, -80);
+    cxt.fill();
+    cxt.closePath();
+    function drawMove(ctx, du) {
+        ctx.clearRect(0, 0, 162, 162);
+        if (du < 100) {
+            /*按比例画圆弧
+            * */
+            ctx.beginPath();
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = '60';
+            ctx.arc(80, 80, 70, 0, Math.PI * (du / 100) * 360 / 180, true);
+            ctx.stroke();
+            ctx.closePath();
+            return true;
+        }
+
+    }
+
+    drawMove(cxt, 100);
+
+
+    function tuDo() {
+        var num = parseInt($("#num").val());
+        if (num < 101 && num > 0) {
+            drawMove(cxt, num);
+            return true;
+        } else {
+            alert("值太小");
+            return true;
+        }
+
+    }
+
+
+</script>
+
+
+
+</body></html>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/JS/index/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/适应安卓ios/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.083Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JS/datepicker无法加载使用问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>#datepicker is not defined<br>该死的错误，排查了jq版本，排查了js引入顺序</p>
+<pre><code>jQuery.Deferred exception: $(...).datepicker is not a function TypeError: $(...).datepicker is not a function
+at HTMLDocument.&lt;anonymous&gt; (http://aa.com/xcc/web/index:410:26)
+at j (http://aa.com/js/jquery.js:2:29948)
+at k (http://aa.com/js/jquery.js:2:30262) undefined
+</code></pre><p>最后把他放到外边即可 如下代码  分析原因 </p>
+<pre><code>$(function(){
+
+})
+$(&quot;#datepicker&quot;).datepicker({
+        todayHighlight: true,
+        language: &apos;zh-CN&apos;
+});
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/JS/datepicker无法加载使用问题/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/路由追踪/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.081Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JS/canvas渐变色图表" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>demo演示地址：<br><a href="https://chengweigao.github.io/JS/index.html" title="渐变百分比图表">https://chengweigao.github.io</a></p>
+<pre><code>&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Document&lt;/title&gt;
+    &lt;style&gt;
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .c {
+            float: left;
+
+        }
+    &lt;/style&gt;
+    &lt;script src=&quot;https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;!--&lt;div style=&quot;width: 186px;height: 186px;background: #ffffff;border: 1px solid;border-radius: 50%;&quot;&gt;--&gt;
+&lt;!--&lt;img src=&quot;./currentcode.png&quot; alt=&quot;&quot; style=&quot;position: relative&quot;&gt;--&gt;
+
+
+&lt;!--&lt;/div&gt;--&gt;
+&lt;!--&lt;div style=&quot;margin:  0 auto;position: relative&quot;&gt;--&gt;
+
+
+&lt;!--&lt;/div&gt;--&gt;
+&lt;!--&lt;div style=&quot;background: red;width:1px;border-bottom: 50px solid transparent;border-left: 50px solid transparent;border-right: 50px solid transparent&quot;&gt;--&gt;
+
+&lt;!--&lt;/div&gt;--&gt;
+&lt;!--
+&lt;!--&amp;ndash;&amp;gt;--&gt;
+&lt;div style=&quot;position: relative;margin: 0 auto;width: 200px;box-sizing: content-box&quot;&gt;
+    &lt;canvas id=&quot;myCanvas&quot; width=&quot;162&quot; height=&quot;162&quot;
+            style=&quot;margin: 0 auto;height: 160px;width: 160px;border-radius: 50%;border: 1px solid; overflow: hidden;box-sizing: content-box;position: absolute;top:0;z-index: 3;&quot;&gt;
+        Your browser does not support the canvas element.
+    &lt;/canvas&gt;
+    &lt;div style=&quot;position: absolute;height: 135px;width: 135px;border-radius: 50%;z-index:6;border: 1px solid;overflow: hidden;background: #ffffff;top:12px;left: 12px;&quot;&gt;
+
+    &lt;/div&gt;
+    &lt;div style=&quot;height: 160px;width: 160px;border-radius: 50%; overflow: hidden;border: 1px solid;box-sizing: content-box;position: relative;z-index:2&quot;
+         id=&quot;box-show&quot;&gt;
+
+
+        &lt;div class=&quot;c&quot;&gt;
+            &lt;div id=&quot;c2&quot; style=&quot;position: relative;width: 80px;height: 80px;background: -webkit-linear-gradient(  #5FACF7, #B583B7);
+    background: -moz-linear-gradient(  #5FACF7, #B583B7);
+    background: linear-gradient( #5FACF7, #B583B7);z-index: -1&quot;&gt;
+
+            &lt;/div&gt;
+
+            &lt;div id=&quot;c1&quot; style=&quot;position: relative;width: 80px;height: 80px;background: -webkit-linear-gradient(#B583B7, #FF646C);
+    background: -moz-linear-gradient( #B583B7, #FF646C);
+    background: linear-gradient( #B583B7, #FF646C);z-index: -1&quot;&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;c&quot;&gt;
+
+
+            &lt;div id=&quot;c3&quot; style=&quot;position: relative;width: 80px;height: 80px;background: -webkit-linear-gradient( #5FACF7, #3CCED6);
+    background: -moz-linear-gradient( #5FACF7, #3CCED6);
+    background: linear-gradient( #5FACF7, #3CCED6);z-index: -1&quot;&gt;
+
+            &lt;/div&gt;
+            &lt;div id=&quot;c4&quot; style=&quot;position: relative;width: 80px;height: 80px;background: -webkit-linear-gradient( #3CCED6, #29E9A5);
+    background: -moz-linear-gradient( #3CCED6, #29E9A5);
+    background: linear-gradient( #3CCED6, #29E9A5);z-index: -1&quot;&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;br&gt;
+    &lt;br&gt;
+
+    &lt;form action=&quot;&quot;&gt;
+        &lt;label for=&quot;num&quot;&gt;
+            比率
+            &lt;input type=&quot;number&quot; id=&quot;num&quot; value=&quot;10&quot; max=&quot;100&quot; min=&quot;1&quot;/&gt;
+        &lt;/label&gt;
+        &lt;input type=&quot;button&quot; id=&quot;submit&quot; onclick=&quot;drawMove(cxt,$(&apos;#num&apos;).val());&quot; value=&quot;设置&quot;/&gt;
+    &lt;/form&gt;
+&lt;/div&gt;
+
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+    var c = document.getElementById(&quot;myCanvas&quot;);
+    var cxt = c.getContext(&quot;2d&quot;);
+    cxt.fillStyle = &quot;red&quot;;
+    cxt.beginPath();
+    /*旋转画布做处理画园*/
+    cxt.translate(80, 80);
+    cxt.rotate(90 * Math.PI / 180);
+    cxt.translate(-80, -80);
+    cxt.fill();
+    cxt.closePath();
+    function drawMove(ctx, du) {
+        ctx.clearRect(0, 0, 162, 162);
+        if (du &lt; 100) {
+            /*按比例画圆弧
+            * */
+            ctx.beginPath();
+            ctx.strokeStyle = &quot;#ffffff&quot;;
+            ctx.lineWidth = &apos;60&apos;;
+            ctx.arc(80, 80, 70, 0, Math.PI * (du / 100) * 360 / 180, true);
+            ctx.stroke();
+            ctx.closePath();
+            return true;
+        }
+
+    }
+
+    drawMove(cxt, 100);
+
+
+    function tuDo() {
+        var num = parseInt($(&quot;#num&quot;).val());
+        if (num &lt; 101 &amp;&amp; num &gt; 0) {
+            drawMove(cxt, num);
+            return true;
+        } else {
+            alert(&quot;值太小&quot;);
+            return true;
+        }
+
+    }
+
+
+&lt;/script&gt;
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/JS/canvas渐变色图表/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/架构搭建/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.079Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JS/2017-08-09js获取屏幕宽高" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Js、获取屏幕宽高</p>
+<pre><code>网页可见区域宽：document.body.clientWidth
+网页可见区域高：document.body.clientHeight
+网页可见区域宽：document.body.offsetWidth(包括边线的宽)
+网页可见区域高：document.body.offsetHeight(包括边线的宽)
+网页正文全文宽：document.body.scrollWidth
+网页正文全文高：document.body.scrollHeight
+网页被卷去的高：document.body.scrollTop(IE7无效)
+网页被卷去的左：document.body.scrollLeft(IE7无效)
+
+网页被卷去的高：document.documentElement.scrollTop(IE7有效)
+
+网页被卷去的左：document.documentElement.scrollLeft(IE7有效)
+网页正文部分上：window.screenTop
+网页正文部分左：window.screenLeft
+屏幕分辨率的高：window.screen.height
+屏幕分辨率的宽：window.screen.width
+屏幕可用工作区高度：window.screen.availHeight
+屏幕可用工作区宽度：window.screen.availWidth
+
+相对于窗口左上角的X：window.event.clientX
+
+相对于窗口左上角的Y：window.event.clientY
+相对于整个页面的X：window.event.X
+相对于整个页面的Y：window.event.Y
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/JS/2017-08-09js获取屏幕宽高/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/数据库主从复制/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.066Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-HTTP/http-HEADER" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code> Php代码   
+1.    //定义编码  
+2.    header( &apos;Content-Type:text/html;charset=utf-8 &apos;);  
+3.      
+4.    //Atom  
+5.    header(&apos;Content-type: application/atom+xml&apos;);  
+6.      
+7.    //CSS  
+8.    header(&apos;Content-type: text/css&apos;);  
+9.      
+10.    //Javascript  
+11.    header(&apos;Content-type: text/javascript&apos;);  
+12.      
+13.    //JPEG Image  
+14.    header(&apos;Content-type: image/jpeg&apos;);  
+15.      
+16.    //JSON  
+17.    header(&apos;Content-type: application/json&apos;);  
+18.      
+19.    //PDF  
+20.    header(&apos;Content-type: application/pdf&apos;);  
+21.      
+22.    //RSS  
+23.    header(&apos;Content-Type: application/rss+xml; charset=ISO-8859-1&apos;);  
+24.      
+25.    //Text (Plain)  
+26.    header(&apos;Content-type: text/plain&apos;);  
+27.      
+28.    //XML  
+29.    header(&apos;Content-type: text/xml&apos;);  
+30.      
+31.    // ok  
+32.    header(&apos;HTTP/1.1 200 OK&apos;);  
+33.      
+34.    //设置一个404头:  
+35.    header(&apos;HTTP/1.1 404 Not Found&apos;);  
+36.      
+37.    //设置地址被永久的重定向  
+38.    header(&apos;HTTP/1.1 301 Moved Permanently&apos;);  
+39.      
+40.    //转到一个新地址  
+41.    header(&apos;Location: http://www.example.org/&apos;);  
+42.      
+43.    //文件延迟转向:  
+44.    header(&apos;Refresh: 10; url=http://www.example.org/&apos;);  
+45.    print &apos;You will be redirected in 10 seconds&apos;;  
+46.      
+47.    //当然，也可以使用html语法实现  
+48.    // &lt;meta http-equiv=&quot;refresh&quot; content=&quot;10;http://www.example.org/ / 
+49.      
+50.    // override X-Powered-By: PHP:  
+51.    header(&apos;X-Powered-By: PHP/4.4.0&apos;);  
+52.    header(&apos;X-Powered-By: Brain/0.6b&apos;);  
+53.      
+54.    //文档语言  
+55.    header(&apos;Content-language: en&apos;);  
+56.      
+57.    //告诉浏览器最后一次修改时间  
+58.    $time = time() - 60; // or filemtime($fn), etc  
+59.    header(&apos;Last-Modified: &apos;.gmdate(&apos;D, d M Y H:i:s&apos;, $time).&apos; GMT&apos;);  
+60.      
+61.    //告诉浏览器文档内容没有发生改变  
+62.    header(&apos;HTTP/1.1 304 Not Modified&apos;);  
+63.      
+64.    //设置内容长度  
+65.    header(&apos;Content-Length: 1234&apos;);  
+66.      
+67.    //设置为一个下载类型  
+68.    header(&apos;Content-Type: application/octet-stream&apos;);  
+69.    header(&apos;Content-Disposition: attachment; filename=&quot;example.zip&quot;&apos;);  
+70.    header(&apos;Content-Transfer-Encoding: binary&apos;);  
+71.    // load the file to send:  
+72.    readfile(&apos;example.zip&apos;);  
+73.      
+74.    // 对当前文档禁用缓存  
+75.    header(&apos;Cache-Control: no-cache, no-store, max-age=0, must-revalidate&apos;);  
+76.    header(&apos;Expires: Mon, 26 Jul 1997 05:00:00 GMT&apos;); // Date in the past  
+77.    header(&apos;Pragma: no-cache&apos;);  
+78.      
+79.    //设置内容类型:  
+80.    header(&apos;Content-Type: text/html; charset=iso-8859-1&apos;);  
+81.    header(&apos;Content-Type: text/html; charset=utf-8&apos;);  
+82.    header(&apos;Content-Type: text/plain&apos;); //纯文本格式  
+83.    header(&apos;Content-Type: image/jpeg&apos;); //JPG***  
+84.    header(&apos;Content-Type: application/zip&apos;); // ZIP文件  
+85.    header(&apos;Content-Type: application/pdf&apos;); // PDF文件  
+86.    header(&apos;Content-Type: audio/mpeg&apos;); // 音频文件  
+87.    header(&apos;Content-Type: application/x-shockw**e-flash&apos;); //Flash动画  
+88.      
+89.    //显示登陆对话框  
+90.    header(&apos;HTTP/1.1 401 Unauthorized&apos;);  
+91.    header(&apos;WWW-Authenticate: Basic realm=&quot;Top Secret&quot;&apos;);  
+92.    print &apos;Text that will be displayed if the user hits cancel or &apos;;  
+93.    print &apos;enters wrong login data&apos;;  
+
+ xlsx下载：
+Php代码   
+1.    $filename = rtrim($_SERVER[&apos;DOCUMENT_ROOT&apos;],&apos;/&apos;).&apos;/app/files/payment_status.csv&apos;;  
+2.    header(&apos;Content-Disposition: attachment; filename=payment_status.xlsx&apos;);  
+3.    header(&apos;Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&apos;);  
+4.    header(&apos;Content-Length: &apos; . filesize($filename));  
+5.    header(&apos;Content-Transfer-Encoding: binary&apos;);  
+6.    header(&apos;Cache-Control: must-revalidate&apos;);  
+7.    header(&apos;Pragma: public&apos;);  
+8.    readfile($filename);  
+9.    header(‘Content-type: application/image/pjpeg’);//输出的类型
+10.    header(‘Content-Disposition: attachment; filename=”downloaded.jpg”‘); //下载显示的名字,注意格式
+readfile(‘my.jpg’);
+// 并将这个文件以前面header发送信息设定的类型输出,从而会弹出一个下载框
+// 就是把服务器上的my.jpg下载下来,下载显示和保存的名字默认是downloaded.jpg
+?&gt;
+各种文件类型的header输出类型如下：
+‘chm’=&gt;’application/octet-stream’,
+‘ppt’=&gt;’application/vnd.ms-powerpoint’,
+‘xls’=&gt;’application/vnd.ms-excel’,
+‘doc’=&gt;’application/msword’,
+‘exe’=&gt;’application/octet-stream’,
+‘rar’=&gt;’application/octet-stream’,
+‘js’=&gt;”javascrīpt/js”,
+‘css’=&gt;”text/css”,
+‘hqx’=&gt;”application/mac-binhex40″,
+‘bin’=&gt;”application/octet-stream”,
+‘oda’=&gt;”application/oda”,
+‘pdf’=&gt;”application/pdf”,
+‘ai’=&gt;”application/postsrcipt”,
+‘eps’=&gt;”application/postsrcipt”,
+‘es’=&gt;”application/postsrcipt”,
+‘rtf’=&gt;”application/rtf”,
+‘mif’=&gt;”application/x-mif”,
+‘csh’=&gt;”application/x-csh”,
+‘dvi’=&gt;”application/x-dvi”,
+‘hdf’=&gt;”application/x-hdf”,
+‘nc’=&gt;”application/x-netcdf”,
+‘cdf’=&gt;”application/x-netcdf”,
+‘latex’=&gt;”application/x-latex”,
+‘ts’=&gt;”application/x-troll-ts”,
+‘src’=&gt;”application/x-wais-source”,
+‘zip’=&gt;”application/zip”,
+‘bcpio’=&gt;”application/x-bcpio”,
+‘cpio’=&gt;”application/x-cpio”,
+‘gtar’=&gt;”application/x-gtar”,
+‘shar’=&gt;”application/x-shar”,
+‘sv4cpio’=&gt;”application/x-sv4cpio”,
+‘sv4crc’=&gt;”application/x-sv4crc”,
+‘tar’=&gt;”application/x-tar”,
+‘ustar’=&gt;”application/x-ustar”,
+‘man’=&gt;”application/x-troff-man”,
+‘sh’=&gt;”application/x-sh”,
+‘tcl’=&gt;”application/x-tcl”,
+‘tex’=&gt;”application/x-tex”,
+‘texi’=&gt;”application/x-texinfo”,
+‘texinfo’=&gt;”application/x-texinfo”,
+‘t’=&gt;”application/x-troff”,
+‘tr’=&gt;”application/x-troff”,
+‘roff’=&gt;”application/x-troff”,
+‘shar’=&gt;”application/x-shar”,
+‘me’=&gt;”application/x-troll-me”,
+‘ts’=&gt;”application/x-troll-ts”,
+‘gif’=&gt;”image/gif”,
+‘jpeg’=&gt;”image/pjpeg”,
+‘jpg’=&gt;”image/pjpeg”,
+‘jpe’=&gt;”image/pjpeg”,
+‘ras’=&gt;”image/x-cmu-raster”,
+‘pbm’=&gt;”image/x-portable-bitmap”,
+‘ppm’=&gt;”image/x-portable-pixmap”,
+‘xbm’=&gt;”image/x-xbitmap”,
+‘xwd’=&gt;”image/x-xwindowdump”,
+‘ief’=&gt;”image/ief”,
+‘tif’=&gt;”image/tiff”,
+‘tiff’=&gt;”image/tiff”,
+‘pnm’=&gt;”image/x-portable-anymap”,
+‘pgm’=&gt;”image/x-portable-graymap”,
+‘rgb’=&gt;”image/x-rgb”,
+‘xpm’=&gt;”image/x-xpixmap”,
+‘txt’=&gt;”text/plain”,
+‘c’=&gt;”text/plain”,
+‘cc’=&gt;”text/plain”,
+‘h’=&gt;”text/plain”,
+‘html’=&gt;”text/html”,
+‘htm’=&gt;”text/html”,
+‘htl’=&gt;”text/html”,
+‘rtx’=&gt;”text/richtext”,
+‘etx’=&gt;”text/x-setext”,
+‘tsv’=&gt;”text/tab-separated-values”,
+‘mpeg’=&gt;”video/mpeg”,
+‘mpg’=&gt;”video/mpeg”,
+‘mpe’=&gt;”video/mpeg”,
+‘avi’=&gt;”video/x-msvideo”,
+‘qt’=&gt;”video/quicktime”,
+‘mov’=&gt;”video/quicktime”,
+‘moov’=&gt;”video/quicktime”,
+‘movie’=&gt;”video/x-sgi-movie”,
+‘au’=&gt;”audio/basic”,
+‘snd’=&gt;”audio/basic”,
+‘wav’=&gt;”audio/x-wav”,
+‘aif’=&gt;”audio/x-aiff”,
+‘aiff’=&gt;”audio/x-aiff”,
+‘aifc’=&gt;”audio/x-aiff”,
+‘swf’=&gt;”application/x-shockwave-flash”
+‘myz’=&gt;”application/myz”
+“.*”=”application/octet-stream”
+“.001″=”application/x-001”
+“.301″=”application/x-301”
+“.323″=”text/h323”
+“.906″=”application/x-906”
+“.907″=”drawing/907”
+“.a11″=”application/x-a11”
+“.acp”=”audio/x-mei-aac”
+“.ai”=”application/postscript”
+“.aif”=”audio/aiff”
+“.aifc”=”audio/aiff”
+“.aiff”=”audio/aiff”
+“.anv”=”application/x-anv”
+“.asa”=”text/asa”
+“.asf”=”video/x-ms-asf”
+“.asp”=”text/asp”
+“.asx”=”video/x-ms-asf”
+“.au”=”audio/basic”
+“.avi”=”video/avi”
+“.awf”=”application/vnd.adobe.workflow”
+“.biz”=”text/xml”
+“.bmp”=”application/x-bmp”
+“.bot”=”application/x-bot”
+“.c4t”=”application/x-c4t”
+“.c90″=”application/x-c90”
+“.cal”=”application/x-cals”
+“.cat”=”application/vnd.ms-pki.seccat”
+“.cdf”=”application/x-netcdf”
+“.cdr”=”application/x-cdr”
+“.cel”=”application/x-cel”
+“.cer”=”application/x-x509-ca-cert”
+“.cg4″=”application/x-g4”
+“.cgm”=”application/x-cgm”
+“.cit”=”application/x-cit”
+“.class”=”java/*”
+“.cml”=”text/xml”
+“.cmp”=”application/x-cmp”
+“.cmx”=”application/x-cmx”
+“.cot”=”application/x-cot”
+“.crl”=”application/pkix-crl”
+“.crt”=”application/x-x509-ca-cert”
+“.csi”=”application/x-csi”
+“.css”=”text/css”
+“.cut”=”application/x-cut”
+“.dbf”=”application/x-dbf”
+“.dbm”=”application/x-dbm”
+“.dbx”=”application/x-dbx”
+“.dcd”=”text/xml”
+“.dcx”=”application/x-dcx”
+“.der”=”application/x-x509-ca-cert”
+“.dgn”=”application/x-dgn”
+“.dib”=”application/x-dib”
+“.dll”=”application/x-msdownload”
+“.doc”=”application/msword”
+“.dot”=”application/msword”
+“.drw”=”application/x-drw”
+“.dtd”=”text/xml”
+“.dwf”=”Model/vnd.dwf”
+“.dwf”=”application/x-dwf”
+“.dwg”=”application/x-dwg”
+“.dxb”=”application/x-dxb”
+“.dxf”=”application/x-dxf”
+“.edn”=”application/vnd.adobe.edn”
+“.emf”=”application/x-emf”
+“.eml”=”message/rfc822”
+“.ent”=”text/xml”
+“.epi”=”application/x-epi”
+“.eps”=”application/x-ps”
+“.eps”=”application/postscript”
+“.etd”=”application/x-ebx”
+“.exe”=”application/x-msdownload”
+“.fax”=”image/fax”
+“.fdf”=”application/vnd.fdf”
+“.fif”=”application/fractals”
+“.fo”=”text/xml”
+“.frm”=”application/x-frm”
+“.g4″=”application/x-g4”
+“.gbr”=”application/x-gbr”
+“.gcd”=”application/x-gcd”
+“.gif”=”image/gif”
+“.gl2″=”application/x-gl2”
+“.gp4″=”application/x-gp4”
+“.hgl”=”application/x-hgl”
+“.hmr”=”application/x-hmr”
+“.hpg”=”application/x-hpgl”
+“.hpl”=”application/x-hpl”
+“.hqx”=”application/mac-binhex40”
+“.hrf”=”application/x-hrf”
+“.hta”=”application/hta”
+“.htc”=”text/x-component”
+“.htm”=”text/html”
+“.html”=”text/html”
+“.htt”=”text/webviewhtml”
+“.htx”=”text/html”
+“.icb”=”application/x-icb”
+“.ico”=”image/x-icon”
+“.ico”=”application/x-ico”
+“.iff”=”application/x-iff”
+“.ig4″=”application/x-g4”
+“.igs”=”application/x-igs”
+“.iii”=”application/x-iphone”
+“.img”=”application/x-img”
+“.ins”=”application/x-internet-signup”
+“.isp”=”application/x-internet-signup”
+“.IVF”=”video/x-ivf”
+“.java”=”java/*”
+“.jfif”=”image/jpeg”
+“.jpe”=”image/jpeg”
+“.jpe”=”application/x-jpe”
+“.jpeg”=”image/jpeg”
+“.jpg”=”image/jpeg”
+“.jpg”=”application/x-jpg”
+“.js”=”application/x-javascript”
+“.jsp”=”text/html”
+“.la1″=”audio/x-liquid-file”
+“.lar”=”application/x-laplayer-reg”
+“.latex”=”application/x-latex”
+“.lavs”=”audio/x-liquid-secure”
+“.lbm”=”application/x-lbm”
+“.lmsff”=”audio/x-la-lms”
+“.ls”=”application/x-javascript”
+“.ltr”=”application/x-ltr”
+“.m1v”=”video/x-mpeg”
+“.m2v”=”video/x-mpeg”
+“.m3u”=”audio/mpegurl”
+“.m4e”=”video/mpeg4”
+“.mac”=”application/x-mac”
+“.man”=”application/x-troff-man”
+“.math”=”text/xml”
+“.mdb”=”application/msaccess”
+“.mdb”=”application/x-mdb”
+“.mfp”=”application/x-shockwave-flash”
+“.mht”=”message/rfc822”
+“.mhtml”=”message/rfc822”
+“.mi”=”application/x-mi”
+“.mid”=”audio/mid”
+“.midi”=”audio/mid”
+“.mil”=”application/x-mil”
+“.mml”=”text/xml”
+“.mnd”=”audio/x-musicnet-download”
+“.mns”=”audio/x-musicnet-stream”
+“.mocha”=”application/x-javascript”
+“.movie”=”video/x-sgi-movie”
+“.mp1″=”audio/mp1”
+“.mp2″=”audio/mp2”
+“.mp2v”=”video/mpeg”
+“.mp3″=”audio/mp3”
+“.mp4″=”video/mpeg4”
+“.mpa”=”video/x-mpg”
+“.mpd”=”application/vnd.ms-project”
+“.mpe”=”video/x-mpeg”
+“.mpeg”=”video/mpg”
+“.mpg”=”video/mpg”
+“.mpga”=”audio/rn-mpeg”
+“.mpp”=”application/vnd.ms-project”
+“.mps”=”video/x-mpeg”
+“.mpt”=”application/vnd.ms-project”
+“.mpv”=”video/mpg”
+“.mpv2″=”video/mpeg”
+“.mpw”=”application/vnd.ms-project”
+“.mpx”=”application/vnd.ms-project”
+“.mtx”=”text/xml”
+“.mxp”=”application/x-mmxp”
+“.net”=”image/pnetvue”
+“.nrf”=”application/x-nrf”
+“.nws”=”message/rfc822”
+“.odc”=”text/x-ms-odc”
+“.out”=”application/x-out”
+“.p10″=”application/pkcs10”
+“.p12″=”application/x-pkcs12”
+“.p7b”=”application/x-pkcs7-certificates”
+“.p7c”=”application/pkcs7-mime”
+“.p7m”=”application/pkcs7-mime”
+“.p7r”=”application/x-pkcs7-certreqresp”
+“.p7s”=”application/pkcs7-signature”
+“.pc5″=”application/x-pc5”
+“.pci”=”application/x-pci”
+“.pcl”=”application/x-pcl”
+“.pcx”=”application/x-pcx”
+“.pdf”=”application/pdf”
+“.pdf”=”application/pdf”
+“.pdx”=”application/vnd.adobe.pdx”
+“.pfx”=”application/x-pkcs12”
+“.pgl”=”application/x-pgl”
+“.pic”=”application/x-pic”
+“.pko”=”application/vnd.ms-pki.pko”
+“.pl”=”application/x-perl”
+“.plg”=”text/html”
+“.pls”=”audio/scpls”
+“.plt”=”application/x-plt”
+“.png”=”image/png”
+“.png”=”application/x-png”
+“.pot”=”application/vnd.ms-powerpoint”
+“.ppa”=”application/vnd.ms-powerpoint”
+“.ppm”=”application/x-ppm”
+“.pps”=”application/vnd.ms-powerpoint”
+“.ppt”=”application/vnd.ms-powerpoint”
+“.ppt”=”application/x-ppt”
+“.pr”=”application/x-pr”
+“.prf”=”application/pics-rules”
+“.prn”=”application/x-prn”
+“.prt”=”application/x-prt”
+“.ps”=”application/x-ps”
+“.ps”=”application/postscript”
+“.ptn”=”application/x-ptn”
+“.pwz”=”application/vnd.ms-powerpoint”
+“.r3t”=”text/vnd.rn-realtext3d”
+“.ra”=”audio/vnd.rn-realaudio”
+“.ram”=”audio/x-pn-realaudio”
+“.ras”=”application/x-ras”
+“.rat”=”application/rat-file”
+“.rdf”=”text/xml”
+“.rec”=”application/vnd.rn-recording”
+“.red”=”application/x-red”
+“.rgb”=”application/x-rgb”
+“.rjs”=”application/vnd.rn-realsystem-rjs”
+“.rjt”=”application/vnd.rn-realsystem-rjt”
+“.rlc”=”application/x-rlc”
+“.rle”=”application/x-rle”
+“.rm”=”application/vnd.rn-realmedia”
+“.rmf”=”application/vnd.adobe.rmf”
+“.rmi”=”audio/mid”
+“.rmj”=”application/vnd.rn-realsystem-rmj”
+“.rmm”=”audio/x-pn-realaudio”
+“.rmp”=”application/vnd.rn-rn_music_package”
+“.rms”=”application/vnd.rn-realmedia-secure”
+“.rmvb”=”application/vnd.rn-realmedia-vbr”
+“.rmx”=”application/vnd.rn-realsystem-rmx”
+“.rnx”=”application/vnd.rn-realplayer”
+“.rp”=”image/vnd.rn-realpix”
+“.rpm”=”audio/x-pn-realaudio-plugin”
+“.rsml”=”application/vnd.rn-rsml”
+“.rt”=”text/vnd.rn-realtext”
+“.rtf”=”application/msword”
+“.rtf”=”application/x-rtf”
+“.rv”=”video/vnd.rn-realvideo”
+“.sam”=”application/x-sam”
+“.sat”=”application/x-sat”
+“.sdp”=”application/sdp”
+“.sdw”=”application/x-sdw”
+“.sit”=”application/x-stuffit”
+“.slb”=”application/x-slb”
+“.sld”=”application/x-sld”
+“.slk”=”drawing/x-slk”
+“.smi”=”application/smil”
+“.smil”=”application/smil”
+“.smk”=”application/x-smk”
+“.snd”=”audio/basic”
+“.sol”=”text/plain”
+“.sor”=”text/plain”
+“.spc”=”application/x-pkcs7-certificates”
+“.spl”=”application/futuresplash”
+“.spp”=”text/xml”
+“.ssm”=”application/streamingmedia”
+“.sst”=”application/vnd.ms-pki.certstore”
+“.stl”=”application/vnd.ms-pki.stl”
+“.stm”=”text/html”
+“.sty”=”application/x-sty”
+“.svg”=”text/xml”
+“.swf”=”application/x-shockwave-flash”
+“.tdf”=”application/x-tdf”
+“.tg4″=”application/x-tg4”
+“.tga”=”application/x-tga”
+“.tif”=”image/tiff”
+“.tif”=”application/x-tif”
+“.tiff”=”image/tiff”
+“.tld”=”text/xml”
+“.top”=”drawing/x-top”
+“.torrent”=”application/x-bittorrent”
+“.tsd”=”text/xml”
+“.txt”=”text/plain”
+“.uin”=”application/x-icq”
+“.uls”=”text/iuls”
+“.vcf”=”text/x-vcard”
+“.vda”=”application/x-vda”
+“.vdx”=”application/vnd.visio”
+“.vml”=”text/xml”
+“.vpg”=”application/x-vpeg005”
+“.vsd”=”application/vnd.visio”
+“.vsd”=”application/x-vsd”
+“.vss”=”application/vnd.visio”
+“.vst”=”application/vnd.visio”
+“.vst”=”application/x-vst”
+“.vsw”=”application/vnd.visio”
+“.vsx”=”application/vnd.visio”
+“.vtx”=”application/vnd.visio”
+“.vxml”=”text/xml”
+“.wav”=”audio/wav”
+“.wax”=”audio/x-ms-wax”
+“.wb1″=”application/x-wb1”
+“.wb2″=”application/x-wb2”
+“.wb3″=”application/x-wb3”
+“.wbmp”=”image/vnd.wap.wbmp”
+“.wiz”=”application/msword”
+“.wk3″=”application/x-wk3”
+“.wk4″=”application/x-wk4”
+“.wkq”=”application/x-wkq”
+“.wks”=”application/x-wks”
+“.wm”=”video/x-ms-wm”
+“.wma”=”audio/x-ms-wma”
+“.wmd”=”application/x-ms-wmd”
+“.wmf”=”application/x-wmf”
+“.wml”=”text/vnd.wap.wml”
+“.wmv”=”video/x-ms-wmv”
+“.wmx”=”video/x-ms-wmx”
+“.wmz”=”application/x-ms-wmz”
+“.wp6″=”application/x-wp6”
+“.wpd”=”application/x-wpd”
+“.wpg”=”application/x-wpg”
+“.wpl”=”application/vnd.ms-wpl”
+“.wq1″=”application/x-wq1”
+“.wr1″=”application/x-wr1”
+“.wri”=”application/x-wri”
+“.wrk”=”application/x-wrk”
+“.ws”=”application/x-ws”
+“.ws2″=”application/x-ws”
+“.wsc”=”text/scriptlet”
+“.wsdl”=”text/xml”
+“.wvx”=”video/x-ms-wvx”
+“.xdp”=”application/vnd.adobe.xdp”
+“.xdr”=”text/xml”
+“.xfd”=”application/vnd.adobe.xfd”
+“.xfdf”=”application/vnd.adobe.xfdf”
+“.xhtml”=”text/html”
+“.xls”=”application/vnd.ms-excel”
+“.xls”=”application/x-xls”
+“.xlw”=”application/x-xlw”
+“.xml”=”text/xml”
+“.xpl”=”audio/scpls”
+“.xq”=”text/xml”
+“.xql”=”text/xml”
+“.xquery”=”text/xml”
+“.xsd”=”text/xml”
+“.xsl”=”text/xml”
+“.xslt”=”text/xml”
+“.xwd”=”application/x-xwd”
+“.x_b”=”application/x-x_b”
+“.x_t”=”application/x-x_t”
+“.myz”=”application/myz”
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/HTTP/http-HEADER/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/github个人主页markddown在线文档建立手段/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.052Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-HTTP/htmlmate标签" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code>一、&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,height=device-height,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no&quot;&gt;
+
+
+1.name=&quot;viewport&quot;  //设置视口（网页可绘制的区域）
+
+2.width=device-width//应用程序的宽度和屏幕的宽度是一样的
+
+3.height=device-height  //应用程序的高度和屏幕的高是一样的
+
+4.initial-scale=1.0  //应用程序启动时候的缩放尺度（1.0表示不缩放）
+
+5.minimum-scale=1.0  //用户可以缩放到的最小尺度（1.0表示不缩放）
+
+6.maximum-scale=1.0  //用户可以放大到的最大尺度（1.0表示不缩放）
+
+7.user-scalable=no  //用户是否可以通过他的手势来缩放整个应用程序，使应用程序的尺度发生一个改变（yes/no）
+
+
+二、&lt;meta name=&quot;viewport&quot; content=&quot;target-densitydpi=device-dpi, width=480px, user-scalable=no&quot;&gt;
+
+
+1.target-densitydpi=device-dpi //指定屏幕像素密度DPI,device-dpi 为设备原本的DPI值,不会有任何缩放.( dpi是单位,一般指每英寸的像素)
+三、&lt;meta name=&quot;apple-mobile-web-app-capable&quot; content=&quot;yes&quot;&gt; 
+
+
+//说明：网站开启对web app程序的支持
+
+1.apple-mobile-web-app-capable //
+
+2.content=&quot;yes&quot;  //是否开启（开启）
+
+
+四、&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt; //强制使用ie最新内核模式渲染
+
+
+五、&lt;meta name=&quot;format-detection&quot; content=&quot;telephone=no&quot;&gt;
+
+
+当该 HTML 页面在手机上浏览时，该标签用于指定是否将网页内容中的手机号码显示为拨号的超链接
+
+在 iPhone 上默认值是：
+
+&lt;meta name=&quot;format-detection&quot; content=&quot;telephone=yes&quot;/&gt;
+
+如果你不希望手机自动将网页中的电话号码显示为拨号的超链接，那么可以这样写：
+
+&lt;meta name=&quot;format-detection&quot; content=&quot;telephone=no&quot;/&gt;
+六、&lt;meta content=&quot;email=no&quot; name=&quot;format-detection&quot; /&gt;//将不识别邮箱，告诉设备忽略将页面中的数字识别为电话号码 。
+
+
+七、&lt;meta name=&quot;apple-mobile-web-app-status-bar-style&quot; content=&quot;black&quot; /&gt;
+
+
+在web app应用下状态条（屏幕顶部条）的颜色；
+
+默认值为default（白色），可以定为black（黑色）和black-translucent（灰色半透明）。
+
+注意：若值为“black-translucent”将会占据页面px位置，浮在页面上方（会覆盖页面20px高度–iphone4和itouch4的Retina屏幕为40px）。
+八、&lt;meta name=&quot;apple-touch-fullscreen&quot; content=&quot;yes&quot;&gt;  //&quot;添加到主屏幕“后，全屏显示
+九、&lt;meta name=&quot;apple-mobile-web-app-capable&quot; content=&quot;yes&quot; /&gt;
+
+
+//这meta的作用就是删除默认的苹果工具栏和菜单栏。content有两个值”yes”和”no”,当我们需要显示工具栏和菜单栏时，这个行meta就不用加了，默认就是显示。
+十、苹果web app其他设置：
+
+
+1).&lt;link rel=&quot;apple-touch-icon-precomposed&quot; href=&quot;iphone_milanoo.png&quot; /&gt;
+
+说明：这个link就是设置web app的放置主屏幕上icon文件路径。
+
+使用：该路径需要注意的就是放到将网站的文档根目录下但不是服务器的文档的根目录。图片尺寸可以设定为57*57（px）或者Retina可以定为114*114（px），ipad尺寸为72*72（px）。
+
+2).&lt;link rel=&quot;apple-touch-startup-image&quot; href=&quot;milanoo_startup.png&quot; /&gt;
+
+说明：这个link就是设置启动时候的界面（图片五），放置的路劲和上面类似。
+
+使用：该路径需要注意的就是放到将网站的文档根目录下但不是服务器的文档的根目录。官方规定启动界面的尺寸必须为 320*640（px），原本以为Retina屏幕可以支持双倍，但是不支持，图片显示不出来。
+十一、&lt;META NAME=&quot;MobileOptimized&quot; CONTENT=&quot;240&quot;&gt;
+
+//浏览器不会自动调整文件的大小,也就是说是固定大小,不会随着浏览器拉伸缩放。
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/HTTP/htmlmate标签/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/virtualBox/盘容量调整/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.047Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-HTML+CSS/chart" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        //<script>
+//var data = {
+//    min: -5, max: 5,
+//    title: '激素水平 -20~+20', array: [
+//        {color: '#071183', name: '间质的促甲状腺激素', operation: '=', value: 10},
+//        {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 20},
+//        {color: '#b5bd63', name: '间质的脱氢表雄酮', operation: '=', value: -10},
+//        {color: '#b98506', name: '间质的皮质醇', operation: '=', value: 10},
+//        {color: '#026209', name: '醛固酮', operation: '=', value: -12},
+//        {color: '#bb7d63', name: '肾上腺髓质激素分泌量', operation: '=', value: -8},
+//        {color: '#9883cd', name: '间质的睾丸激素', operation: '=', value: -20},
+//        {color: '#90008f', name: '胰岛素分泌量', operation: '=', value: -29},
+//
+//    ]
+//};
+
+
+aNm = function () {
+    this.canheight = 30;//px;
+    this.Twidth = 35;
+    this.allWidth = 280;
+    this.padding = (this.allWidth - this.Twidth * 6) / 2;
+    this.allHeight = 190;
+    this.MiddelNumber = 0;
+    this.ctx = '';
+    this.step = 2;
+    this.minNumber = 0;
+    this.maxNumber = 3;
+    this.data = {};
+    this.lineSmall=0;
+    /*设置画布*/
+    this.doC = (function (canvasId, data) {
+        this.Canvas = document.getElementById(canvasId);
+        this.ctx = this.Canvas.getContext('2d');
+        this.ctx.fillStyle = "#fffff1";
+        this.ctx.fillRect(0, 0, this.allWidth, this.allHeight);
+        this.mkline(data);
+        this.data = data;
+        console.log(this);
+        this.canvasId = canvasId;
+        this.mkRect(data);
+
+    });
+    /*画线的布局*/
+    this.mkline = (function (data) {
+
+
+        /*获取刻度值*/
+        for (var i = 0; i < data.array.length; i++) {
+            if (data.array[i].value < this.minNumber) {
+                this.minNumber = data.array[i].value;
+            }
+            if (data.array[i].value > this.maxNumber) {
+                this.maxNumber = data.array[i].value;
+            }
+        }
+
+            this.lineSmall=this.minNumber;
+
+        this.minNumber = this.maxNumber * -1 > this.minNumber ? this.minNumber : this.maxNumber * -1;
+        if( this.lineSmall>=0){
+
+            this.step = Math.ceil((this.minNumber-20) / 6 * -1);
+
+        }else{
+
+            this.step = Math.ceil((this.minNumber-20) / 3 * -1);
+        }
+
+
+        this.minNumber += (this.step - this.minNumber * -1 % this.step);
+
+        this.maxNumber += (this.step - this.maxNumber % this.step);
+        for (var i = 0; i < 7; i++) {
+            /*竖格虚线*/
+            this.ctx.strokeStyle = 'black';
+
+            this.ctx.setLineDash([]);
+
+            this.ctx.lineDashOffset = 1;
+            this.ctx.beginPath();
+            this.ctx.lineWidth = 0.3;
+            if( this.lineSmall>=0){
+                 if(i==0){
+                        this.ctx.setLineDash([]);
+                        this.ctx.lineWidth = 1;
+                    }
+            }else{
+                if(i==3){
+                    this.ctx.setLineDash([]);
+                    this.ctx.lineWidth = 1;
+                }
+            }
+
+
+//              起始点
+            this.ctx.moveTo((this.Twidth) * i + this.padding, 0);
+//              画到位置
+            this.ctx.lineTo((this.Twidth) * i + this.padding, this.allHeight - 12);
+            this.ctx.stroke();
+            this.ctx.closePath();
+            /*写小刻度*/
+            if (!(i < 0 || i > 5)) {
+                for (var j = 0; j <=4; j++) {
+                    if (j == this.step || j == 0) {
+                        add = 0;
+                    } else {
+                        add = 4
+                    }
+                    this.ctx.beginPath();
+                    this.ctx.setLineDash([]);
+                    this.ctx.strokeStyle = 'black';
+                    this.ctx.lineWidth = 0.1;
+                    this.ctx.moveTo((this.Twidth) * i + this.padding + this.Twidth / 4 * j, 180);
+                    this.ctx.lineTo((this.Twidth) * i + this.padding + this.Twidth / 4 * j, 190 - add);
+                    this.ctx.stroke();
+                    this.ctx.closePath();
+                }
+            }
+
+
+            /*刻度数字书写*/
+            this.ctx.fillStyle = 'green';
+
+            if(this.lineSmall>=0){
+                this.ctx.fillText((i) * this.step * 1, (this.Twidth) * i - 2 + this.padding, 200);
+            }else{
+                if (i < 3) {
+
+                    this.ctx.fillText((3 - i) * this.step * -1, (this.Twidth) * i - 2 + this.padding, 200);
+
+                } else if (i == 3) {
+
+                    this.ctx.fillText(0, (this.Twidth) * i - 2 + this.padding, 200);
+                } else if (i > 3) {
+
+                    this.ctx.fillText((i - 3) * this.step, (this.Twidth) * i - 2 + this.padding, 200);
+                }
+            }
+
+
+
+        }
+        this.ctx.beginPath();
+        this.ctx.setLineDash([]);
+        this.ctx.lineDashOffset = 0;
+        this.ctx.strokeStyle = 'green';
+        this.ctx.lineWidth = 0.8;
+        this.ctx.moveTo(0, this.allHeight - 10);
+        this.ctx.lineTo(this.allWidth, this.allHeight - 10);
+        this.ctx.stroke();
+        this.canheight = (this.allHeight - 10) / data.array.length;
+        this.ctx.closePath();
+        /*横格虚线*/
+        for (var i = 0; i < data.array.length; i++) {
+
+            this.ctx.strokeStyle = 'grey';
+
+            this.ctx.setLineDash([1, 3]);
+            this.ctx.lineDashOffset = 1;
+            this.ctx.beginPath();
+            this.ctx.lineWidth = 1;
+            this.ctx.moveTo(0 + this.padding , (this.canheight) * i);
+            this.ctx.lineTo(this.allWidth - 1 - this.padding , (this.canheight) * i);
+            this.ctx.stroke();
+            this.ctx.closePath();
+        }
+    });
+    /*画幅度条*/
+    this.mkRect = (function (data) {
+
+        this.makeDocument();
+        this.makejzhunLin();
+       if(this.lineSmall>=0){
+
+         var  longwidth=this.Twidth * 0
+       }else{
+           var  longwidth=this.Twidth * 3
+       }
+
+        for (var i = 0; i < data.array.length; i++) {
+            this.ctx.beginPath();
+            this.ctx.fillStyle = data.array[i].color;
+
+            this.ctx.fillRect((this.padding + longwidth) , (this.canheight * i)+2.5, (data.array[i].value * this.Twidth / this.step), this.canheight-5);
+
+            this.ctx.closePath();
+            if (data.array[i].value > 1) {
+                this.makeSonDocument(i, (this.padding + longwidth) - 2, (this.canheight * i)+2.5, (data.array[i].value * this.Twidth / this.step), this.canheight-5, data.array[i].name + "[" + data.array[i].value + "]", 1)
+            } else {
+                this.makeSonDocument(i, (this.padding + longwidth) - 2, (this.canheight * i)+2.5, (data.array[i].value * this.Twidth / this.step), this.canheight-5, data.array[i].name + "[" + data.array[i].value + "]")
+            }
+
+
+        }
+
+    });
+
+    /*创建外围对象*/
+    this.makeDocument = (function () {
+        var Div = document.createElement('div');
+        Div.id = this.canvasId + "_box";
+
+        var rect = document.getElementById(this.canvasId).getBoundingClientRect();
+        document.body.appendChild(Div);
+        Div = document.getElementById(this.canvasId + "_box");
+        Div.style.position = 'absolute';
+        Div.style.top = rect.top + 'px';
+        Div.style.left = rect.left + 'px';
+        Div.style.border = '1px solid';
+        Div.style.width = this.allWidth + 'px';
+        Div.style.height = this.allHeight + 'px';
+        Div.title = this.data.title;
+
+    })
+//        创建小的每条元素对象 用来做鼠标经过提示
+    this.makeSonDocument = (function (i, y, x, w, h, title, q) {
+        var sonDiv = document.createElement('div');
+        sonDiv.id = this.canvasId + "_box_son" + i;
+        Div = document.getElementById(this.canvasId + "_box");
+
+        Div.appendChild(sonDiv);
+        sonDiv = document.getElementById(this.canvasId + "_box_son" + i);
+        sonDiv.style.position = 'absolute';
+        sonDiv.style.top = (+x) - 2 + 'px';
+        /*判断负值的处理*/
+        if (q) {
+            sonDiv.style.left = (y) - 2 + 'px';
+        } else {
+            sonDiv.style.left = (y + w) - 1 + 'px';
+        }
+
+        sonDiv.addEventListener('mouseover', function (a) {
+            this.style.border = "1px solid red";
+        }, false);
+        sonDiv.addEventListener('mouseleave', function (a) {
+            this.style.border = "none";
+        }, false);
+        sonDiv.style.width = Math.abs(w) + 'px';
+        sonDiv.style.height = Math.abs(h) + 'px';
+        sonDiv.title = title;
+    })
+
+    /*画标准线*/
+    this.makejzhunLin = (function () {
+        if(this.lineSmall>=0){
+
+          var  longwidth=this.Twidth * 0
+        }else{
+         var   longwidth=this.Twidth * 3
+        }
+
+        this.ctx.strokeStyle = 'red';
+        this.ctx.setLineDash([]);
+        this.ctx.beginPath();
+        this.ctx.lineWidth = 1;
+        this.ctx.moveTo((this.Twidth / this.step) * this.data.max + this.padding + (longwidth), 0);
+        this.ctx.lineTo((this.Twidth / this.step) * this.data.max + this.padding + (longwidth), this.allHeight - 10);
+        this.makeSonDocument('max', (this.Twidth / this.step) * this.data.max + this.padding + (longwidth), 0, 0.1, this.allHeight - 10, "标准上限[" + this.data.max + ']', 1);
+        if(this.lineSmall>=0&&this.data.min>0){
+
+            this.ctx.moveTo((this.Twidth / this.step) * this.data.min + this.padding + (longwidth), 0);
+            this.ctx.lineTo((this.Twidth / this.step) * this.data.min + this.padding + (longwidth), this.allHeight - 10);
+            this.makeSonDocument('min', (this.Twidth / this.step) * this.data.min + this.padding + (longwidth), 0, 0.1, this.allHeight - 10, "标准下限[" + this.data.min + ']', 1);
+        }else if(this.lineSmall<0){
+            this.ctx.moveTo((this.Twidth / this.step) * this.data.min + this.padding + (longwidth), 0);
+            this.ctx.lineTo((this.Twidth / this.step) * this.data.min + this.padding + (longwidth), this.allHeight - 10);
+            this.makeSonDocument('min', (this.Twidth / this.step) * this.data.min + this.padding + (longwidth), 0, 0.1, this.allHeight - 10, "标准下限[" + this.data.min + ']', 1);
+        }
+
+        this.ctx.stroke();
+        this.ctx.closePath();
+
+
+    })
+
+}
+//Anm = new aNm;
+//Anm.doC('myChartFive', data);
+//Anm.doC('myChartFive1', data);
+//
+////     function getL(canvasId, evt) {
+////        var rect = document.getElementById(canvasId).getBoundingClientRect();
+////        return {
+////            x: evt.clientX - rect.left,
+////            y: evt.clientY - rect.top
+////        };
+////    };
+//</script>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/HTML+CSS/chart/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/正在学习中2017-8-5/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.041Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-HTML+CSS/chart" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!doctype html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,height=device-height, user-scalable=no,initial-scale=1, minimum-scale=1, maximum-scale=1,target-densitydpi=device-dpi ">
+    <title>Document</title>
+    <style>
+        div:hover{
+        border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <div style="border: 1px solid;padding-top: 10px; text-align: center">
+        <canvas id="myChartFive" width="280" height="200">111</canvas>
+
+    </div>
+</div>
+<div>
+    <div style="border: 1px solid;padding-top: 10px; text-align: center">
+        <canvas id="myChartFive1" width="280" height="200">111</canvas>
+
+    </div>
+</div>
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+<script src="chart.js"></script>
+<script>
+    var data = {
+        min: -5, max: 5,
+        title: '激素水平 -20~+20', array: [
+            {color: '#071183', name: '间质的促甲状腺激素', operation: '=', value: 10},
+            {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 20},
+            {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 100},
+            {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 100},
+            {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 20},
+        ]
+    };
+    var data1 = {
+        min:-20, max: 50,
+        title: '激素水平 -20~+20', array: [
+            {color: '#071183', name: '间质的促甲状腺激素', operation: '=', value: 10},
+            {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 20},
+            {color: '#b5bd63', name: '间质的脱氢表雄酮', operation: '=', value: -10},
+            {color: '#b98506', name: '间质的皮质醇', operation: '=', value: 10},
+            {color: '#026209', name: '醛固酮', operation: '=', value: -12},
+            {color: '#bb7d63', name: '肾上腺髓质激素分泌量', operation: '=', value: -8},
+            {color: '#9883cd', name: '间质的睾丸激素', operation: '=', value: -20},
+            {color: '#90008f', name: '胰岛素分泌量', operation: '=', value: -29},
+            {color: '#026209', name: '醛固酮', operation: '=', value: -12},
+            {color: '#bb7d63', name: '肾上腺髓质激素分泌量', operation: '=', value: -8},
+            {color: '#9883cd', name: '间质的睾丸激素', operation: '=', value: -20},
+            {color: '#90008f', name: '胰岛素分泌量', operation: '=', value: 60},
+
+        ]
+    };
+
+    Anm = new aNm;
+
+    Anm.doC('myChartFive', data);
+    Anm.doC('myChartFive1', data1);
+
+//     function getL(canvasId, evt) {
+//        var rect = document.getElementById(canvasId).getBoundingClientRect();
+//        return {
+//            x: evt.clientX - rect.left,
+//            y: evt.clientY - rect.top
+//        };
+//    };
+</script>
+
+</body>
+</html>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/HTML+CSS/chart/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/2017-8-8scrapy爬虫框架上手/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.040Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-HTML+CSS/2017-08-09chart图表" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>由于业务需要使用图标展示数据，<br>第三方的图表由于封装太好，<br>不能更改调整成自记得需求，<br>而且引用类库过多，<br>so自己用canvas定制呗<br>稍作调整兼容手机屏幕<br>demo如下<br><a href="https://chengweigao.github.io/index.html?url=HTML+CSS/1.html" title="demo地址">https://chengweigao.github.io/index.html?url=HTML+CSS/1.html</a></p>
+<p><a href="https://chengweigao.github.io/index.html?url=HTML+CSS/2.html" title="demo2地址">https://chengweigao.github.io/index.html?url=HTML+CSS/2.html</a>    </p>
+</blockquote>
+<pre><code>&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot;
+    content=&quot;width=device-width,height=device-height, user-scalable=no,initial-scale=1, minimum-scale=1, maximum-scale=1,target-densitydpi=device-dpi &quot;&gt;
+  &lt;title&gt;Document&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div&gt;
+  &lt;div style=&quot;border: 1px solid;padding-top: 10px; text-align: center&quot;&gt;
+    &lt;canvas id=&quot;myChartFive&quot; width=&quot;280&quot; height=&quot;200&quot;&gt;111&lt;/canvas&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div&gt;
+  &lt;div style=&quot;border: 1px solid;padding-top: 10px; text-align: center&quot;&gt;
+    &lt;canvas id=&quot;myChartFive1&quot; width=&quot;280&quot; height=&quot;200&quot;&gt;111&lt;/canvas&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://cdn.bootcss.com/jquery/3.2.1/jquery.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+  var data = {
+    min: -5, max: 5,
+    title: &apos;激素水平 -20~+20&apos;, array: [
+      {color: &apos;#071183&apos;, name: &apos;间质的促甲状腺激素&apos;, operation: &apos;=&apos;, value: 10},
+      {color: &apos;#9103cd&apos;, name: &apos;间质的促卵泡激素&apos;, operation: &apos;=&apos;, value: 20},
+      {color: &apos;#b5bd63&apos;, name: &apos;间质的脱氢表雄酮&apos;, operation: &apos;=&apos;, value: -10},
+      {color: &apos;#b98506&apos;, name: &apos;间质的皮质醇&apos;, operation: &apos;=&apos;, value: 10},
+      {color: &apos;#026209&apos;, name: &apos;醛固酮&apos;, operation: &apos;=&apos;, value: -12},
+      {color: &apos;#bb7d63&apos;, name: &apos;肾上腺髓质激素分泌量&apos;, operation: &apos;=&apos;, value: -8},
+      {color: &apos;#9883cd&apos;, name: &apos;间质的睾丸激素&apos;, operation: &apos;=&apos;, value: -20},
+      {color: &apos;#90008f&apos;, name: &apos;胰岛素分泌量&apos;, operation: &apos;=&apos;, value: -29},
+
+    ]
+  };
+
+
+  aNm = function () {
+    this.canheight = 30;//px;
+    this.Twidth = 35;
+    this.allWidth = 280;
+    this.padding = (this.allWidth - this.Twidth * 6) / 2;
+    this.allHeight = 190;
+    this.MiddelNumber = 0;
+    this.ctx = &apos;&apos;;
+    this.step = 2;
+    this.minNumber = -3;
+    this.maxNumber = 3;
+    this.data = {};
+    /*设置画布*/
+    this.doC = (function (canvasId, data) {
+      this.Canvas = document.getElementById(canvasId);
+      this.ctx = this.Canvas.getContext(&apos;2d&apos;);
+      this.ctx.fillStyle = &quot;#fffff1&quot;;
+      this.ctx.fillRect(0, 0, this.allWidth, this.allHeight);
+      this.mkline(data);
+      this.data = data;
+      console.log(this);
+      this.canvasId = canvasId;
+
+      this.mkRect(data);
+
+    });
+    /*画线的布局*/
+    this.mkline = (function (data) {
+
+
+      /*获取刻度值*/
+      for (var i = 0; i &lt; data.array.length; i++) {
+    if (data.array[i].value &lt; this.minNumber) {
+      this.minNumber = data.array[i].value;
+    }
+    if (data.array[i].value &gt; this.maxNumber) {
+      this.maxNumber = data.array[i].value;
+    }
+      }
+
+
+      this.minNumber = this.maxNumber * -1 &gt; this.minNumber ? this.minNumber : this.maxNumber * -1;
+      this.step = Math.ceil((this.minNumber) / 3 * -1);
+
+      this.minNumber += (this.step - this.minNumber * -1 % this.step);
+
+      this.maxNumber += (this.step - this.maxNumber % this.step);
+      for (var i = 0; i &lt; 7; i++) {
+    /*竖格虚线*/
+    this.ctx.strokeStyle = &apos;black&apos;;
+
+    this.ctx.setLineDash([1, 2]);
+
+    this.ctx.lineDashOffset = 1;
+    this.ctx.beginPath();
+    this.ctx.lineWidth = 0.3;
+    if(i==3){
+      this.ctx.setLineDash([]);
+      this.ctx.lineWidth = 1;
+    }
+
+//              起始点
+    this.ctx.moveTo((this.Twidth) * i + this.padding, 0);
+//              画到位置
+    this.ctx.lineTo((this.Twidth) * i + this.padding, this.allHeight - 12);
+    this.ctx.stroke();
+    this.ctx.closePath();
+    /*写小刻度*/
+    if (!(i &lt; 0 || i &gt; 5)) {
+      for (var j = 0; j &lt;= this.step; j++) {
+        if (j == this.step || j == 0) {
+          add = 0;
+        } else {
+          add = 4
+        }
+        this.ctx.beginPath();
+        this.ctx.setLineDash([]);
+        this.ctx.strokeStyle = &apos;red&apos;;
+        this.ctx.lineWidth = 0.1;
+        this.ctx.moveTo((this.Twidth) * i + this.padding + this.Twidth / this.step * j, 180);
+        this.ctx.lineTo((this.Twidth) * i + this.padding + this.Twidth / this.step * j, 190 - add);
+        this.ctx.stroke();
+        this.ctx.closePath();
+      }
+    }
+
+
+    /*刻度数字书写*/
+    this.ctx.fillStyle = &apos;green&apos;;
+
+    if (i &lt; 3) {
+
+      this.ctx.fillText((3 - i) * this.step * -1, (this.Twidth) * i - 2 + this.padding, 200);
+
+    } else if (i == 3) {
+
+      this.ctx.fillText(0, (this.Twidth) * i - 2 + this.padding, 200);
+    } else if (i &gt; 3) {
+
+      this.ctx.fillText((i - 3) * this.step, (this.Twidth) * i - 2 + this.padding, 200);
+    }
+
+
+      }
+      this.ctx.beginPath();
+      this.ctx.setLineDash([]);
+      this.ctx.lineDashOffset = 0;
+      this.ctx.strokeStyle = &apos;green&apos;;
+      this.ctx.lineWidth = 0.8;
+      this.ctx.moveTo(0, this.allHeight - 10);
+      this.ctx.lineTo(this.allWidth, this.allHeight - 10);
+      this.ctx.stroke();
+      this.canheight = (this.allHeight - 10) / data.array.length;
+      this.ctx.closePath();
+      /*横格虚线*/
+      for (var i = 0; i &lt; data.array.length; i++) {
+
+    this.ctx.strokeStyle = &apos;grey&apos;;
+
+    this.ctx.setLineDash([1, 3]);
+    this.ctx.lineDashOffset = 0.5;
+    this.ctx.beginPath();
+    this.ctx.lineWidth = 1;
+    this.ctx.moveTo(0 + this.padding - 10, (this.canheight) * i);
+    this.ctx.lineTo(this.allWidth - 1 - this.padding + 10, (this.canheight) * i);
+    this.ctx.stroke();
+    this.ctx.closePath();
+      }
+    });
+    /*画幅度条*/
+    this.mkRect = (function (data) {
+      this.makeDocument();
+      this.makejzhunLin();
+      for (var i = 0; i &lt; data.array.length; i++) {
+    this.ctx.beginPath();
+    this.ctx.fillStyle = data.array[i].color;
+
+    this.ctx.fillRect((this.padding + this.Twidth * 3) , (this.canheight * i)+2.5, (data.array[i].value * this.Twidth / this.step), this.canheight-5);
+
+    this.ctx.closePath();
+    if (data.array[i].value &gt; 1) {
+      this.makeSonDocument(i, (this.padding + this.Twidth * 3) - 2, (this.canheight * i)+2.5, (data.array[i].value * this.Twidth / this.step), this.canheight-5, data.array[i].name + &quot;[&quot; + data.array[i].value + &quot;]&quot;, 1)
+    } else {
+      this.makeSonDocument(i, (this.padding + this.Twidth * 3) - 2, (this.canheight * i)+2.5, (data.array[i].value * this.Twidth / this.step), this.canheight-5, data.array[i].name + &quot;[&quot; + data.array[i].value + &quot;]&quot;)
+    }
+
+
+      }
+
+    });
+
+    /*创建外围对象*/
+    this.makeDocument = (function () {
+      var Div = document.createElement(&apos;div&apos;);
+      Div.id = this.canvasId + &quot;_box&quot;;
+
+      var rect = document.getElementById(this.canvasId).getBoundingClientRect();
+      document.body.appendChild(Div);
+      Div = document.getElementById(this.canvasId + &quot;_box&quot;);
+      Div.style.position = &apos;absolute&apos;;
+      Div.style.top = rect.top + &apos;px&apos;;
+      Div.style.left = rect.left + &apos;px&apos;;
+      Div.style.border = &apos;1px solid&apos;;
+      Div.style.width = this.allWidth + &apos;px&apos;;
+      Div.style.height = this.allHeight + &apos;px&apos;;
+      Div.title = this.data.title;
+
+    })
+//        创建小的每条元素对象 用来做鼠标经过提示
+    this.makeSonDocument = (function (i, y, x, w, h, title, q) {
+      var sonDiv = document.createElement(&apos;div&apos;);
+      sonDiv.id = this.canvasId + &quot;_box_son&quot; + i;
+      Div = document.getElementById(this.canvasId + &quot;_box&quot;);
+
+      Div.appendChild(sonDiv);
+      sonDiv = document.getElementById(this.canvasId + &quot;_box_son&quot; + i);
+      sonDiv.style.position = &apos;absolute&apos;;
+      sonDiv.style.top = (+x) - 2 + &apos;px&apos;;
+      /*判断负值的处理*/
+      if (q) {
+    sonDiv.style.left = (y) - 2 + &apos;px&apos;;
+      } else {
+    sonDiv.style.left = (y + w) - 1 + &apos;px&apos;;
+      }
+
+      sonDiv.addEventListener(&apos;mouseover&apos;, function (a) {
+    this.style.border = &quot;1px solid red&quot;;
+      }, false);
+      sonDiv.addEventListener(&apos;touchstart&apos;, function (a) {
+    this.style.border = &quot;1px solid red&quot;;
+      }, false);
+      sonDiv.addEventListener(&apos;mouseleave&apos;, function (a) {
+    this.style.border = &quot;none&quot;;
+      }, false);
+      sonDiv.addEventListener(&apos;touchover&apos;, function (a) {
+    this.style.border = &quot;1px solid red&quot;;
+      }, false);
+      sonDiv.style.width = Math.abs(w) + &apos;px&apos;;
+      sonDiv.style.height = Math.abs(h) + &apos;px&apos;;
+      sonDiv.title = title;
+    })
+
+    /*画标准线*/
+    this.makejzhunLin = (function () {
+
+
+      this.ctx.strokeStyle = &apos;red&apos;;
+      this.ctx.setLineDash([]);
+      this.ctx.beginPath();
+      this.ctx.lineWidth = 1;
+      this.ctx.moveTo((this.Twidth / this.step) * this.data.max + this.padding + (this.Twidth * 3), 0);
+      this.ctx.lineTo((this.Twidth / this.step) * this.data.max + this.padding + (this.Twidth * 3), this.allHeight - 10);
+      this.makeSonDocument(&apos;max&apos;, (this.Twidth / this.step) * this.data.max + this.padding + (this.Twidth * 3), 0, 0.1, this.allHeight - 10, &quot;标准上限[&quot; + this.data.max + &apos;]&apos;, 1);
+      this.ctx.moveTo((this.Twidth / this.step) * this.data.min + this.padding + (this.Twidth * 3), 0);
+      this.ctx.lineTo((this.Twidth / this.step) * this.data.min + this.padding + (this.Twidth * 3), this.allHeight - 10);
+      this.makeSonDocument(&apos;min&apos;, (this.Twidth / this.step) * this.data.min + this.padding + (this.Twidth * 3), 0, 0.1, this.allHeight - 10, &quot;标准下限[&quot; + this.data.min + &apos;]&apos;, 1);
+      this.ctx.stroke();
+      this.ctx.closePath();
+
+
+    })
+
+  }
+  Anm = new aNm;
+  Anm.doC(&apos;myChartFive&apos;, data);
+  Anm.doC(&apos;myChartFive1&apos;, data);
+
+  //     function getL(canvasId, evt) {
+  //        var rect = document.getElementById(canvasId).getBoundingClientRect();
+  //        return {
+  //            x: evt.clientX - rect.left,
+  //            y: evt.clientY - rect.top
+  //        };
+  //    };
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/HTML+CSS/2017-08-09chart图表/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-  
-    </div></section>
-  
 
-    
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+  
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2017/09/page/2/">2</a><a class="page-number" href="/archives/2017/09/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2017/09/page/5/">5</a><a class="extend next" rel="next" href="/archives/2017/09/page/2/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
     </nav>
   
 
@@ -395,9 +2349,9 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: false,
+		isHome: true,
 		isPost: false,
-		isArchive: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

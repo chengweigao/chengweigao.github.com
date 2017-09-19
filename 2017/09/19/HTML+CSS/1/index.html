@@ -6,15 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://chengweigao.github.io">
-  <title>Archives: 2017/9 | Hexo</title>
+  <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="Document            111              111           var data = {     min: -5, max: 5,     title: &apos;激素水平 -20~+20&apos;, array: [       {color: &apos;#071183&apos;, name: &apos;间质的促甲状腺激素&apos;, operation: &apos;=&apos;, value: 1">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="https://chengweigao.github.io/archives/2017/09/index.html">
+<meta property="og:url" content="https://chengweigao.github.io/2017/09/19/HTML+CSS/1/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Document            111              111           var data = {     min: -5, max: 5,     title: &apos;激素水平 -20~+20&apos;, array: [       {color: &apos;#071183&apos;, name: &apos;间质的促甲状腺激素&apos;, operation: &apos;=&apos;, value: 1">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-08-21T08:13:31.526Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="Document            111              111           var data = {     min: -5, max: 5,     title: &apos;激素水平 -20~+20&apos;, array: [       {color: &apos;#071183&apos;, name: &apos;间质的促甲状腺激素&apos;, operation: &apos;=&apos;, value: 1">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -144,235 +148,441 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-HTML+CSS/1" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,height=device-height, user-scalable=no,initial-scale=1, minimum-scale=1, maximum-scale=1,target-densitydpi=device-dpi ">
+  <title>Document</title>
+</head>
+<body>
+
+<div>
+  <div style="border: 1px solid;padding-top: 10px; text-align: center">
+    <canvas id="myChartFive" width="280" height="200">111</canvas>
+
+  </div>
+</div>
+<div>
+  <div style="border: 1px solid;padding-top: 10px; text-align: center">
+    <canvas id="myChartFive1" width="280" height="200">111</canvas>
+
+  </div>
+</div>
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+<script>
+  var data = {
+    min: -5, max: 5,
+    title: '激素水平 -20~+20', array: [
+      {color: '#071183', name: '间质的促甲状腺激素', operation: '=', value: 10},
+      {color: '#9103cd', name: '间质的促卵泡激素', operation: '=', value: 20},
+      {color: '#b5bd63', name: '间质的脱氢表雄酮', operation: '=', value: -10},
+      {color: '#b98506', name: '间质的皮质醇', operation: '=', value: 10},
+      {color: '#026209', name: '醛固酮', operation: '=', value: -12},
+      {color: '#bb7d63', name: '肾上腺髓质激素分泌量', operation: '=', value: -8},
+      {color: '#9883cd', name: '间质的睾丸激素', operation: '=', value: -20},
+      {color: '#90008f', name: '胰岛素分泌量', operation: '=', value: -29},
+
+    ]
+  };
+
+
+  aNm = function () {
+    this.canheight = 30;//px;
+    this.Twidth = 35;
+    this.allWidth = 280;
+    this.padding = (this.allWidth - this.Twidth * 6) / 2;
+    this.allHeight = 190;
+    this.MiddelNumber = 0;
+    this.ctx = '';
+    this.step = 2;
+    this.minNumber = -3;
+    this.maxNumber = 3;
+    this.data = {};
+    /*设置画布*/
+    this.doC = (function (canvasId, data) {
+      this.Canvas = document.getElementById(canvasId);
+      this.ctx = this.Canvas.getContext('2d');
+      this.ctx.fillStyle = "#fffff1";
+      this.ctx.fillRect(0, 0, this.allWidth, this.allHeight);
+      this.mkline(data);
+      this.data = data;
+      console.log(this);
+      this.canvasId = canvasId;
+
+      this.mkRect(data);
+
+    });
+    /*画线的布局*/
+    this.mkline = (function (data) {
+
+
+      /*获取刻度值*/
+      for (var i = 0; i < data.array.length; i++) {
+        if (data.array[i].value < this.minNumber) {
+          this.minNumber = data.array[i].value;
+        }
+        if (data.array[i].value > this.maxNumber) {
+          this.maxNumber = data.array[i].value;
+        }
+      }
+
+
+      this.minNumber = this.maxNumber * -1 > this.minNumber ? this.minNumber : this.maxNumber * -1;
+      this.step = Math.ceil((this.minNumber) / 3 * -1);
+
+      this.minNumber += (this.step - this.minNumber * -1 % this.step);
+
+      this.maxNumber += (this.step - this.maxNumber % this.step);
+      for (var i = 0; i < 7; i++) {
+        /*竖格虚线*/
+        this.ctx.strokeStyle = 'black';
+
+        this.ctx.setLineDash([1, 2]);
+
+        this.ctx.lineDashOffset = 1;
+        this.ctx.beginPath();
+        this.ctx.lineWidth = 0.3;
+        if(i==3){
+          this.ctx.setLineDash([]);
+          this.ctx.lineWidth = 1;
+        }
+
+//              起始点
+        this.ctx.moveTo((this.Twidth) * i + this.padding, 0);
+//              画到位置
+        this.ctx.lineTo((this.Twidth) * i + this.padding, this.allHeight - 12);
+        this.ctx.stroke();
+        this.ctx.closePath();
+        /*写小刻度*/
+        if (!(i < 0 || i > 5)) {
+          for (var j = 0; j <= this.step; j++) {
+            if (j == this.step || j == 0) {
+              add = 0;
+            } else {
+              add = 4
+            }
+            this.ctx.beginPath();
+            this.ctx.setLineDash([]);
+            this.ctx.strokeStyle = 'red';
+            this.ctx.lineWidth = 0.1;
+            this.ctx.moveTo((this.Twidth) * i + this.padding + this.Twidth / this.step * j, 180);
+            this.ctx.lineTo((this.Twidth) * i + this.padding + this.Twidth / this.step * j, 190 - add);
+            this.ctx.stroke();
+            this.ctx.closePath();
+          }
+        }
+
+
+        /*刻度数字书写*/
+        this.ctx.fillStyle = 'green';
+
+        if (i < 3) {
+
+          this.ctx.fillText((3 - i) * this.step * -1, (this.Twidth) * i - 2 + this.padding, 200);
+
+        } else if (i == 3) {
+
+          this.ctx.fillText(0, (this.Twidth) * i - 2 + this.padding, 200);
+        } else if (i > 3) {
+
+          this.ctx.fillText((i - 3) * this.step, (this.Twidth) * i - 2 + this.padding, 200);
+        }
+
+
+      }
+      this.ctx.beginPath();
+      this.ctx.setLineDash([]);
+      this.ctx.lineDashOffset = 0;
+      this.ctx.strokeStyle = 'green';
+      this.ctx.lineWidth = 0.8;
+      this.ctx.moveTo(0, this.allHeight - 10);
+      this.ctx.lineTo(this.allWidth, this.allHeight - 10);
+      this.ctx.stroke();
+      this.canheight = (this.allHeight - 10) / data.array.length;
+      this.ctx.closePath();
+      /*横格虚线*/
+      for (var i = 0; i < data.array.length; i++) {
+
+        this.ctx.strokeStyle = 'grey';
+
+        this.ctx.setLineDash([1, 3]);
+        this.ctx.lineDashOffset = 0.5;
+        this.ctx.beginPath();
+        this.ctx.lineWidth = 1;
+        this.ctx.moveTo(0 + this.padding - 10, (this.canheight) * i);
+        this.ctx.lineTo(this.allWidth - 1 - this.padding + 10, (this.canheight) * i);
+        this.ctx.stroke();
+        this.ctx.closePath();
+      }
+    });
+    /*画幅度条*/
+    this.mkRect = (function (data) {
+      this.makeDocument();
+      this.makejzhunLin();
+      for (var i = 0; i < data.array.length; i++) {
+        this.ctx.beginPath();
+        this.ctx.fillStyle = data.array[i].color;
+
+        this.ctx.fillRect((this.padding + this.Twidth * 3) , (this.canheight * i)+2.5, (data.array[i].value * this.Twidth / this.step), this.canheight-5);
+
+        this.ctx.closePath();
+        if (data.array[i].value > 1) {
+          this.makeSonDocument(i, (this.padding + this.Twidth * 3) - 2, (this.canheight * i)+2.5, (data.array[i].value * this.Twidth / this.step), this.canheight-5, data.array[i].name + "[" + data.array[i].value + "]", 1)
+        } else {
+          this.makeSonDocument(i, (this.padding + this.Twidth * 3) - 2, (this.canheight * i)+2.5, (data.array[i].value * this.Twidth / this.step), this.canheight-5, data.array[i].name + "[" + data.array[i].value + "]")
+        }
+
+
+      }
+
+    });
+
+    /*创建外围对象*/
+    this.makeDocument = (function () {
+      var Div = document.createElement('div');
+      Div.id = this.canvasId + "_box";
+
+      var rect = document.getElementById(this.canvasId).getBoundingClientRect();
+      document.body.appendChild(Div);
+      Div = document.getElementById(this.canvasId + "_box");
+      Div.style.position = 'absolute';
+      Div.style.top = rect.top + 'px';
+      Div.style.left = rect.left + 'px';
+      Div.style.border = '1px solid';
+      Div.style.width = this.allWidth + 'px';
+      Div.style.height = this.allHeight + 'px';
+      Div.title = this.data.title;
+
+    })
+//        创建小的每条元素对象 用来做鼠标经过提示
+    this.makeSonDocument = (function (i, y, x, w, h, title, q) {
+      var sonDiv = document.createElement('div');
+      sonDiv.id = this.canvasId + "_box_son" + i;
+      Div = document.getElementById(this.canvasId + "_box");
+
+      Div.appendChild(sonDiv);
+      sonDiv = document.getElementById(this.canvasId + "_box_son" + i);
+      sonDiv.style.position = 'absolute';
+      sonDiv.style.top = (+x) - 2 + 'px';
+      /*判断负值的处理*/
+      if (q) {
+        sonDiv.style.left = (y) - 2 + 'px';
+      } else {
+        sonDiv.style.left = (y + w) - 1 + 'px';
+      }
+
+      sonDiv.addEventListener('mouseover', function (a) {
+        this.style.border = "1px solid red";
+      }, false);
+      sonDiv.addEventListener('touchstart', function (a) {
+        this.style.border = "1px solid red";
+      }, false);
+      sonDiv.addEventListener('mouseleave', function (a) {
+        this.style.border = "none";
+      }, false);
+      sonDiv.addEventListener('touchover', function (a) {
+        this.style.border = "1px solid red";
+      }, false);
+      sonDiv.style.width = Math.abs(w) + 'px';
+      sonDiv.style.height = Math.abs(h) + 'px';
+      sonDiv.title = title;
+    })
+
+    /*画标准线*/
+    this.makejzhunLin = (function () {
+
+
+      this.ctx.strokeStyle = 'red';
+      this.ctx.setLineDash([]);
+      this.ctx.beginPath();
+      this.ctx.lineWidth = 1;
+      this.ctx.moveTo((this.Twidth / this.step) * this.data.max + this.padding + (this.Twidth * 3), 0);
+      this.ctx.lineTo((this.Twidth / this.step) * this.data.max + this.padding + (this.Twidth * 3), this.allHeight - 10);
+      this.makeSonDocument('max', (this.Twidth / this.step) * this.data.max + this.padding + (this.Twidth * 3), 0, 0.1, this.allHeight - 10, "标准上限[" + this.data.max + ']', 1);
+      this.ctx.moveTo((this.Twidth / this.step) * this.data.min + this.padding + (this.Twidth * 3), 0);
+      this.ctx.lineTo((this.Twidth / this.step) * this.data.min + this.padding + (this.Twidth * 3), this.allHeight - 10);
+      this.makeSonDocument('min', (this.Twidth / this.step) * this.data.min + this.padding + (this.Twidth * 3), 0, 0.1, this.allHeight - 10, "标准下限[" + this.data.min + ']', 1);
+      this.ctx.stroke();
+      this.ctx.closePath();
+
+
+    })
+
+  }
+  Anm = new aNm;
+  Anm.doC('myChartFive', data);
+  Anm.doC('myChartFive1', data);
+
+  //     function getL(canvasId, evt) {
+  //        var rect = document.getElementById(canvasId).getBoundingClientRect();
+  //        return {
+  //            x: evt.clientX - rect.left,
+  //            y: evt.clientY - rect.top
+  //        };
+  //    };
+</script>
+
+</body>
+</html>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/js/base64/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.089Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://chengweigao.github.io/2017/09/19/HTML+CSS/1/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/静态github个人首页制作密集/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.085Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/适应安卓ios/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.083Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+<nav id="article-nav">
+  
+    <a href="/2017/09/19/HTML+CSS/2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/19/dos/文件夹树生成dos/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/路由追踪/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.081Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/架构搭建/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.079Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+        
+        
+    </div>
+</aside>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/数据库主从复制/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.066Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/github个人主页markddown在线文档建立手段/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.052Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/virtualBox/盘容量调整/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.047Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/正在学习中2017-8-5/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.041Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/2017-8-8scrapy爬虫框架上手/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.040Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2017/09/page/2/">2</a><a class="page-number" href="/archives/2017/09/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2017/09/page/5/">5</a><a class="extend next" rel="next" href="/archives/2017/09/page/2/">Next &raquo;</a>
-    </nav>
+  
+
+  
+
+  
+  <div id="gitment-ctn"></div> 
+<link rel="stylesheet" href="//imsun.github.io/gitment/style/default.css">
+<script src="//imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  id: "https://chengweigao.github.io/2017/09/19/HTML+CSS/1/",
+  owner: 'chengweigao',
+  repo: 'chengweigao.github.io',
+  oauth: {
+    client_id: 'bec5a6c09caa2ad8e7f0',
+    client_secret: '2da15ec3d9c19e7100774431aa110c33ea96eb0a',
+  },
+})
+gitment.render('gitment-ctn')
+</script>
   
 
 
@@ -396,8 +606,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

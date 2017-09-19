@@ -6,15 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://chengweigao.github.io">
-  <title>Archives: 2017/9 | Hexo</title>
+  <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="主Redis：192.168.10.1 6379从redis：192.168.10.2 6380一、主从配置1、将主从redis配置文件redis.conf中的aemonize no 改为 yes2、修改从redis配置文件redis.conf中的port 6379 改为 6380，添加slaveof 192.168.10.1 63793、启动主从服务  主redis：        [root@">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="https://chengweigao.github.io/archives/2017/09/index.html">
+<meta property="og:url" content="https://chengweigao.github.io/2017/09/19/nosql/redis主从/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="主Redis：192.168.10.1 6379从redis：192.168.10.2 6380一、主从配置1、将主从redis配置文件redis.conf中的aemonize no 改为 yes2、修改从redis配置文件redis.conf中的port 6379 改为 6380，添加slaveof 192.168.10.1 63793、启动主从服务  主redis：        [root@">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-08-21T08:13:31.540Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="主Redis：192.168.10.1 6379从redis：192.168.10.2 6380一、主从配置1、将主从redis配置文件redis.conf中的aemonize no 改为 yes2、修改从redis配置文件redis.conf中的port 6379 改为 6380，添加slaveof 192.168.10.1 63793、启动主从服务  主redis：        [root@">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -144,235 +148,223 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-nosql/redis主从" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>主Redis：192.168.10.1 6379<br>从redis：192.168.10.2 6380<br>一、主从配置<br>1、将主从redis配置文件redis.conf中的aemonize no 改为 yes<br>2、修改从redis配置文件redis.conf中的port 6379 改为 6380，添加slaveof 192.168.10.1 6379<br>3、启动主从服务</p>
+<pre><code> 主redis：      
+ [root@localhost redis-2.8.3]# src/redis-server /soft/redis-2.8.3-master/redis-2.8.3/redis.conf
+从redis：
+[root@localhost redis-2.8.3]# src/redis-server /soft/redis-2.8.3-slave/redis-2.8.3/redis.conf
+</code></pre><p>4、测试数据同步</p>
+<pre><code>  主redis：
+  [root@localhost redis-2.8.3]# src/redis-cli -p 6379
+ 127.0.0.1:6379&gt; set name abc
+ OK
+ 127.0.0.1:6379&gt; get name
+ &quot;abc&quot;
+ 127.0.0.1:6379&gt;
+从redis：
+  [root@localhost redis-2.8.3]# src/redis-cli -p 6380
+ 127.0.0.1:6380&gt; get name
+ &quot;abc&quot;
+ 127.0.0.1:6380&gt;
+</code></pre><p>5、默认是读写分离的</p>
+<pre><code>在从redis：
+[root@localhost redis-2.8.3]# src/redis-cli -p 6380
+127.0.0.1:6380&gt; set name 123
+(error) READONLY You can&apos;t write against a read only slave.
+</code></pre><p> 二、主从切换</p>
+<pre><code> 1、停止主redis
+ [root@localhost redis-2.8.3]# src/redis-cli -n 6379 shutdown
+ [root@localhost redis-2.8.3]# src/redis-cli -p 6379
+ Could not connect to Redis at 127.0.0.1:6379: Connection refused
+ not connected&gt;
+ 2、将从redis设成主redis
+ [root@localhost redis-2.8.3]# src/redis-cli -p 6380 slaveof NO ONE
+ OK
+3、测试从redis是否切换从主redis
+ [root@localhost redis-2.8.3]# src/redis-cli -p 6380
+ 127.0.0.1:6380&gt; set name 123
+ OK
+ 127.0.0.1:6380&gt; get name
+ &quot;123&quot;
+ 127.0.0.1:6380&gt;
+ 4、原来的主redis恢复正常了，要重新切换回去
+     1）将现在的主redis的数据进行保存
+ [root@localhost redis-2.8.3]# src/redis-cli -p 6380
+ 127.0.0.1:6380&gt; get name
+ &quot;abc&quot;
+ 127.0.0.1:6380&gt; set name 123
+ OK
+ 127.0.0.1:6380&gt; get name
+ &quot;123&quot;
+ 127.0.0.1:6380&gt; save
+ OK
+ 127.0.0.1:6380&gt; get name
+ &quot;123&quot;
+ 127.0.0.1:6380&gt;  
+   2）将现在的主redis根目录下dump.rdb文件拷贝覆盖到原来主redis的根目录
+   3）启动原来的主redis
+  [root@localhost redis-2.8.3]# src/redis-server /soft/redis-2.8.3-master/redis-2.8.3/redis.conf
+   4）在现在的主redis中切换
+  [root@localhost redis-2.8.3]# src/redis-cli -p 6380 slaveof 192.168.10.1 6379
+  OK
+</code></pre>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/js/base64/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.089Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://chengweigao.github.io/2017/09/19/nosql/redis主从/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/静态github个人首页制作密集/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.085Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/适应安卓ios/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.083Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+<nav id="article-nav">
+  
+    <a href="/2017/09/19/PHP/json_encode/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/19/nosql/memcache/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/路由追踪/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.081Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/架构搭建/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.079Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+        
+        
+    </div>
+</aside>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/数据库主从复制/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.066Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/github个人主页markddown在线文档建立手段/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.052Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/virtualBox/盘容量调整/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.047Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/正在学习中2017-8-5/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.041Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/2017-8-8scrapy爬虫框架上手/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.040Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2017/09/page/2/">2</a><a class="page-number" href="/archives/2017/09/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2017/09/page/5/">5</a><a class="extend next" rel="next" href="/archives/2017/09/page/2/">Next &raquo;</a>
-    </nav>
+  
+
+  
+
+  
+  <div id="gitment-ctn"></div> 
+<link rel="stylesheet" href="//imsun.github.io/gitment/style/default.css">
+<script src="//imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  id: "https://chengweigao.github.io/2017/09/19/nosql/redis主从/",
+  owner: 'chengweigao',
+  repo: 'chengweigao.github.io',
+  oauth: {
+    client_id: 'bec5a6c09caa2ad8e7f0',
+    client_secret: '2da15ec3d9c19e7100774431aa110c33ea96eb0a',
+  },
+})
+gitment.render('gitment-ctn')
+</script>
   
 
 
@@ -396,8 +388,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

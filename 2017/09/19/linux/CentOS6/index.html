@@ -6,15 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://chengweigao.github.io">
-  <title>Archives: 2017/9 | Hexo</title>
+  <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="CentOS6.5系统下安装Apache2.4+PHP5.6+Mysql5.5 (LAMP)一直都认为国内最好的PHP框架为ThinkPHP，但有朋友说在做DB更新的时候，会出现偶然性几率的丢失掉 Where 条件，等于说做有条件的更新的时候，有可能就突然变成了全部更新， 。唯有转投当前最热门之一的 YII 框架 。 Down下基础框架后，跑一下，发现没效果，查看一下教程文档才发现原来需要最低 P">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="https://chengweigao.github.io/archives/2017/09/index.html">
+<meta property="og:url" content="https://chengweigao.github.io/2017/09/19/linux/CentOS6/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="CentOS6.5系统下安装Apache2.4+PHP5.6+Mysql5.5 (LAMP)一直都认为国内最好的PHP框架为ThinkPHP，但有朋友说在做DB更新的时候，会出现偶然性几率的丢失掉 Where 条件，等于说做有条件的更新的时候，有可能就突然变成了全部更新， 。唯有转投当前最热门之一的 YII 框架 。 Down下基础框架后，跑一下，发现没效果，查看一下教程文档才发现原来需要最低 P">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-08-21T08:13:31.535Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="CentOS6.5系统下安装Apache2.4+PHP5.6+Mysql5.5 (LAMP)一直都认为国内最好的PHP框架为ThinkPHP，但有朋友说在做DB更新的时候，会出现偶然性几率的丢失掉 Where 条件，等于说做有条件的更新的时候，有可能就突然变成了全部更新， 。唯有转投当前最热门之一的 YII 框架 。 Down下基础框架后，跑一下，发现没效果，查看一下教程文档才发现原来需要最低 P">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -144,235 +148,279 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-linux/CentOS6" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>CentOS6.5系统下安装Apache2.4+PHP5.6+Mysql5.5 (LAMP)<br>一直都认为国内最好的PHP框架为ThinkPHP，但有朋友说在做DB更新的时候，会出现偶然性几率的丢失掉 Where 条件，等于说做有条件的更新的时候，有可能就突然变成了全部更新， 。唯有转投当前最热门之一的 YII 框架 。</p>
+<p>Down下基础框架后，跑一下，发现没效果，查看一下教程文档才发现原来需要最低 PHP5.4 的版本支持，但系统上用的是php5.3 的版本，看来要升级了。<br>吐槽一下，不知道为什么，php都更新了那么多个版本了，但是CentOS默认 yum 安装的还是PHP5.3 的版本，根本找不到直接升级PHP的方法，唯有手工编译升级了。</p>
+<p>首先说下思路，因为一开始系统上已经跑了一套完成的 PHP 环境，那时候都是快速自动安装的，如果是跑一些5.3以下版本的话，很简单，几个指令，10分钟搞定了。<br>但现在要升级，彻底一点的话，唯有推倒重来了。所以步骤有：</p>
+<ol>
+<li>卸载掉当前的 Apache、php、MySQL；</li>
+<li>清除残留的一些配置文件；</li>
+<li>一步步安装 Apache 、mysql、php，当然在过程当中需要注意每个软件的依赖控件不可少。</li>
+</ol>
+<p>下面是整体的步骤，从卸载后开始（同理适合刚刚安装好的全新系统）：</p>
+<ol>
+<li>准备工作，工欲善其事必先利其器，各个软件的安装包是必须的，有：</li>
+</ol>
+<p>apr-1.5.1.tar.bz2<br>apr-util-1.5.4.tar.bz2<br>pcre-8.36.tar.bz2<br>httpd-2.4.10.tar.bz2</p>
+<p>mysql-5.5.21.tar.gz</p>
+<p>php-5.6.4.tar.bz2</p>
+<p>具体的版本和下载地址相信大家都可以搜索下载好啦。</p>
+<ol>
+<li>安装Apache2.4</li>
+</ol>
+<p>apr-1.5.1.tar.bz2<br>apr-util-1.5.4.tar.bz2<br>pcre-8.36.tar.bz2<br>这些是Apache依赖的一些安装包，解压，安装。</p>
+<pre><code>cd apr-1.5.1
+./configure --prefix=/usr/local/apr
+make &amp;&amp; make install
+
+cd apr-util-1.5.4
+./configure --prefix=/usr/local/apr-util --with-apr=/usr/local/apr
+make &amp;&amp; make install
+
+cd pcre-8.36
+./configure
+make &amp;&amp; make install
+
+都完成后正式安装Apache
+cd httpd-2.4.10
+./configure --prefix=/usr/local/apache2 --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util --with-pcre=/usr/local/pcre --enable-so --enable-rewrite
+make &amp;&amp; make install
+
+cp /usr/local/apache2/bin/apachectl /etc/rc.d/init.d/httpd
+servicehttpd start
+</code></pre><p>测试是否安装成功</p>
+<p>出现“It works”就说明Apache已经正常安装。</p>
+<ol>
+<li><p>安装Mysql<br>需要先安装好cmake</p>
+<pre><code> yum -y install cmake make
+   cd mysql-5.5.21`
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/usr/local/mysql/data -DSYSCONFIGDIR=/usr/local/mysql/etc -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_ARCHIVE_STORAGE_ENGINE=1 -DWITH_BLACKHOLE_STORAGE_ENGINE=1 -DWITH_PARTITION_STORAGE_ENGINE=1 -DMYSQL_UNIX_ADDR=/tmp/mysqld.sock -DMYSQL_TCP_PORT=3306 -DENABLED_LOCAL_INFILE=1 -DEXTRA_CHARSETS=all -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DMYSQL_USER=mysql
+
+make&amp;&amp; make install
+</code></pre></li>
+</ol>
+<p>配置mysql 5.5.21<br>    cp /usr/loacl/mysql/support-files/my-huge.cnfetc/my.cnf<br>    vi /etc/my.cnf<br>修改my.cnf配置，把innodb相关选项前面的#去掉，大概在115-130行之间。</p>
+<pre><code>以下命令为mysql启动及自启动配置
+cp /usr/loacl/mysql/support-files/mysql.server /etc/init.d/mysqld
+/usr/local/mysql/scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data &amp;
+chkconfig --add mysqld
+chkconfig --level 345 mysqld on
+
+service mysqld start 
+</code></pre><p>一般只要把my.cnf设置好这里就不会报错</p>
+<p>剩下mysql的账号密码数据库等更改创建就还是老规矩了</p>
+<ol>
+<li>安装PHP5.6</li>
+</ol>
+<blockquote>
+<pre><code>cd php-5.6.4
+
+./configure --prefix=/usr/local/php
+ --with-apxs2=/usr/local/apache2/bin/apxs 
+--with-libxml-dir=/usr/include/libxml2 
+--with-config-file-path=/usr/local/apache2/conf 
+--with-mysql=/usr/local/mysql 
+--with-mysqli=/usr/local/mysql/bin/mysql_config 
+--with-gd 
+--enable-gd-native-ttf
+ --with-zlib --with-mcrypt
+ --with-pdo-mysql=/usr/local/mysql
+ --enable-shmop 
+--enable-soap
+ --enable-sockets 
+--enable-wddx 
+--enable-zip 
+--with-xmlrpc 
+--enable-fpm 
+--enable-mbstring 
+--with-zlib-dir 
+--with-bz2 
+--with-curl 
+--enable-exif 
+--enable-ftp 
+--with-jpeg-dir=/usr/lib 
+--with-png-dir=/usr/lib 
+--with-freetype-dir=/usr/lib/
+</code></pre></blockquote>
+<p>有时候，CentOS会在编译过程中报错 mcrypt.h not found. Please reinstall libmcrypt<br>这个很好解决，百度一下就出来了，传送门<br>解决后</p>
+<pre><code>    make&amp;&amp; make install
+
+
+apache配置文件httpd.conf相关修改以支持PHP
+vim /usr/local/apache/conf/httpd.conf
+1. 添加php支持。
+AddType application/x-httpd-php .php .phtml
+AddType application/x-httpd-php-source .phps
+2. 添加默认索引页面index.php，再找到“DirectoryIndex”，在index.html后面加上“ index.php”
+DirectoryIndex index.html index.php
+3. 不显示目录结构，找到“Options Indexes FollowSymLinks”，修改为
+Options FollowSymLinks
+4. 开启Apache支持伪静态，找到“AllowOverride None”，修改为
+AllowOverride All
+保存httpd.conf配置，然后再执行以下两行命令
+ chown -R nobody. /usr/local/apache/htdocs/
+chmod -R 777 /usr/local/apache/htdocs/
+ service httpd restart
+</code></pre><p>到这里基本 PHP环境搞定，测试一下.</p>
+<p>尝试一下 YII2 是否可以正常运行</p>
+<p>Bingo~~~ 收工。</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/js/base64/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.089Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://chengweigao.github.io/2017/09/19/linux/CentOS6/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/静态github个人首页制作密集/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.085Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/适应安卓ios/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.083Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+<nav id="article-nav">
+  
+    <a href="/2017/09/19/linux/centos7防火墙/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/19/linux/centos 7 mariadb/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/路由追踪/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.081Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/架构搭建/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.079Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+        
+        
+    </div>
+</aside>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/数据库主从复制/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.066Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/github个人主页markddown在线文档建立手段/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.052Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/virtualBox/盘容量调整/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.047Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/正在学习中2017-8-5/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.041Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/2017-8-8scrapy爬虫框架上手/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.040Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2017/09/page/2/">2</a><a class="page-number" href="/archives/2017/09/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2017/09/page/5/">5</a><a class="extend next" rel="next" href="/archives/2017/09/page/2/">Next &raquo;</a>
-    </nav>
+  
+
+  
+
+  
+  <div id="gitment-ctn"></div> 
+<link rel="stylesheet" href="//imsun.github.io/gitment/style/default.css">
+<script src="//imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  id: "https://chengweigao.github.io/2017/09/19/linux/CentOS6/",
+  owner: 'chengweigao',
+  repo: 'chengweigao.github.io',
+  oauth: {
+    client_id: 'bec5a6c09caa2ad8e7f0',
+    client_secret: '2da15ec3d9c19e7100774431aa110c33ea96eb0a',
+  },
+})
+gitment.render('gitment-ctn')
+</script>
   
 
 
@@ -396,8 +444,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

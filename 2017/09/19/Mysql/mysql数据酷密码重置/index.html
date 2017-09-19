@@ -6,15 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://chengweigao.github.io">
-  <title>Archives: 2017/9 | Hexo</title>
+  <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="1.当我们备份数据时，从其它库拷过来的.sql脚本，这个sql脚本是全部备份的。 这时如果两个数据库版本不一样，就会出现不能登录等问题，这时我们唯有初始化。其关键问题在全备时mysql库发生变化，造成密码等错误。 —–解决方法： 如果安装是二进制版本的： rm -rf 数据库data文件夹cd mysql/binmysqld –initialize –user=mysql      –mysql5">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="https://chengweigao.github.io/archives/2017/09/index.html">
+<meta property="og:url" content="https://chengweigao.github.io/2017/09/19/Mysql/mysql数据酷密码重置/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1.当我们备份数据时，从其它库拷过来的.sql脚本，这个sql脚本是全部备份的。 这时如果两个数据库版本不一样，就会出现不能登录等问题，这时我们唯有初始化。其关键问题在全备时mysql库发生变化，造成密码等错误。 —–解决方法： 如果安装是二进制版本的： rm -rf 数据库data文件夹cd mysql/binmysqld –initialize –user=mysql      –mysql5">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-08-21T08:13:31.529Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="1.当我们备份数据时，从其它库拷过来的.sql脚本，这个sql脚本是全部备份的。 这时如果两个数据库版本不一样，就会出现不能登录等问题，这时我们唯有初始化。其关键问题在全备时mysql库发生变化，造成密码等错误。 —–解决方法： 如果安装是二进制版本的： rm -rf 数据库data文件夹cd mysql/binmysqld –initialize –user=mysql      –mysql5">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -144,235 +148,186 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Mysql/mysql数据酷密码重置" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1.当我们备份数据时，从其它库拷过来的.sql脚本，这个sql脚本是全部备份的。</p>
+<p>这时如果两个数据库版本不一样，就会出现不能登录等问题，这时我们唯有初始化。其关键问题在全备时mysql库发生变化，造成密码等错误。</p>
+<p>—–解决方法：</p>
+<pre><code>如果安装是二进制版本的：
+</code></pre><h1 id="rm-rf-数据库data文件夹"><a href="#rm-rf-数据库data文件夹" class="headerlink" title="rm -rf 数据库data文件夹"></a>rm -rf 数据库data文件夹</h1><h1 id="cd-mysql-bin"><a href="#cd-mysql-bin" class="headerlink" title="cd mysql/bin"></a>cd mysql/bin</h1><h1 id="mysqld-–initialize-–user-mysql-–mysql5-7版本初始化"><a href="#mysqld-–initialize-–user-mysql-–mysql5-7版本初始化" class="headerlink" title="mysqld –initialize –user=mysql      –mysql5.7版本初始化"></a>mysqld –initialize –user=mysql      –mysql5.7版本初始化</h1><h1 id="bin-mysql-install-db-–user-mysql-–5-6到5-7版本"><a href="#bin-mysql-install-db-–user-mysql-–5-6到5-7版本" class="headerlink" title="bin/mysql_install_db –user=mysql       –5.6到5.7版本"></a>bin/mysql_install_db –user=mysql       –5.6到5.7版本</h1><p>这时页面最下方会出现初始化后的密码，然后我们登录数据库输入刚才记录的密码。</p>
+<p>mysql&gt;alter user ‘root’@’localhost’ identified by ‘新密码’;</p>
+<p>方法1： 用SET PASSWORD命令<br>首先登录MySQL。<br>格式：mysql&gt; set password for 用户名@localhost = password(‘新密码’);<br>例子：mysql&gt; set password for root@localhost = password(‘123’); </p>
+<p>方法2：用mysqladmin<br>格式：mysqladmin -u用户名 -p旧密码 password 新密码<br>例子：mysqladmin -uroot -p123456 password 123 </p>
+<p>方法3：用UPDATE直接编辑user表<br>首先登录MySQL。<br>mysql&gt; use mysql;<br>mysql&gt; update user set password=password(‘123’) where user=’root’ and host=’localhost’;<br>mysql&gt; flush privileges; </p>
+<p>方法4：在忘记root密码的时候，可以这样<br>以windows为例： </p>
+<ol>
+<li>关闭正在运行的MySQL服务。 </li>
+<li>打开DOS窗口，转到mysql\bin目录。 </li>
+<li>输入mysqld –skip-grant-tables 回车。–skip-grant-tables 的意思是启动MySQL服务的时候跳过权限表认证。 </li>
+<li>再开一个DOS窗口（因为刚才那个DOS窗口已经不能动了），转到mysql\bin目录。 </li>
+<li>输入mysql回车，如果成功，将出现MySQL提示符 &gt;。 </li>
+<li>连接权限数据库： use mysql; 。 </li>
+<li>改密码：update user set password=password(“123”) where user=”root”;（别忘了最后加分号） 。 </li>
+<li>刷新权限（必须步骤）：flush privileges;　。 </li>
+<li>退出 quit。 </li>
+<li>注销系统，再进入，使用用户名root和刚才设置的新密码123登录</li>
+</ol>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/js/base64/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.089Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://chengweigao.github.io/2017/09/19/Mysql/mysql数据酷密码重置/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/静态github个人首页制作密集/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.085Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/适应安卓ios/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.083Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+<nav id="article-nav">
+  
+    <a href="/2017/09/19/Mysql/pdo或phpMyAdmin2002错误/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/19/Mysql/mysql安装/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/路由追踪/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.081Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/架构搭建/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.079Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+        
+        
+    </div>
+</aside>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/数据库主从复制/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.066Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/github个人主页markddown在线文档建立手段/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.052Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/virtualBox/盘容量调整/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.047Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/正在学习中2017-8-5/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.041Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/2017-8-8scrapy爬虫框架上手/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.040Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2017/09/page/2/">2</a><a class="page-number" href="/archives/2017/09/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2017/09/page/5/">5</a><a class="extend next" rel="next" href="/archives/2017/09/page/2/">Next &raquo;</a>
-    </nav>
+  
+
+  
+
+  
+  <div id="gitment-ctn"></div> 
+<link rel="stylesheet" href="//imsun.github.io/gitment/style/default.css">
+<script src="//imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  id: "https://chengweigao.github.io/2017/09/19/Mysql/mysql数据酷密码重置/",
+  owner: 'chengweigao',
+  repo: 'chengweigao.github.io',
+  oauth: {
+    client_id: 'bec5a6c09caa2ad8e7f0',
+    client_secret: '2da15ec3d9c19e7100774431aa110c33ea96eb0a',
+  },
+})
+gitment.render('gitment-ctn')
+</script>
   
 
 
@@ -396,8 +351,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

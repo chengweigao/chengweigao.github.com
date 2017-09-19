@@ -6,15 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://chengweigao.github.io">
-  <title>Archives: 2017/9 | Hexo</title>
+  <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="Php代码    1.    //定义编码   2.    header( &amp;apos;Content-Type:text/html;charset=utf-8 &amp;apos;);   3.       4.    //Atom   5.    header(&amp;apos;Content-type: application/atom+xml&amp;apos;);   6.       7.    //CS">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="https://chengweigao.github.io/archives/2017/09/index.html">
+<meta property="og:url" content="https://chengweigao.github.io/2017/09/19/HTTP/http-HEADER/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Php代码    1.    //定义编码   2.    header( &amp;apos;Content-Type:text/html;charset=utf-8 &amp;apos;);   3.       4.    //Atom   5.    header(&amp;apos;Content-type: application/atom+xml&amp;apos;);   6.       7.    //CS">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-08-21T08:13:31.528Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="Php代码    1.    //定义编码   2.    header( &amp;apos;Content-Type:text/html;charset=utf-8 &amp;apos;);   3.       4.    //Atom   5.    header(&amp;apos;Content-type: application/atom+xml&amp;apos;);   6.       7.    //CS">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -144,235 +148,703 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-HTTP/http-HEADER" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code> Php代码   
+1.    //定义编码  
+2.    header( &apos;Content-Type:text/html;charset=utf-8 &apos;);  
+3.      
+4.    //Atom  
+5.    header(&apos;Content-type: application/atom+xml&apos;);  
+6.      
+7.    //CSS  
+8.    header(&apos;Content-type: text/css&apos;);  
+9.      
+10.    //Javascript  
+11.    header(&apos;Content-type: text/javascript&apos;);  
+12.      
+13.    //JPEG Image  
+14.    header(&apos;Content-type: image/jpeg&apos;);  
+15.      
+16.    //JSON  
+17.    header(&apos;Content-type: application/json&apos;);  
+18.      
+19.    //PDF  
+20.    header(&apos;Content-type: application/pdf&apos;);  
+21.      
+22.    //RSS  
+23.    header(&apos;Content-Type: application/rss+xml; charset=ISO-8859-1&apos;);  
+24.      
+25.    //Text (Plain)  
+26.    header(&apos;Content-type: text/plain&apos;);  
+27.      
+28.    //XML  
+29.    header(&apos;Content-type: text/xml&apos;);  
+30.      
+31.    // ok  
+32.    header(&apos;HTTP/1.1 200 OK&apos;);  
+33.      
+34.    //设置一个404头:  
+35.    header(&apos;HTTP/1.1 404 Not Found&apos;);  
+36.      
+37.    //设置地址被永久的重定向  
+38.    header(&apos;HTTP/1.1 301 Moved Permanently&apos;);  
+39.      
+40.    //转到一个新地址  
+41.    header(&apos;Location: http://www.example.org/&apos;);  
+42.      
+43.    //文件延迟转向:  
+44.    header(&apos;Refresh: 10; url=http://www.example.org/&apos;);  
+45.    print &apos;You will be redirected in 10 seconds&apos;;  
+46.      
+47.    //当然，也可以使用html语法实现  
+48.    // &lt;meta http-equiv=&quot;refresh&quot; content=&quot;10;http://www.example.org/ / 
+49.      
+50.    // override X-Powered-By: PHP:  
+51.    header(&apos;X-Powered-By: PHP/4.4.0&apos;);  
+52.    header(&apos;X-Powered-By: Brain/0.6b&apos;);  
+53.      
+54.    //文档语言  
+55.    header(&apos;Content-language: en&apos;);  
+56.      
+57.    //告诉浏览器最后一次修改时间  
+58.    $time = time() - 60; // or filemtime($fn), etc  
+59.    header(&apos;Last-Modified: &apos;.gmdate(&apos;D, d M Y H:i:s&apos;, $time).&apos; GMT&apos;);  
+60.      
+61.    //告诉浏览器文档内容没有发生改变  
+62.    header(&apos;HTTP/1.1 304 Not Modified&apos;);  
+63.      
+64.    //设置内容长度  
+65.    header(&apos;Content-Length: 1234&apos;);  
+66.      
+67.    //设置为一个下载类型  
+68.    header(&apos;Content-Type: application/octet-stream&apos;);  
+69.    header(&apos;Content-Disposition: attachment; filename=&quot;example.zip&quot;&apos;);  
+70.    header(&apos;Content-Transfer-Encoding: binary&apos;);  
+71.    // load the file to send:  
+72.    readfile(&apos;example.zip&apos;);  
+73.      
+74.    // 对当前文档禁用缓存  
+75.    header(&apos;Cache-Control: no-cache, no-store, max-age=0, must-revalidate&apos;);  
+76.    header(&apos;Expires: Mon, 26 Jul 1997 05:00:00 GMT&apos;); // Date in the past  
+77.    header(&apos;Pragma: no-cache&apos;);  
+78.      
+79.    //设置内容类型:  
+80.    header(&apos;Content-Type: text/html; charset=iso-8859-1&apos;);  
+81.    header(&apos;Content-Type: text/html; charset=utf-8&apos;);  
+82.    header(&apos;Content-Type: text/plain&apos;); //纯文本格式  
+83.    header(&apos;Content-Type: image/jpeg&apos;); //JPG***  
+84.    header(&apos;Content-Type: application/zip&apos;); // ZIP文件  
+85.    header(&apos;Content-Type: application/pdf&apos;); // PDF文件  
+86.    header(&apos;Content-Type: audio/mpeg&apos;); // 音频文件  
+87.    header(&apos;Content-Type: application/x-shockw**e-flash&apos;); //Flash动画  
+88.      
+89.    //显示登陆对话框  
+90.    header(&apos;HTTP/1.1 401 Unauthorized&apos;);  
+91.    header(&apos;WWW-Authenticate: Basic realm=&quot;Top Secret&quot;&apos;);  
+92.    print &apos;Text that will be displayed if the user hits cancel or &apos;;  
+93.    print &apos;enters wrong login data&apos;;  
+
+ xlsx下载：
+Php代码   
+1.    $filename = rtrim($_SERVER[&apos;DOCUMENT_ROOT&apos;],&apos;/&apos;).&apos;/app/files/payment_status.csv&apos;;  
+2.    header(&apos;Content-Disposition: attachment; filename=payment_status.xlsx&apos;);  
+3.    header(&apos;Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&apos;);  
+4.    header(&apos;Content-Length: &apos; . filesize($filename));  
+5.    header(&apos;Content-Transfer-Encoding: binary&apos;);  
+6.    header(&apos;Cache-Control: must-revalidate&apos;);  
+7.    header(&apos;Pragma: public&apos;);  
+8.    readfile($filename);  
+9.    header(‘Content-type: application/image/pjpeg’);//输出的类型
+10.    header(‘Content-Disposition: attachment; filename=”downloaded.jpg”‘); //下载显示的名字,注意格式
+readfile(‘my.jpg’);
+// 并将这个文件以前面header发送信息设定的类型输出,从而会弹出一个下载框
+// 就是把服务器上的my.jpg下载下来,下载显示和保存的名字默认是downloaded.jpg
+?&gt;
+各种文件类型的header输出类型如下：
+‘chm’=&gt;’application/octet-stream’,
+‘ppt’=&gt;’application/vnd.ms-powerpoint’,
+‘xls’=&gt;’application/vnd.ms-excel’,
+‘doc’=&gt;’application/msword’,
+‘exe’=&gt;’application/octet-stream’,
+‘rar’=&gt;’application/octet-stream’,
+‘js’=&gt;”javascrīpt/js”,
+‘css’=&gt;”text/css”,
+‘hqx’=&gt;”application/mac-binhex40″,
+‘bin’=&gt;”application/octet-stream”,
+‘oda’=&gt;”application/oda”,
+‘pdf’=&gt;”application/pdf”,
+‘ai’=&gt;”application/postsrcipt”,
+‘eps’=&gt;”application/postsrcipt”,
+‘es’=&gt;”application/postsrcipt”,
+‘rtf’=&gt;”application/rtf”,
+‘mif’=&gt;”application/x-mif”,
+‘csh’=&gt;”application/x-csh”,
+‘dvi’=&gt;”application/x-dvi”,
+‘hdf’=&gt;”application/x-hdf”,
+‘nc’=&gt;”application/x-netcdf”,
+‘cdf’=&gt;”application/x-netcdf”,
+‘latex’=&gt;”application/x-latex”,
+‘ts’=&gt;”application/x-troll-ts”,
+‘src’=&gt;”application/x-wais-source”,
+‘zip’=&gt;”application/zip”,
+‘bcpio’=&gt;”application/x-bcpio”,
+‘cpio’=&gt;”application/x-cpio”,
+‘gtar’=&gt;”application/x-gtar”,
+‘shar’=&gt;”application/x-shar”,
+‘sv4cpio’=&gt;”application/x-sv4cpio”,
+‘sv4crc’=&gt;”application/x-sv4crc”,
+‘tar’=&gt;”application/x-tar”,
+‘ustar’=&gt;”application/x-ustar”,
+‘man’=&gt;”application/x-troff-man”,
+‘sh’=&gt;”application/x-sh”,
+‘tcl’=&gt;”application/x-tcl”,
+‘tex’=&gt;”application/x-tex”,
+‘texi’=&gt;”application/x-texinfo”,
+‘texinfo’=&gt;”application/x-texinfo”,
+‘t’=&gt;”application/x-troff”,
+‘tr’=&gt;”application/x-troff”,
+‘roff’=&gt;”application/x-troff”,
+‘shar’=&gt;”application/x-shar”,
+‘me’=&gt;”application/x-troll-me”,
+‘ts’=&gt;”application/x-troll-ts”,
+‘gif’=&gt;”image/gif”,
+‘jpeg’=&gt;”image/pjpeg”,
+‘jpg’=&gt;”image/pjpeg”,
+‘jpe’=&gt;”image/pjpeg”,
+‘ras’=&gt;”image/x-cmu-raster”,
+‘pbm’=&gt;”image/x-portable-bitmap”,
+‘ppm’=&gt;”image/x-portable-pixmap”,
+‘xbm’=&gt;”image/x-xbitmap”,
+‘xwd’=&gt;”image/x-xwindowdump”,
+‘ief’=&gt;”image/ief”,
+‘tif’=&gt;”image/tiff”,
+‘tiff’=&gt;”image/tiff”,
+‘pnm’=&gt;”image/x-portable-anymap”,
+‘pgm’=&gt;”image/x-portable-graymap”,
+‘rgb’=&gt;”image/x-rgb”,
+‘xpm’=&gt;”image/x-xpixmap”,
+‘txt’=&gt;”text/plain”,
+‘c’=&gt;”text/plain”,
+‘cc’=&gt;”text/plain”,
+‘h’=&gt;”text/plain”,
+‘html’=&gt;”text/html”,
+‘htm’=&gt;”text/html”,
+‘htl’=&gt;”text/html”,
+‘rtx’=&gt;”text/richtext”,
+‘etx’=&gt;”text/x-setext”,
+‘tsv’=&gt;”text/tab-separated-values”,
+‘mpeg’=&gt;”video/mpeg”,
+‘mpg’=&gt;”video/mpeg”,
+‘mpe’=&gt;”video/mpeg”,
+‘avi’=&gt;”video/x-msvideo”,
+‘qt’=&gt;”video/quicktime”,
+‘mov’=&gt;”video/quicktime”,
+‘moov’=&gt;”video/quicktime”,
+‘movie’=&gt;”video/x-sgi-movie”,
+‘au’=&gt;”audio/basic”,
+‘snd’=&gt;”audio/basic”,
+‘wav’=&gt;”audio/x-wav”,
+‘aif’=&gt;”audio/x-aiff”,
+‘aiff’=&gt;”audio/x-aiff”,
+‘aifc’=&gt;”audio/x-aiff”,
+‘swf’=&gt;”application/x-shockwave-flash”
+‘myz’=&gt;”application/myz”
+“.*”=”application/octet-stream”
+“.001″=”application/x-001”
+“.301″=”application/x-301”
+“.323″=”text/h323”
+“.906″=”application/x-906”
+“.907″=”drawing/907”
+“.a11″=”application/x-a11”
+“.acp”=”audio/x-mei-aac”
+“.ai”=”application/postscript”
+“.aif”=”audio/aiff”
+“.aifc”=”audio/aiff”
+“.aiff”=”audio/aiff”
+“.anv”=”application/x-anv”
+“.asa”=”text/asa”
+“.asf”=”video/x-ms-asf”
+“.asp”=”text/asp”
+“.asx”=”video/x-ms-asf”
+“.au”=”audio/basic”
+“.avi”=”video/avi”
+“.awf”=”application/vnd.adobe.workflow”
+“.biz”=”text/xml”
+“.bmp”=”application/x-bmp”
+“.bot”=”application/x-bot”
+“.c4t”=”application/x-c4t”
+“.c90″=”application/x-c90”
+“.cal”=”application/x-cals”
+“.cat”=”application/vnd.ms-pki.seccat”
+“.cdf”=”application/x-netcdf”
+“.cdr”=”application/x-cdr”
+“.cel”=”application/x-cel”
+“.cer”=”application/x-x509-ca-cert”
+“.cg4″=”application/x-g4”
+“.cgm”=”application/x-cgm”
+“.cit”=”application/x-cit”
+“.class”=”java/*”
+“.cml”=”text/xml”
+“.cmp”=”application/x-cmp”
+“.cmx”=”application/x-cmx”
+“.cot”=”application/x-cot”
+“.crl”=”application/pkix-crl”
+“.crt”=”application/x-x509-ca-cert”
+“.csi”=”application/x-csi”
+“.css”=”text/css”
+“.cut”=”application/x-cut”
+“.dbf”=”application/x-dbf”
+“.dbm”=”application/x-dbm”
+“.dbx”=”application/x-dbx”
+“.dcd”=”text/xml”
+“.dcx”=”application/x-dcx”
+“.der”=”application/x-x509-ca-cert”
+“.dgn”=”application/x-dgn”
+“.dib”=”application/x-dib”
+“.dll”=”application/x-msdownload”
+“.doc”=”application/msword”
+“.dot”=”application/msword”
+“.drw”=”application/x-drw”
+“.dtd”=”text/xml”
+“.dwf”=”Model/vnd.dwf”
+“.dwf”=”application/x-dwf”
+“.dwg”=”application/x-dwg”
+“.dxb”=”application/x-dxb”
+“.dxf”=”application/x-dxf”
+“.edn”=”application/vnd.adobe.edn”
+“.emf”=”application/x-emf”
+“.eml”=”message/rfc822”
+“.ent”=”text/xml”
+“.epi”=”application/x-epi”
+“.eps”=”application/x-ps”
+“.eps”=”application/postscript”
+“.etd”=”application/x-ebx”
+“.exe”=”application/x-msdownload”
+“.fax”=”image/fax”
+“.fdf”=”application/vnd.fdf”
+“.fif”=”application/fractals”
+“.fo”=”text/xml”
+“.frm”=”application/x-frm”
+“.g4″=”application/x-g4”
+“.gbr”=”application/x-gbr”
+“.gcd”=”application/x-gcd”
+“.gif”=”image/gif”
+“.gl2″=”application/x-gl2”
+“.gp4″=”application/x-gp4”
+“.hgl”=”application/x-hgl”
+“.hmr”=”application/x-hmr”
+“.hpg”=”application/x-hpgl”
+“.hpl”=”application/x-hpl”
+“.hqx”=”application/mac-binhex40”
+“.hrf”=”application/x-hrf”
+“.hta”=”application/hta”
+“.htc”=”text/x-component”
+“.htm”=”text/html”
+“.html”=”text/html”
+“.htt”=”text/webviewhtml”
+“.htx”=”text/html”
+“.icb”=”application/x-icb”
+“.ico”=”image/x-icon”
+“.ico”=”application/x-ico”
+“.iff”=”application/x-iff”
+“.ig4″=”application/x-g4”
+“.igs”=”application/x-igs”
+“.iii”=”application/x-iphone”
+“.img”=”application/x-img”
+“.ins”=”application/x-internet-signup”
+“.isp”=”application/x-internet-signup”
+“.IVF”=”video/x-ivf”
+“.java”=”java/*”
+“.jfif”=”image/jpeg”
+“.jpe”=”image/jpeg”
+“.jpe”=”application/x-jpe”
+“.jpeg”=”image/jpeg”
+“.jpg”=”image/jpeg”
+“.jpg”=”application/x-jpg”
+“.js”=”application/x-javascript”
+“.jsp”=”text/html”
+“.la1″=”audio/x-liquid-file”
+“.lar”=”application/x-laplayer-reg”
+“.latex”=”application/x-latex”
+“.lavs”=”audio/x-liquid-secure”
+“.lbm”=”application/x-lbm”
+“.lmsff”=”audio/x-la-lms”
+“.ls”=”application/x-javascript”
+“.ltr”=”application/x-ltr”
+“.m1v”=”video/x-mpeg”
+“.m2v”=”video/x-mpeg”
+“.m3u”=”audio/mpegurl”
+“.m4e”=”video/mpeg4”
+“.mac”=”application/x-mac”
+“.man”=”application/x-troff-man”
+“.math”=”text/xml”
+“.mdb”=”application/msaccess”
+“.mdb”=”application/x-mdb”
+“.mfp”=”application/x-shockwave-flash”
+“.mht”=”message/rfc822”
+“.mhtml”=”message/rfc822”
+“.mi”=”application/x-mi”
+“.mid”=”audio/mid”
+“.midi”=”audio/mid”
+“.mil”=”application/x-mil”
+“.mml”=”text/xml”
+“.mnd”=”audio/x-musicnet-download”
+“.mns”=”audio/x-musicnet-stream”
+“.mocha”=”application/x-javascript”
+“.movie”=”video/x-sgi-movie”
+“.mp1″=”audio/mp1”
+“.mp2″=”audio/mp2”
+“.mp2v”=”video/mpeg”
+“.mp3″=”audio/mp3”
+“.mp4″=”video/mpeg4”
+“.mpa”=”video/x-mpg”
+“.mpd”=”application/vnd.ms-project”
+“.mpe”=”video/x-mpeg”
+“.mpeg”=”video/mpg”
+“.mpg”=”video/mpg”
+“.mpga”=”audio/rn-mpeg”
+“.mpp”=”application/vnd.ms-project”
+“.mps”=”video/x-mpeg”
+“.mpt”=”application/vnd.ms-project”
+“.mpv”=”video/mpg”
+“.mpv2″=”video/mpeg”
+“.mpw”=”application/vnd.ms-project”
+“.mpx”=”application/vnd.ms-project”
+“.mtx”=”text/xml”
+“.mxp”=”application/x-mmxp”
+“.net”=”image/pnetvue”
+“.nrf”=”application/x-nrf”
+“.nws”=”message/rfc822”
+“.odc”=”text/x-ms-odc”
+“.out”=”application/x-out”
+“.p10″=”application/pkcs10”
+“.p12″=”application/x-pkcs12”
+“.p7b”=”application/x-pkcs7-certificates”
+“.p7c”=”application/pkcs7-mime”
+“.p7m”=”application/pkcs7-mime”
+“.p7r”=”application/x-pkcs7-certreqresp”
+“.p7s”=”application/pkcs7-signature”
+“.pc5″=”application/x-pc5”
+“.pci”=”application/x-pci”
+“.pcl”=”application/x-pcl”
+“.pcx”=”application/x-pcx”
+“.pdf”=”application/pdf”
+“.pdf”=”application/pdf”
+“.pdx”=”application/vnd.adobe.pdx”
+“.pfx”=”application/x-pkcs12”
+“.pgl”=”application/x-pgl”
+“.pic”=”application/x-pic”
+“.pko”=”application/vnd.ms-pki.pko”
+“.pl”=”application/x-perl”
+“.plg”=”text/html”
+“.pls”=”audio/scpls”
+“.plt”=”application/x-plt”
+“.png”=”image/png”
+“.png”=”application/x-png”
+“.pot”=”application/vnd.ms-powerpoint”
+“.ppa”=”application/vnd.ms-powerpoint”
+“.ppm”=”application/x-ppm”
+“.pps”=”application/vnd.ms-powerpoint”
+“.ppt”=”application/vnd.ms-powerpoint”
+“.ppt”=”application/x-ppt”
+“.pr”=”application/x-pr”
+“.prf”=”application/pics-rules”
+“.prn”=”application/x-prn”
+“.prt”=”application/x-prt”
+“.ps”=”application/x-ps”
+“.ps”=”application/postscript”
+“.ptn”=”application/x-ptn”
+“.pwz”=”application/vnd.ms-powerpoint”
+“.r3t”=”text/vnd.rn-realtext3d”
+“.ra”=”audio/vnd.rn-realaudio”
+“.ram”=”audio/x-pn-realaudio”
+“.ras”=”application/x-ras”
+“.rat”=”application/rat-file”
+“.rdf”=”text/xml”
+“.rec”=”application/vnd.rn-recording”
+“.red”=”application/x-red”
+“.rgb”=”application/x-rgb”
+“.rjs”=”application/vnd.rn-realsystem-rjs”
+“.rjt”=”application/vnd.rn-realsystem-rjt”
+“.rlc”=”application/x-rlc”
+“.rle”=”application/x-rle”
+“.rm”=”application/vnd.rn-realmedia”
+“.rmf”=”application/vnd.adobe.rmf”
+“.rmi”=”audio/mid”
+“.rmj”=”application/vnd.rn-realsystem-rmj”
+“.rmm”=”audio/x-pn-realaudio”
+“.rmp”=”application/vnd.rn-rn_music_package”
+“.rms”=”application/vnd.rn-realmedia-secure”
+“.rmvb”=”application/vnd.rn-realmedia-vbr”
+“.rmx”=”application/vnd.rn-realsystem-rmx”
+“.rnx”=”application/vnd.rn-realplayer”
+“.rp”=”image/vnd.rn-realpix”
+“.rpm”=”audio/x-pn-realaudio-plugin”
+“.rsml”=”application/vnd.rn-rsml”
+“.rt”=”text/vnd.rn-realtext”
+“.rtf”=”application/msword”
+“.rtf”=”application/x-rtf”
+“.rv”=”video/vnd.rn-realvideo”
+“.sam”=”application/x-sam”
+“.sat”=”application/x-sat”
+“.sdp”=”application/sdp”
+“.sdw”=”application/x-sdw”
+“.sit”=”application/x-stuffit”
+“.slb”=”application/x-slb”
+“.sld”=”application/x-sld”
+“.slk”=”drawing/x-slk”
+“.smi”=”application/smil”
+“.smil”=”application/smil”
+“.smk”=”application/x-smk”
+“.snd”=”audio/basic”
+“.sol”=”text/plain”
+“.sor”=”text/plain”
+“.spc”=”application/x-pkcs7-certificates”
+“.spl”=”application/futuresplash”
+“.spp”=”text/xml”
+“.ssm”=”application/streamingmedia”
+“.sst”=”application/vnd.ms-pki.certstore”
+“.stl”=”application/vnd.ms-pki.stl”
+“.stm”=”text/html”
+“.sty”=”application/x-sty”
+“.svg”=”text/xml”
+“.swf”=”application/x-shockwave-flash”
+“.tdf”=”application/x-tdf”
+“.tg4″=”application/x-tg4”
+“.tga”=”application/x-tga”
+“.tif”=”image/tiff”
+“.tif”=”application/x-tif”
+“.tiff”=”image/tiff”
+“.tld”=”text/xml”
+“.top”=”drawing/x-top”
+“.torrent”=”application/x-bittorrent”
+“.tsd”=”text/xml”
+“.txt”=”text/plain”
+“.uin”=”application/x-icq”
+“.uls”=”text/iuls”
+“.vcf”=”text/x-vcard”
+“.vda”=”application/x-vda”
+“.vdx”=”application/vnd.visio”
+“.vml”=”text/xml”
+“.vpg”=”application/x-vpeg005”
+“.vsd”=”application/vnd.visio”
+“.vsd”=”application/x-vsd”
+“.vss”=”application/vnd.visio”
+“.vst”=”application/vnd.visio”
+“.vst”=”application/x-vst”
+“.vsw”=”application/vnd.visio”
+“.vsx”=”application/vnd.visio”
+“.vtx”=”application/vnd.visio”
+“.vxml”=”text/xml”
+“.wav”=”audio/wav”
+“.wax”=”audio/x-ms-wax”
+“.wb1″=”application/x-wb1”
+“.wb2″=”application/x-wb2”
+“.wb3″=”application/x-wb3”
+“.wbmp”=”image/vnd.wap.wbmp”
+“.wiz”=”application/msword”
+“.wk3″=”application/x-wk3”
+“.wk4″=”application/x-wk4”
+“.wkq”=”application/x-wkq”
+“.wks”=”application/x-wks”
+“.wm”=”video/x-ms-wm”
+“.wma”=”audio/x-ms-wma”
+“.wmd”=”application/x-ms-wmd”
+“.wmf”=”application/x-wmf”
+“.wml”=”text/vnd.wap.wml”
+“.wmv”=”video/x-ms-wmv”
+“.wmx”=”video/x-ms-wmx”
+“.wmz”=”application/x-ms-wmz”
+“.wp6″=”application/x-wp6”
+“.wpd”=”application/x-wpd”
+“.wpg”=”application/x-wpg”
+“.wpl”=”application/vnd.ms-wpl”
+“.wq1″=”application/x-wq1”
+“.wr1″=”application/x-wr1”
+“.wri”=”application/x-wri”
+“.wrk”=”application/x-wrk”
+“.ws”=”application/x-ws”
+“.ws2″=”application/x-ws”
+“.wsc”=”text/scriptlet”
+“.wsdl”=”text/xml”
+“.wvx”=”video/x-ms-wvx”
+“.xdp”=”application/vnd.adobe.xdp”
+“.xdr”=”text/xml”
+“.xfd”=”application/vnd.adobe.xfd”
+“.xfdf”=”application/vnd.adobe.xfdf”
+“.xhtml”=”text/html”
+“.xls”=”application/vnd.ms-excel”
+“.xls”=”application/x-xls”
+“.xlw”=”application/x-xlw”
+“.xml”=”text/xml”
+“.xpl”=”audio/scpls”
+“.xq”=”text/xml”
+“.xql”=”text/xml”
+“.xquery”=”text/xml”
+“.xsd”=”text/xml”
+“.xsl”=”text/xml”
+“.xslt”=”text/xml”
+“.xwd”=”application/x-xwd”
+“.x_b”=”application/x-x_b”
+“.x_t”=”application/x-x_t”
+“.myz”=”application/myz”
+</code></pre>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/js/base64/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.089Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://chengweigao.github.io/2017/09/19/HTTP/http-HEADER/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/静态github个人首页制作密集/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.085Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/适应安卓ios/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.083Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+<nav id="article-nav">
+  
+    <a href="/2017/09/19/JS/2017-08-09js获取屏幕宽高/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/19/HTTP/htmlmate标签/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/路由追踪/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.081Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/架构搭建/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.079Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+        
+        
+    </div>
+</aside>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/数据库主从复制/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.066Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/github个人主页markddown在线文档建立手段/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.052Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/virtualBox/盘容量调整/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.047Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/正在学习中2017-8-5/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.041Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/2017-8-8scrapy爬虫框架上手/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.040Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2017/09/page/2/">2</a><a class="page-number" href="/archives/2017/09/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2017/09/page/5/">5</a><a class="extend next" rel="next" href="/archives/2017/09/page/2/">Next &raquo;</a>
-    </nav>
+  
+
+  
+
+  
+  <div id="gitment-ctn"></div> 
+<link rel="stylesheet" href="//imsun.github.io/gitment/style/default.css">
+<script src="//imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  id: "https://chengweigao.github.io/2017/09/19/HTTP/http-HEADER/",
+  owner: 'chengweigao',
+  repo: 'chengweigao.github.io',
+  oauth: {
+    client_id: 'bec5a6c09caa2ad8e7f0',
+    client_secret: '2da15ec3d9c19e7100774431aa110c33ea96eb0a',
+  },
+})
+gitment.render('gitment-ctn')
+</script>
   
 
 
@@ -396,8 +868,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

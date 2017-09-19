@@ -6,11 +6,11 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://chengweigao.github.io">
-  <title>Archives: 2017/9 | Hexo</title>
+  <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="https://chengweigao.github.io/archives/2017/09/index.html">
+<meta property="og:url" content="https://chengweigao.github.io/page/2/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
@@ -146,232 +146,850 @@
           <div id="js-content" class="content-ll">
             
   
-  
+    <article id="post-PHP/workermen" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code>Workerman3.x版本手册
+Workerman是一个高性能的socket服务器通讯框架，用于快速开发各种网络应用，包括tcp的、udp的、长连接、短连接应用。 
+在线手册 »
+GatewayWorker手册
+GatewayWorker是基于Workerman开发的一套TCP长连接的应用框架，
+实现了单发、群发、广播等接口，内置了mysql类库，
+GatewayWorker分为Gateway进程和Worker进程，天然支持分布式部署，能够支持庞大的连接数（百万甚至千万连接级别的应用）。
+可用于开发IM聊天应用、移动通讯、游戏后台、物联网、智能家居后台等等。
+工作原理
+1、Register、Gateway、BusinessWorker进程启动
+2、Gateway、BusinessWorker进程启动后向Register服务进程发起长连接注册自己
+3、Register服务收到Gateway的注册后，把所有Gateway的通讯地址保存在内存中
+4、Register服务收到BusinessWorker的注册后，把内存中所有的Gateway的通讯地址发给BusinessWorker
+5、BusinessWorker进程得到所有的Gateway内部通讯地址后尝试连接Gateway
+6、如果运行过程中有新的Gateway服务注册到Register（一般是分布式部署加机器），则将新的Gateway内部通讯地址列表将广播给所有BusinessWorker，BusinessWorker收到后建立连接
+7、如果有Gateway下线，则Register服务会收到通知，会将对应的内部通讯地址删除，然后广播新的内部通讯地址列表给所有BusinessWorker，BusinessWorker不再连接下线的Gateway
+8、至此Gateway与BusinessWorker通过Register已经建立起长连接
+9、客户端的事件及数据全部由Gateway转发给BusinessWorker处理，BusinessWorker默认调用Events.php中的onConnect onMessage onClose处理业务逻辑。
+10、BusinessWorker的业务逻辑入口全部在Events.php中，包括onWorkerStart进程启动事件(进程事件)、onConnect连接事件(客户端事件)、onMessage消息事件（客户端事件）、onClose连接关闭事件（客户端事件）、onWorkerStop进程退出事件（进程事件）
+重要的事情说三遍
+业务开发只需要关注 Applications/项目/Events.php一个文件即可。
+业务开发只需要关注 Applications/项目/Events.php一个文件即可。
+业务开发只需要关注 Applications/项目/Events.php一个文件即可。
+开放的端口及协议在start_gateway.php中更改。参见Gateway类的使用一章。
+注意
+1、服务端启动成功，但是无法通讯，请检查服务器防火墙。
+2、客户端与服务端要能保持正常通讯，需要保证客户端与服务端的通讯协议是一致的。比如服务端是websocket协议，客户端也要使用websocket协议来通讯(js里用ws=new WebSocket(&apos;ws://ip:port&apos;);来连接)，而浏览器地址栏(http协议)直接访问websocket服务肯定是不通的。
+3、长连接应用切记需要开启应用层心跳(GatewayWorker提供了设置，参见心跳检测)，心跳间隔20-30秒最佳，为了避免长连接应为长时间不通讯被节点防火墙断开。
+
+
+
+
+
+目录结构
+.
+├── Applications // 这里是所有开发者应用项目
+│   └── YourApp  // 其中一个项目目录，目录名可以自定义
+│   ├── Events.php // 开发者只需要关注这个文件
+│   ├── start_gateway.php // gateway进程启动脚本，包括端口号等设置
+│   ├── start_businessworker.php // businessWorker进程启动脚本
+│   └── start_register.php // 注册服务启动脚本
+│
+├── start.php // 全局启动脚本，此脚本会依次加载Applications/项目/start_*.php启动脚本
+│
+└── vendor// GatewayWorker框架和Workerman框架源码目录，此目录开发者不用关心
+
+
+
+start_gateway.php
+start_gateway.php为gateway进程启动脚本，主要定义了客户端连接的端口号、协议等信息，具体参见 Gateway类的使用一节。
+客户端连接的就是start_gateway.php中初始化的Gateway端口。
+start_businessworker.php
+start_businessworker.php为businessWorker进程启动脚本，也即是调用Events.php的业务处理进程，具体参见 BusinessWorker类的使用一节。
+start_register.php
+start_register.php为注册服务启动脚本，用于协调GatewayWorker集群内部Gateway与Worker的通信，参见Register类使用一节。
+注意：客户端不要连接Register服务端口，客户端应该连接Gateway端口
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gateway/Worker 的进程模型
+
+特点：
+从图上我们可以看出Gateway负责接收客户端的连接以及连接上的数据，然后Worker接收Gateway发来的数据做处理，然后再经由Gateway把结果转发给其它客户端。每个客户端都有很多的路由到达另外一个客户端，例如client⑦与client①可以经由蓝色路径完成数据通讯
+优点：
+1、可以方便的实现客户端之间的通讯
+2、Gateway与Worker之间是基于socket长连接通讯，也就是说Gateway、Worker可以部署在不同的服务器上，非常容易实现分布式部署，扩容服务器
+3、Gateway进程只负责网络IO，业务实现都在Worker进程上，可以reload Worker进程，实现在不影响用户的情况下完成代码热更新。
+适用范围：
+适用于客户端与客户端需要实时通讯的项目。
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/js/base64/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.089Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/PHP/workermen/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/静态github个人首页制作密集/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.085Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-PHP/php目录树json" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>#用php获取当前目录树的json<br>    &lt;?php<br>    header(“Content-Type:text/html; charset=utf-8”);<br>    ini_set(‘display_errors’,’On’);<br>    error_reporting(E_ALL);<br>    $dir=’D:/www/‘;<br>    function traverse($path = ‘.’) {<br>    $current_dir = opendir($path);    //opendir()返回一个目录句柄,失败返回false<br>    $dirData=[];<br>    while(($file = readdir($current_dir)) !== false) {    //readdir()返回打开目录句柄中的一个条目<br>        //windows下字符转码<br>        $file=iconv(‘GB2312’, ‘UTF-8’, $file);<br>        $sub_dir = $path . DIRECTORY_SEPARATOR . $file;    //构建子目录路径<br>        if($file == ‘.’ || $file == ‘..’) {<br>            continue;<br>        } else if(is_dir($sub_dir)) {    //如果是目录,进行递归</p>
+<pre><code>        $dirData[$file]=traverse($sub_dir);
+    } else {    //如果是文件,直接输出
+        $dirData[]=$file;
+
+    }
+}
+
+return $dirData;
+}
+$re=traverse($dir);
+//链接字符串
+$str=&quot;&lt;?php  return &quot;;
+$str.=var_export($re,true);
+$str .=&quot;;&quot;;
+//写入文件
+file_put_contents(&apos;./1.php&apos;,$str);
+$li=include_once  &apos;./1.php&apos;;
+file_put_contents(&apos;./1.txt&apos;,json_encode($li));
+if(json_last_error()===0){
+echo &quot;成功了&lt;a href=&apos;1.txt&apos;&gt;查看json&lt;/a&gt;&quot;;
+echo &quot;&lt;br&gt;&quot;;
+$data=include &apos;./1.php&apos;;
+var_dump($data);
+
+};
+///var_dump(getDir($dir));
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/PHP/php目录树json/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/适应安卓ios/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.083Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-PHP/json_encode" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>###碰到json不正常 又没办法处理，只能强行替换</p>
+<pre><code>&lt;?php
+
+$arr=&lt;&lt;&lt;STYI
+{&quot;i&quot;:&quot;&quot;肉类-谷类-水果（理想的互补性）各种水果和蔬菜（植物微量营养素的协同作用）&quot;&quot;,&quot;ti&quot;:&quot;&quot;,&quot;yn&quot;:&quot;&quot;,&quot;zhii&quot;:&quot;&quot;}
+STYI;
+/*去除特殊符号*/
+$arr=preg_replace(&apos;/\s/&apos;, &apos;&apos;, $arr);
+/*所有引号替换成单引号*/
+$arr=str_replace(array(&apos;&quot;&quot;&apos;),&quot;&apos;&apos;&quot;,$arr);
+/*保留最结尾空白值*/
+$arr=str_replace(array(&quot;&apos;&apos;}&quot;),&apos;&quot;&quot;}&apos;,$arr);
+/*将正常的空置替换成双引号*/
+$arr=str_replace(&quot;:&apos;&apos;,&quot;,&apos;:&quot;&quot;,&apos;,$arr);
+/*将不正常的开头结尾替换掉*/
+$arr=str_replace(&quot;:&apos;&apos;&quot;,&apos;:&quot;\&apos;&apos;,$arr);
+$arr=str_replace(&quot;&apos;&apos;,&quot;,&apos;\&apos;&quot;,&apos;,$arr);
+
+$arr=json_decode($arr,true);
+//echo json_last_error_msg();
+
+//var_dump($arr);die;
+
+?&gt;
+</code></pre><p>#php json_encode时中文被转义<br>        可以分析json错误原因<br>        json_last_error()</p>
+<pre><code>#这样就避免了中文转义
+json_encode($_FILES, JSON_UNESCAPED_UNICODE );
+
+下面的常量可以和 json_encode() 的 form 选项结合使用。
+
+JSON_HEX_TAG (integer)
+所有的 &lt; 和 &gt; 转换成 \u003C 和 \u003E。 自 PHP 5.3.0 起生效。
+JSON_HEX_AMP (integer)
+所有的 &amp; 转换成 \u0026。 自 PHP 5.3.0 起生效。
+JSON_HEX_APOS (integer)
+所有的 &apos; 转换成 \u0027。 自 PHP 5.3.0 起生效。
+JSON_HEX_QUOT (integer)
+所有的 &quot; 转换成 \u0022。 自 PHP 5.3.0 起生效。
+JSON_FORCE_OBJECT (integer)
+使一个非关联数组输出一个类（Object）而非数组。 在数组为空而接受者需要一个类（Object）的时候尤其有用。 自 PHP 5.3.0 起生效。
+JSON_NUMERIC_CHECK (integer)
+将所有数字字符串编码成数字（numbers）。 自 PHP 5.3.3 起生效。
+JSON_PRETTY_PRINT (integer)
+用空白字符格式化返回的数据。 自 PHP 5.4.0 起生效。
+JSON_UNESCAPED_SLASHES (integer)
+不要编码 /。 自 PHP 5.4.0 起生效。
+JSON_UNESCAPED_UNICODE (integer)
+以字面编码多字节 Unicode 字符（默认是编码成 \uXXXX）。 自 PHP 5.4.0 起生效。
+JSON 错误码
+    常量    含义    可用性
+    JSON_ERROR_NONE    没有错误发生     
+    JSON_ERROR_DEPTH    到达了最大堆栈深度     
+    JSON_ERROR_STATE_MISMATCH    无效或异常的 JSON     
+    JSON_ERROR_CTRL_CHAR    控制字符错误，可能是编码不对     
+    JSON_ERROR_SYNTAX    语法错误     
+    JSON_ERROR_UTF8    异常的 UTF-8 字符，也许是因为不正确的编码。    PHP 5.3.3
+    JSON_ERROR_RECURSION    One or more recursive references in the value to be encoded    PHP 5.5.0
+    JSON_ERROR_INF_OR_NAN    One or more NAN or INF values in the value to be encoded    PHP 5.5.0
+    JSON_ERROR_UNSUPPORTED_TYPE    指定的类型，值无法编码。    PHP 5.5.0
+    JSON_ERROR_INVALID_PROPERTY_NAME    指定的属性名无法编码。    PHP 7.0.0
+    JSON_ERROR_UTF16    畸形的 UTF-16 字符，可能因为字符编码不正确。    PHP 7.0.0
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/PHP/json_encode/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/路由追踪/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.081Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-nosql/redis主从" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>主Redis：192.168.10.1 6379<br>从redis：192.168.10.2 6380<br>一、主从配置<br>1、将主从redis配置文件redis.conf中的aemonize no 改为 yes<br>2、修改从redis配置文件redis.conf中的port 6379 改为 6380，添加slaveof 192.168.10.1 6379<br>3、启动主从服务</p>
+<pre><code> 主redis：      
+ [root@localhost redis-2.8.3]# src/redis-server /soft/redis-2.8.3-master/redis-2.8.3/redis.conf
+从redis：
+[root@localhost redis-2.8.3]# src/redis-server /soft/redis-2.8.3-slave/redis-2.8.3/redis.conf
+</code></pre><p>4、测试数据同步</p>
+<pre><code>  主redis：
+  [root@localhost redis-2.8.3]# src/redis-cli -p 6379
+ 127.0.0.1:6379&gt; set name abc
+ OK
+ 127.0.0.1:6379&gt; get name
+ &quot;abc&quot;
+ 127.0.0.1:6379&gt;
+从redis：
+  [root@localhost redis-2.8.3]# src/redis-cli -p 6380
+ 127.0.0.1:6380&gt; get name
+ &quot;abc&quot;
+ 127.0.0.1:6380&gt;
+</code></pre><p>5、默认是读写分离的</p>
+<pre><code>在从redis：
+[root@localhost redis-2.8.3]# src/redis-cli -p 6380
+127.0.0.1:6380&gt; set name 123
+(error) READONLY You can&apos;t write against a read only slave.
+</code></pre><p> 二、主从切换</p>
+<pre><code> 1、停止主redis
+ [root@localhost redis-2.8.3]# src/redis-cli -n 6379 shutdown
+ [root@localhost redis-2.8.3]# src/redis-cli -p 6379
+ Could not connect to Redis at 127.0.0.1:6379: Connection refused
+ not connected&gt;
+ 2、将从redis设成主redis
+ [root@localhost redis-2.8.3]# src/redis-cli -p 6380 slaveof NO ONE
+ OK
+3、测试从redis是否切换从主redis
+ [root@localhost redis-2.8.3]# src/redis-cli -p 6380
+ 127.0.0.1:6380&gt; set name 123
+ OK
+ 127.0.0.1:6380&gt; get name
+ &quot;123&quot;
+ 127.0.0.1:6380&gt;
+ 4、原来的主redis恢复正常了，要重新切换回去
+     1）将现在的主redis的数据进行保存
+ [root@localhost redis-2.8.3]# src/redis-cli -p 6380
+ 127.0.0.1:6380&gt; get name
+ &quot;abc&quot;
+ 127.0.0.1:6380&gt; set name 123
+ OK
+ 127.0.0.1:6380&gt; get name
+ &quot;123&quot;
+ 127.0.0.1:6380&gt; save
+ OK
+ 127.0.0.1:6380&gt; get name
+ &quot;123&quot;
+ 127.0.0.1:6380&gt;  
+   2）将现在的主redis根目录下dump.rdb文件拷贝覆盖到原来主redis的根目录
+   3）启动原来的主redis
+  [root@localhost redis-2.8.3]# src/redis-server /soft/redis-2.8.3-master/redis-2.8.3/redis.conf
+   4）在现在的主redis中切换
+  [root@localhost redis-2.8.3]# src/redis-cli -p 6380 slaveof 192.168.10.1 6379
+  OK
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/nosql/redis主从/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/架构搭建/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.079Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-nosql/memcache" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Memcache     php扩展安装 加个Memcache缓存。<br>一开始yum安装，因为PHP版本比较高。<br>而默认的二进制版memcache是由低版本编译的，所以就造成 Class ‘Memcache’not found的错误。<br>依赖Gcc c++</p>
+<blockquote>
+<p>sudo yum install gcc-c++</p>
+</blockquote>
+<p>安装依赖Libevent事件触发管理器。</p>
+<blockquote>
+<p> wget <a href="https://github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz" target="_blank" rel="external">https://github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz</a></p>
+<p>tar vxf libevent-2.0.21-stable.tar.gz</p>
+<p>cd libevent-2.0.21-stable</p>
+<p>./configure -prefix=/usr/local/libevent    # ./configure</p>
+<p>make &amp;&amp; make install</p>
+<p>yum install libevent-devel</p>
+</blockquote>
+<p>安装memcache</p>
+<blockquote>
+<p> wget <a href="https://github.com/websupport-sk/pecl-memcache/archive/php7.zip" target="_blank" rel="external">https://github.com/websupport-sk/pecl-memcache/archive/php7.zip</a> </p>
+<p> unzip php7.zip </p>
+<p> cd  pecl-memcache-php7</p>
+<p> phpize</p>
+<p> ./configure –with-php-config=/usr/local/php/bin/php-config</p>
+<p> make &amp;&amp; make install</p>
+</blockquote>
+<p>在php.ini的最下面添加</p>
+<blockquote>
+<p>[memcache]</p>
+<p>extension_dir = “/usr/local/php70/lib/php/extensions/no-debug-non-zts-20151012/“</p>
+<p>extension = “memcache.so”</p>
+</blockquote>
+<p>安装memcached 3.0.3扩展<br>需要依赖libmemcached</p>
+<pre><code>wget https://launchpadlibrarian.net/165454254/libmemcached-1.0.18.tar.gz    
+tar -zxvf libmemcached-1.0.18.tar.gz 
+cd libmemcached-1.0.18/
+./configure --prefix=/usr/local/libmemcached  
+make 
+make &amp; make install
+
+
+wget http://pecl.php.net/get/memcached-3.0.3.tgz
+cd memcached-3.0.3/
+./configure 
+./configure  --with-libmemcached-dir=/usr/local/libmemcached
+make insatll
+make install
+</code></pre><p>在php.ini的最下面添加</p>
+<blockquote>
+<p>[memcached]</p>
+<p>extension_dir = “/usr/local/php70/lib/php/extensions/no-debug-non-zts-20151012/“</p>
+<p>extension = “memcached.so”</p>
+</blockquote>
+<p>编译安装Memcached</p>
+<blockquote>
+<p>wget <a href="http://memcached.org/files/memcached-1.4.25.tar.gz" target="_blank" rel="external">http://memcached.org/files/memcached-1.4.25.tar.gz</a></p>
+<p>tar vxf memcached-1.4.25.tar.gz</p>
+<p>cd memcached-1.4.25</p>
+<p>./configure -with-libevent=/usr/local/libevent   # ./configure</p>
+<p>make &amp;&amp; make install</p>
+</blockquote>
+<p>启动Memcache</p>
+<blockquote>
+<p> /usr/local/bin/memcached -d -m 128 -l 127.0.0.1 -p 11211 -u root   # (128为内存, 11211为端口,root为用户组)</p>
+</blockquote>
+<p>验证启动：<br>ps aux|grep memcached</p>
+<p>重启php-fpm ，重新加载nginx</p>
+<blockquote>
+<p>pkill php-fpm</p>
+<p>/usr/local/php/sbin/php-fpm </p>
+<p>/usr/local/src/nginx/sbin/nginx -s reload</p>
+</blockquote>
+<p>浏览器访问test.php,文件内容，检测是否整合php</p>
+<pre><code>&lt;?php
+$mem = new memcache;
+$mem-&gt;connect(&apos;localhost&apos;, 11211);
+$mem-&gt;set(&apos;key&apos;, &apos;cbam_liangshu!&apos;);
+$val = $mem-&gt;get(&apos;key&apos;);
+echo $val;
+?&gt;
+</code></pre><p>安装完成，此时可以通过telnet 连接memcache服务器并 通过stats命令查看Memcache的工作状态。</p>
+<blockquote>
+<p>telnet localhost 11211</p>
+</blockquote>
+<p>刷新缓存</p>
+<blockquote>
+<p>flush_all</p>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/nosql/memcache/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/数据库主从复制/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.066Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Mysql/储存过程储存函及慢查询优化" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&lt;!DOCTYPE html&gt;</p>
+<html lang="en"><br><head><br>    <meta charset="UTF-8"><br>    <title>Document</title><br></head><br><body><br><br><dt><br>开启慢查询日志<br></dt><br><dl><br>        <pre><br>    log-slow-queries: 代表MYSQL慢查询的日志存储目录, 此目录文件一定要有写权限；<br><br>    Windows下需要写绝对路径，如：log-slow-queries=”C:/Program Files/MySQL/MySQL Server 5.5/log/mysql-slow.log”<br><br>    long_query_time: 最长执行时间. (如图, MSYQL将记录下所有执行时间超过2条的SQL语句, 此处为测试时间, 时间不应太小最好在5-10秒之内, 当然可以根据自己的标准而定);<br>            </pre><br></dl><br><br><dt><br><br>    数据库函数<br></dt><br><dl><br>    <pre><br>    Function: nowtime<br>    sql_mode: STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION<br>    Create Function: CREATE DEFINER=<code>root</code>@<code>%</code> FUNCTION <code>nowtime</code>() RETURNS int(11)<br>    BEGIN<br>    #Routine body goes here…<br>    DECLARE v1 INT DEFAULT 0;<br><br>    WHILE v1 &lt; 1000000 DO<br>    INSERT INTO <code>111</code>.test SET <code>111</code>.test.testid=v1;<br>    SET v1 = v1 +1;<br>    END WHILE;<br>    RETURN v1;<br>    END<br>    character_set_client: utf8<br>    collation_connection: utf8_general_ci<br>    Database Collation: utf8_general_ci<br></pre><br><br></dl><br><dt><br></dt><br><dl><br><pre><br><br># 创建存储过程<br>delimiter //<br>CREATE PROCEDURE GET_DSRXX(IN id VARCHAR(50))<br>BEGIN<br>    # 获取当事人信息[存储过程] Mysql对变量名大小写不敏感，所以变量名尽量不要一致；<br>    # 案件类型<br>    DECLARE ajlx VARCHAR(20);<br>    # 审判程序<br>    DECLARE cx VARCHAR(20);<br>    # 字典项代码<br>    DECLARE zdlx VARCHAR(20);<br>    # 查询案件信息<br>    SELECT AJLB, SPCX INTO ajlx, cx FROM TD_AJJBXX WHERE AJID = id;<br>    CASE ajlx<br>        WHEN ‘1’ THEN<br>            CASE cx<br>                WHEN ‘1’ THEN SET zdlx = ‘DIC_XSYS_DSRSSDW’;<br>                WHEN ‘2’ THEN SET zdlx = ‘DIC_XSES_DSRSSDW’;<br>                WHEN ‘4’ THEN SET zdlx = ‘DIC_XSZS_DSRSSDW’;<br>            END CASE;<br>        WHEN ‘2’ THEN<br>            CASE cx<br>                WHEN ‘1’ THEN SET zdlx = ‘DIC_MSYS_DSRSSDW’;<br>                WHEN ‘2’ THEN SET zdlx = ‘DIC_MSES_DSRSSDW’;<br>                WHEN ‘4’ THEN SET zdlx = ‘DIC_MSZS_DSRSSDW’;<br>            END CASE;<br>        WHEN ‘6’ THEN<br>            CASE cx<br>                WHEN ‘1’ THEN SET zdlx = ‘DIC_XZYS_DSRSSDW’;<br>                WHEN ‘2’ THEN SET zdlx = ‘DIC_XZES_DSRSSDW’;<br>                WHEN ‘4’ THEN SET zdlx = ‘DIC_XZZS_DSRSSDW’;<br>            END CASE;<br>        WHEN ‘7’ THEN SET zdlx = ‘DIC_PC_DSRSSDW’;<br>        WHEN ‘8’ THEN SET zdlx = ‘DIC_ZX_DSRSSDW’;<br>    END CASE;<br>    # 查询当事人信息/字典项名称<br>    SELECT (SELECT ZDXMC FROM TD_ZDX WHERE ZDLXDM = zdlx AND ZDXDM = SSDW) AS SSDW, GROUP_CONCAT(DSRMC) AS DSRMC FROM TD_DSR WHERE AJID = id GROUP BY SSDW;<br>END //<br>delimiter;<br><br># 执行存储过程<br>CALL GET_DSRXX(‘1442541348467’);  </pre></dl><br><pre><br>    网上有很多的文章教怎么配置MySQL服务器，但考虑到服务器硬件配置的不同，具体应用的差别，那些文章的做法只能作为初步设置参考，我们需要根据自己的情况进行配置优化，好的做法是MySQL服务器稳定运行了一段时间后运行，根据服务器的”状态”进行优化。<br>　　mysql&gt; show global status;<br>　　可以列出MySQL服务器运行各种状态值，另外，查询MySQL服务器配置信息语句：<br>　　mysql&gt; show variables;<br>　　一、慢查询<br>　　mysql&gt; show variables like ‘%slow%’;<br>　　+——————+——-+<br>　　| Variable_name | Value |<br>　　+——————+——-+<br>　　| log_slow_queries | ON |<br>　　| slow_launch_time | 2 |<br>　　+——————+——-+<br>　　mysql&gt; show global status like ‘%slow%’;<br>　　+———————+——-+<br>　　| Variable_name | Value |<br>　　+———————+——-+<br>　　| Slow_launch_threads | 0 |<br>　　| Slow_queries | 4148 |<br>　　+———————+——-+　　<br>        配置中打开了记录慢查询，执行时间超过2秒的即为慢查询，系统显示有4148个慢查询，你可以分析慢查询日志，找出有问题的SQL语句，慢查询时间不宜设置过长，否则意义不大，最好在5秒以内，如果你需要微秒级别的慢查询，可以考虑给MySQL打补丁：<a href="http://www.percona.com/docs/wiki/release:start，记得找对应的版本。" target="_blank" rel="external">http://www.percona.com/docs/wiki/release:start，记得找对应的版本。</a><br>　　打开慢查询日志可能会对系统性能有一点点影响，如果你的mysql是主-从结构，可以考虑打开其中一台从服务器的慢查询日志，这样既可以监控慢查询，对系统性能影响又小。<br><br><br>　　二、连接数<br>　　经常会遇见”MySQL: ERROR 1040: Too many connections”的情况，一种是访问量确实很高，MySQL服务器抗不住，这个时候就要考虑增加从服务器分散读压力，另外一种情况是MySQL配置文件中max_connections值过小：<br>　　mysql&gt; show variables like ‘max_connections’;<br>　　+—————–+——-+<br>　　| Variable_name | Value |<br>　　+—————–+——-+<br>　　| max_connections | 256 |<br>　　+—————–+——-+　　<br><br>       这台MySQL服务器最大连接数是256，然后查询一下服务器响应的最大连接数：<br>　　mysql&gt; show global status like ‘Max_used_connections’;<br>　　MySQL服务器过去的最大连接数是245，没有达到服务器连接数上限256，应该没有出现1040错误，比较理想的设置是：<br>　　Max_used_connections / max_connections <em> 100% ≈ 85%<br>　　最大连接数占上限连接数的85%左右，如果发现比例在10%以下，MySQL服务器连接数上限设置的过高了。<br><br><br>　　三、Key_buffer_size<br>　　key_buffer_size是对MyISAM表性能影响最大的一个参数，下面一台以MyISAM为主要存储引擎服务器的配置：<br>　　mysql&gt; show variables like ‘key_buffer_size’;<br>　　+—————–+————+<br>　　| Variable_name | Value |<br>　　+—————–+————+<br>　　| key_buffer_size | 536870912 |<br>　　+—————–+————+　　<br><br>       分配了512MB内存给key_buffer_size，我们再看一下key_buffer_size的使用情况：<br>　　mysql&gt; show global status like ‘key_read%’;<br>　　+————————+————-+<br>　　| Variable_name | Value | mysql<br>　　+————————+————-+<br>　　| Key_read_requests | 27813678764 |<br>　　| Key_reads | 6798830 |<br>　　+————————+————-+　　<br><br>       一共有27813678764个索引读取请求，有6798830个请求在内存中没有找到直接从硬盘读取索引，计算索引未命中缓存的概率：<br>　　key_cache_miss_rate = Key_reads / Key_read_requests </em> 100%<br>　　比如上面的数据，key_cache_miss_rate为0.0244%，4000个索引读取请求才有一个直接读硬盘，已经很BT了,key_cache_miss_rate在0.1%以下都很好(每1000个请求有一个直接读硬盘)，如果key_cache_miss_rate在0.01%以下的话，key_buffer_size分配的过多，可以适当减少。<br>　　MySQL服务器还提供了key<em>blocks</em><em>参数：<br>　　mysql&gt; show global status like ‘key_blocks_u%’;<br>　　+————————+————-+<br>　　| Variable_name | Value |<br>　　+————————+————-+<br>　　| Key_blocks_unused | 0 |<br>　　| Key_blocks_used | 413543 |<br>　　+————————+————-+　　<br><br>       Key_blocks_unused表示未使用的缓存簇(blocks)数，Key_blocks_used表示曾经用到的最大的blocks数，比如这台服务器，所有的缓存都用到了，要么增加key_buffer_size，要么就是过渡索引了，把缓存占满了。比较理想的设置：<br>　　Key_blocks_used / (Key_blocks_unused + Key_blocks_used) </em> 100% ≈ 80%<br><br><br>　　四、临时表<br>　　mysql&gt; show global status like ‘created_tmp%’;<br>　　+————————-+———+<br>　　| Variable_name | Value |<br>　　+————————-+———+<br>　　| Created_tmp_disk_tables | 21197 |<br>　　| Created_tmp_files | 58 |<br>　　| Created_tmp_tables | 1771587 |<br>　　+————————-+———+　　<br><br>       每次创建临时表，Created_tmp_tables增加，如果是在磁盘上创建临时表，Created_tmp_disk_tables也增加,Created_tmp_files表示MySQL服务创建的临时文件文件数，比较理想的配置是：<br>　　Created_tmp_disk_tables / Created_tmp_tables <em> 100% &lt;= 25%<br>　　比如上面的服务器Created_tmp_disk_tables / Created_tmp_tables </em> 100% = 1.20%，应该相当好了。我们再看一下MySQL服务器对临时表的配置：<br>　　mysql&gt; show variables where Variable_name in (‘tmp_table_size’, ‘max_heap_table_size’);<br>　　+———————+———–+<br>　　| Variable_name | Value |<br>　　+———————+———–+<br>　　| max_heap_table_size | 268435456 |<br>　　| tmp_table_size | 536870912 |<br>　　+———————+———–+　　<br><br>      只有256MB以下的临时表才能全部放内存，超过的就会用到硬盘临时表。<br>　　五、Open Table情况<br>　　mysql&gt; show global status like ‘open%tables%’;<br>　　+—————+——-+<br>　　| Variable_name | Value |<br>　　+—————+——-+<br>　　| Open_tables | 919 |<br>　　| Opened_tables | 1951 |<br>　　+—————+——-+　　<br><br>      Open_tables表示打开表的数量，Opened_tables表示打开过的表数量，如果Opened_tables数量过大，说明配置中table_cache(5.1.3之后这个值叫做table_open_cache)值可能太小，我们查询一下服务器table_cache值：<br>　　mysql&gt; show variables like ‘table_cache’;<br>　　+—————+——-+<br>　　| Variable_name | Value |<br>　　+—————+——-+<br>　　| table_cache | 2048 |<br>　　+—————+——-+<br>　　比较合适的值为：<br>　　Open_tables / Opened_tables <em> 100% &gt;= 85%<br>　　Open_tables / table_cache </em> 100% &lt;= 95%<br><br><br>　　六、进程使用情况<br>　　mysql&gt; show global status like ‘Thread%’;<br>　　+——————-+——-+<br>　　| Variable_name | Value |<br>　　+——————-+——-+<br>　　| Threads_cached | 46 |<br>　　| Threads_connected | 2 |<br>　　| Threads_created | 570 |<br>　　| Threads_running | 1 |<br>　　+——————-+——-+　　<br><br>      如果我们在MySQL服务器配置文件中设置了thread_cache_size，当客户端断开之后，服务器处理此客户的线程将会缓存起来以响应下一个客户而不是销毁(前提是缓存数未达上限)。Threads_created表示创建过的线程数，如果发现Threads_created值过大的话，表明MySQL服务器一直在创建线程，这也是比较耗资源，可以适当增加配置文件中thread_cache_size值，查询服务器thread_cache_size配置：<br>　　mysql&gt; show variables like ‘thread_cache_size’;<br>　　+——————-+——-+<br>　　| Variable_name | Value |<br>　　+——————-+——-+<br>　　| thread_cache_size | 64 |<br>　　+——————-+——-+　　<br><br>      示例中的服务器还是挺健康的。<br><br><br>　　七、查询缓存(query cache)<br>　　mysql&gt; show global status like ‘qcache%’;<br>　　+————————-+———–+<br>　　| Variable_name | Value |<br>　　+————————-+———–+<br>　　| Qcache_free_blocks | 22756 |<br>　　| Qcache_free_memory | 76764704 |<br>　　| Qcache_hits | 213028692 |<br>　　| Qcache_inserts | 208894227 |<br>　　| Qcache_lowmem_prunes | 4010916 |<br>　　| Qcache_not_cached | 13385031 |<br>　　| Qcache_queries_in_cache | 43560 |<br>　　| Qcache_total_blocks | 111212 |<br>　　+————————-+———–+　　<br><br>       MySQL查询缓存变量解释：<br>　　Qcache_free_blocks：缓存中相邻内存块的个数。数目大说明可能有碎片。FLUSH QUERY CACHE会对缓存中的碎片进行整理，从而得到一个空闲块。<br>　　Qcache_free_memory：缓存中的空闲内存。<br>　　Qcache_hits：每次查询在缓存中命中时就增大<br>　　Qcache_inserts：每次插入一个查询时就增大。命中次数除以插入次数就是不中比率。<br>　　Qcache_lowmem_prunes：缓存出现内存不足并且必须要进行清理以便为更多查询提供空间的次数。这个数字最好长时间来看;如果这个数字在不断增长，就表示可能碎片非常严重，或者内存很少。(上面的 free_blocks和free_memory可以告诉您属于哪种情况)<br>　　Qcache_not_cached：不适合进行缓存的查询的数量，通常是由于这些查询不是 SELECT 语句或者用了now()之类的函数。<br>　　Qcache_queries_in_cache：当前缓存的查询(和响应)的数量。<br>　　Qcache_total_blocks：缓存中块的数量。<br>　　我们再查询一下服务器关于query_cache的配置：<br>　　mysql&gt; show variables like ‘query_cache%’;<br>　　+——————————+———–+<br>　　| Variable_name | Value |<br>　　+——————————+———–+<br>　　| query_cache_limit | 2097152 |<br>　　| query_cache_min_res_unit | 4096 |<br>　　| query_cache_size | 203423744 |<br>　　| query_cache_type | ON |<br>　　| query_cache_wlock_invalidate | OFF |<br><br>       +——————————+———–+<br>　　各字段的解释：<br>　　query_cache_limit：超过此大小的查询将不缓存<br>　　query_cache_min_res_unit：缓存块的最小大小<br>　　query_cache_size：查询缓存大小<br>　　query_cache_type：缓存类型，决定缓存什么样的查询，示例中表示不缓存 select sql_no_cache 查询<br>　　query_cache_wlock_invalidate：当有其他客户端正在对MyISAM表进行写操作时，如果查询在query cache中，是否返回cache结果还是等写操作完成再读表获取结果。<br>　　query_cache_min_res_unit的配置是一柄”双刃剑”，默认是4KB，设置值大对大数据查询有好处，但如果你的查询都是小数据查询，就容易造成内存碎片和浪费。<br>　　查询缓存碎片率 = Qcache_free_blocks / Qcache_total_blocks <em> 100%<br>　　如果查询缓存碎片率超过20%，可以用FLUSH QUERY CACHE整理缓存碎片，或者试试减小query_cache_min_res_unit，如果你的查询都是小数据量的话。<br>　　查询缓存利用率 = (query_cache_size - Qcache_free_memory) / query_cache_size </em> 100%<br>　　查询缓存利用率在25%以下的话说明query_cache_size设置的过大，可适当减小;查询缓存利用率在80%以上而且Qcache_lowmem_prunes &gt; 50的话说明query_cache_size可能有点小，要不就是碎片太多。<br>　　查询缓存命中率 = (Qcache_hits - Qcache_inserts) / Qcache_hits <em> 100%<br>　　示例服务器 查询缓存碎片率 = 20.46%，查询缓存利用率 = 62.26%，查询缓存命中率 = 1.94%，命中率很差，可能写操作比较频繁吧，而且可能有些碎片。<br><br><br>　　八、排序使用情况<br>　　mysql&gt; show global status like ‘sort%’;<br>　　+——————-+————+<br>　　| Variable_name | Value |<br>　　+——————-+————+<br>　　| Sort_merge_passes | 29 |<br>　　| Sort_range | 37432840 |<br>　　| Sort_rows | 9178691532 |<br>　　| Sort_scan | 1860569 |<br>　　+——————-+————+　　<br><br>       Sort_merge_passes 包括两步。MySQL 首先会尝试在内存中做排序，使用的内存大小由系统变量 Sort_buffer_size 决定，如果它的大小不够把所有的记录都读到内存中，MySQL 就会把每次在内存中排序的结果存到临时文件中，等 MySQL 找到所有记录之后，再把临时文件中的记录做一次排序。这再次排序就会增加 Sort_merge_passes。实际上，MySQL 会用另一个临时文件来存再次排序的结果，所以通常会看到 Sort_merge_passes 增加的数值是建临时文件数的两倍。因为用到了临时文件，所以速度可能会比较慢，增加 Sort_buffer_size 会减少 Sort_merge_passes 和 创建临时文件的次数。但盲目的增加 Sort_buffer_size 并不一定能提高速度，见 How fast can you sort data with MySQL?(引自<a href="http://qroom.blogspot.com/2007/09/mysql-select-sort.html，貌似被墙" target="_blank" rel="external">http://qroom.blogspot.com/2007/09/mysql-select-sort.html，貌似被墙</a>) mysql<br>　　另外，增加read_rnd_buffer_size(3.2.3是record_rnd_buffer_size)的值对排序的操作也有一点的好处，参见：<a href="http://www.mysqlperformanceblog.com/2007/07/24/what-exactly-is-read_rnd_buffer_size/" target="_blank" rel="external">http://www.mysqlperformanceblog.com/2007/07/24/what-exactly-is-read_rnd_buffer_size/</a><br><br><br>　　九、文件打开数(open_files)<br>　　mysql&gt; show global status like ‘open_files’;<br>　　+—————+——-+<br>　　| Variable_name | Value |<br>　　+—————+——-+<br>　　| Open_files | 1410 |<br>　　+—————+——-+<br>　　mysql&gt; show variables like ‘open_files_limit’;<br>　　+——————+——-+<br>　　| Variable_name | Value |<br>　　+——————+——-+<br>　　| open_files_limit | 4590 |<br>　　+——————+——-+　　<br><br>      比较合适的设置：Open_files / open_files_limit </em> 100% &lt;= 75%<br><br><br>　　十、表锁情况<br>　　mysql&gt; show global status like ‘table_locks%’;<br>　　+———————–+———–+<br>　　| Variable_name | Value |<br>　　+———————–+———–+<br>　　| Table_locks_immediate | 490206328 |<br>　　| Table_locks_waited | 2084912 |<br>　　+———————–+———–+　　<br><br>       Table_locks_immediate表示立即释放表锁数，Table_locks_waited表示需要等待的表锁数，如果Table_locks_immediate / Table_locks_waited &gt; 5000，最好采用InnoDB引擎，因为InnoDB是行锁而MyISAM是表锁，对于高并发写入的应用InnoDB效果会好些。示例中的服务器Table_locks_immediate / Table_locks_waited = 235，MyISAM就足够了。<br><br><br>　　十一、表扫描情况<br>　　mysql&gt; show global status like ‘handler_read%’;<br>　　+———————–+————-+<br>　　| Variable_name | Value |<br>　　+———————–+————-+<br>　　| Handler_read_first | 5803750 |<br>　　| Handler_read_key | 6049319850 |<br>　　| Handler_read_next | 94440908210 |<br>　　| Handler_read_prev | 34822001724 |<br>　　| Handler_read_rnd | 405482605 |<br>　　| Handler_read_rnd_next | 18912877839 |<br>　　+———————–+————-+　　<br><br>        各字段解释参见<a href="http://hi.baidu.com/thinkinginlamp/blog/item/31690cd7c4bc5cdaa144df9c.html，调出服务器完成的查询请求次数：" target="_blank" rel="external">http://hi.baidu.com/thinkinginlamp/blog/item/31690cd7c4bc5cdaa144df9c.html，调出服务器完成的查询请求次数：</a><br>　　mysql&gt; show global status like ‘com_select’;<br>　　+—————+———–+<br>　　| Variable_name | Value |<br>　　+—————+———–+<br>　　| Com_select | 222693559 |<br>　　+—————+———–+　　<br><br>       计算表扫描率：<br>　　表扫描率 = Handler_read_rnd_next / Com_select<br>　　如果表扫描率超过4000，说明进行了太多表扫描，很有可能索引没有建好，增加read_buffer_size值会有一些好处，但最好不要超过8MB。<br>　　后记：<br>　　文中提到一些数字都是参考值，了解基本原理就可以，除了MySQL提供的各种status值外，操作系统的一些性能指标也很重要，比如常用的top,iostat等，尤其是iostat，现在的系统瓶颈一般都在磁盘IO上，关于iostat的使用.<br></pre><br><br></body><br></html>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/Mysql/储存过程储存函及慢查询优化/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/github个人主页markddown在线文档建立手段/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.052Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Mysql/pdo或phpMyAdmin2002错误" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="php-pdo-mysql错误"><a href="#php-pdo-mysql错误" class="headerlink" title="php  pdo  mysql错误"></a>php  pdo  mysql错误</h1><p>#2002 - No such file or directory &amp; mdash;<br>是因为php没有指定对应的mysql.sock</p>
+<blockquote>
+<p>Mysql有两种连接方式：<br>（1），TCP/IP<br>（2），socket<br>对mysql.sock来说，其作用是程序与mysqlserver处于同一台机器，发起本地连接时可用。<br>例如你无须定义连接host的具体IP地址，只要为空或localhost就可以。<br>在此种情况下，即使你改变mysql的外部port也是一样可能正常连接。<br>因为你在my.ini中或my.cnf中改变端口后，mysql.sock是随每一次 mysql server启动生成的。已经根据你在更改完my.cnf后重启mysql时重新生成了一次，信息已跟着变更。<br>那么对于外部连接，必须是要变更port才能连接的。<br>linux下安装mysql连接的时候经常回提示说找不到mysql.sock文件，解决办法很简单：<br>如果是新安装的mysql，提示找不到文件，就搜索下，指定正确的位置。<br>如果mysql.sock文件误删的话，就需要重启mysql服务，如果重启成功的话会在datadir目录下面生成mysql.sock 到时候指定即可。</p>
+</blockquote>
+<p>首先查看mysql.sock在那个位置</p>
+<pre><code>&gt;  find / -name mysql.sock
+</code></pre><p>找到对应的位置后到php.ini填写上对应的 ${path}是你的.sock路径</p>
+<pre><code>mysql.default_socket = /${path}/mysql.sock
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/Mysql/pdo或phpMyAdmin2002错误/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/virtualBox/盘容量调整/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.047Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Mysql/mysql数据酷密码重置" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1.当我们备份数据时，从其它库拷过来的.sql脚本，这个sql脚本是全部备份的。</p>
+<p>这时如果两个数据库版本不一样，就会出现不能登录等问题，这时我们唯有初始化。其关键问题在全备时mysql库发生变化，造成密码等错误。</p>
+<p>—–解决方法：</p>
+<pre><code>如果安装是二进制版本的：
+</code></pre><h1 id="rm-rf-数据库data文件夹"><a href="#rm-rf-数据库data文件夹" class="headerlink" title="rm -rf 数据库data文件夹"></a>rm -rf 数据库data文件夹</h1><h1 id="cd-mysql-bin"><a href="#cd-mysql-bin" class="headerlink" title="cd mysql/bin"></a>cd mysql/bin</h1><h1 id="mysqld-–initialize-–user-mysql-–mysql5-7版本初始化"><a href="#mysqld-–initialize-–user-mysql-–mysql5-7版本初始化" class="headerlink" title="mysqld –initialize –user=mysql      –mysql5.7版本初始化"></a>mysqld –initialize –user=mysql      –mysql5.7版本初始化</h1><h1 id="bin-mysql-install-db-–user-mysql-–5-6到5-7版本"><a href="#bin-mysql-install-db-–user-mysql-–5-6到5-7版本" class="headerlink" title="bin/mysql_install_db –user=mysql       –5.6到5.7版本"></a>bin/mysql_install_db –user=mysql       –5.6到5.7版本</h1><p>这时页面最下方会出现初始化后的密码，然后我们登录数据库输入刚才记录的密码。</p>
+<p>mysql&gt;alter user ‘root’@’localhost’ identified by ‘新密码’;</p>
+<p>方法1： 用SET PASSWORD命令<br>首先登录MySQL。<br>格式：mysql&gt; set password for 用户名@localhost = password(‘新密码’);<br>例子：mysql&gt; set password for root@localhost = password(‘123’); </p>
+<p>方法2：用mysqladmin<br>格式：mysqladmin -u用户名 -p旧密码 password 新密码<br>例子：mysqladmin -uroot -p123456 password 123 </p>
+<p>方法3：用UPDATE直接编辑user表<br>首先登录MySQL。<br>mysql&gt; use mysql;<br>mysql&gt; update user set password=password(‘123’) where user=’root’ and host=’localhost’;<br>mysql&gt; flush privileges; </p>
+<p>方法4：在忘记root密码的时候，可以这样<br>以windows为例： </p>
+<ol>
+<li>关闭正在运行的MySQL服务。 </li>
+<li>打开DOS窗口，转到mysql\bin目录。 </li>
+<li>输入mysqld –skip-grant-tables 回车。–skip-grant-tables 的意思是启动MySQL服务的时候跳过权限表认证。 </li>
+<li>再开一个DOS窗口（因为刚才那个DOS窗口已经不能动了），转到mysql\bin目录。 </li>
+<li>输入mysql回车，如果成功，将出现MySQL提示符 &gt;。 </li>
+<li>连接权限数据库： use mysql; 。 </li>
+<li>改密码：update user set password=password(“123”) where user=”root”;（别忘了最后加分号） 。 </li>
+<li>刷新权限（必须步骤）：flush privileges;　。 </li>
+<li>退出 quit。 </li>
+<li>注销系统，再进入，使用用户名root和刚才设置的新密码123登录</li>
+</ol>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/Mysql/mysql数据酷密码重置/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/正在学习中2017-8-5/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.041Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Mysql/mysql安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Mysql     yum安装<br>先去网<a href="https://dev.mysql.com/downloads/repo/yum/" target="_blank" rel="external">https://dev.mysql.com/downloads/repo/yum/</a><br>下载对应系统的rpm包<br><a href="https://repo.mysql.com//mysql57-community-release-el6-9.noarch.rpm" target="_blank" rel="external">https://repo.mysql.com//mysql57-community-release-el6-9.noarch.rpm</a></p>
+<p>rpm –ivh   mysql57-community-release-el6-9.noarch.rpm<br>然后后就可以开心的yum 安装了</p>
+<p>如果不知道当前使用的配置文件的路径，可以尝试下面的操作：</p>
+<h1 id="which-mysqld"><a href="#which-mysqld" class="headerlink" title="which mysqld"></a>which mysqld</h1><p>/usr/local/mysql/bin/mysqld</p>
+<h1 id="usr-local-mysql-bin-mysqld-–verbose-–help-grep-A-1-‘Default-options’"><a href="#usr-local-mysql-bin-mysqld-–verbose-–help-grep-A-1-‘Default-options’" class="headerlink" title="/usr/local/mysql/bin/mysqld –verbose –help |grep -A 1 ‘Default options’"></a>/usr/local/mysql/bin/mysqld –verbose –help |grep -A 1 ‘Default options’</h1><p>2016-06-02 16:49:39 0 [Note] /usr/local/mysql/bin/mysqld (mysqld 5.6.25-log) starting as process 8253 …<br>2016-06-02 16:49:41 8253 [Note] Plugin ‘FEDERATED’ is disabled.<br>Default options are read from the following files in the given order: 默认的选项是按照给定的顺序读取从以下文件:<br>/etc/mysql/my.cnf /etc/my.cnf ~/.my.cnf </p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/Mysql/mysql安装/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/2017-8-8scrapy爬虫框架上手/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.040Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-linux/命令学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="linux命令笔记"><a href="#linux命令笔记" class="headerlink" title="linux命令笔记"></a>linux命令笔记</h1><pre><code>查找文件
+find / -name ***
+查找文件
+whereis **
+查找程序
+which php
+
+scp是有Security的文件copy，基于ssh登录。操作起来比较方便，比如要把当前一个文件copy到远程另外一台主机上，可以如下命令。
+
+scp /home/1.gz root@192.168.1.206:/home/
+
+然后会提示你输入另外那台172.19.2.75主机的root用户的登录密码，接着就开始copy了。
+如果想反过来操作，把文件从远程主机copy到当前系统，也很简单。
+
+scp root@192.168.1.100:/home/1.gz home/1.gz
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/linux/命令学习/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-  
-    </div></section>
-  
 
-    
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+  
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2017/09/page/2/">2</a><a class="page-number" href="/archives/2017/09/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2017/09/page/5/">5</a><a class="extend next" rel="next" href="/archives/2017/09/page/2/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
     </nav>
   
 
@@ -395,9 +1013,9 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: false,
+		isHome: true,
 		isPost: false,
-		isArchive: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

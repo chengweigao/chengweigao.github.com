@@ -6,15 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://chengweigao.github.io">
-  <title>Archives: 2017/9 | Hexo</title>
+  <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="目录 开发环境安装    3 CentOS6.5中修改yum源    3 要解压很简单 ：    4 安装php7.0    4 CentOS 6.5 双网卡配置一个上外网一个接局域网1、配置DNS修改对应网卡的DNS的配置文件 vi /etc/resolv.conf修改以下内容，可以设置多个：nameserver 202.106.0.20nameserver 114.114.114.1142、配">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="https://chengweigao.github.io/archives/2017/09/index.html">
+<meta property="og:url" content="https://chengweigao.github.io/2017/09/19/linux/6.5centos64/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="目录 开发环境安装    3 CentOS6.5中修改yum源    3 要解压很简单 ：    4 安装php7.0    4 CentOS 6.5 双网卡配置一个上外网一个接局域网1、配置DNS修改对应网卡的DNS的配置文件 vi /etc/resolv.conf修改以下内容，可以设置多个：nameserver 202.106.0.20nameserver 114.114.114.1142、配">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-08-21T08:13:31.535Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="目录 开发环境安装    3 CentOS6.5中修改yum源    3 要解压很简单 ：    4 安装php7.0    4 CentOS 6.5 双网卡配置一个上外网一个接局域网1、配置DNS修改对应网卡的DNS的配置文件 vi /etc/resolv.conf修改以下内容，可以设置多个：nameserver 202.106.0.20nameserver 114.114.114.1142、配">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -144,235 +148,212 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-linux/6.5centos64" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>目录</p>
+<p>开发环境安装    3</p>
+<p>CentOS6.5中修改yum源    3</p>
+<p>要解压很简单 ：    4</p>
+<p>安装php7.0    4</p>
+<p>CentOS 6.5 双网卡配置一个上外网一个接局域网<br>1、配置DNS<br>修改对应网卡的DNS的配置文件</p>
+<h1 id="vi-etc-resolv-conf"><a href="#vi-etc-resolv-conf" class="headerlink" title="vi /etc/resolv.conf"></a>vi /etc/resolv.conf</h1><p>修改以下内容，可以设置多个：<br>nameserver 202.106.0.20<br>nameserver 114.114.114.114<br>2、配置外网网卡的网关<br>修改网关的配置文件</p>
+<p><code>[root@centos]# vi /etc/sysconfig/network</code></p>
+<p>修改以下内容<br>NETWORKING=yes(表示系统是否使用网络，一般设置为yes。如果设为no，则不能使用网络，而且很多系统服务程序将无法启动)<br>HOSTNAME=centos(设置本机的主机名，这里设置的主机名要和/etc/hosts中设置的主机名对应)<br>GATEWAY=192.168.1.1(注意：这里需要配置为外网网卡的网关)<br>3、配置IP地址<br>修改对应网卡的IP地址的配置文件</p>
+<p><code># vi /etc/sysconfig/network-scripts/ifcfg-eth0</code></p>
+<p>修改以下内容</p>
+<p><code>DEVICE=eth0 #描述网卡对应的设备别名，例如ifcfg-eth0的文件中它为eth0，Dell服务器的一般为：em1、em2
+BOOTPROTO=static #设置网卡获得ip地址的方式，可能的选项为static，dhcp或bootp，分别对应静态指定的 ip地址，通过dhcp协议获得的ip地址，通过bootp协议获得的ip地址
+BROADCAST=192.168.0.255 #对应的子网广播地址
+HWADDR=00:07:E9:05:E8:B4 #对应的网卡物理地址
+IPADDR=12.168.1.2 #如果设置网卡获得 ip地址的方式为静态指定，此字段就指定了网卡对应的ip地址
+GATEWAY= #注意：内网网卡这里必须为空，否则两个网卡同时启用后上不了外网
+IPV6INIT=no
+IPV6_AUTOCONF=no
+NETMASK=255.255.255.0 #网卡对应的网络掩码
+NETWORK=192.168.1.0 #网卡对应的网络地址
+ONBOOT=yes #系统启动时是否设置此网络接口，设置为yes时，系统启动时激活此设备</code><br>4、重新启动网络配置</p>
+<h1 id="service-network-restart"><a href="#service-network-restart" class="headerlink" title="service network restart"></a>service network restart</h1><p>或</p>
+<h1 id="etc-init-d-network-restart"><a href="#etc-init-d-network-restart" class="headerlink" title="/etc/init.d/network restart"></a>/etc/init.d/network restart</h1><p>开发环境安装<br>CentOS6.5中修改yum源<br>在自己安装的CentOS6.5中使用yum安装软件，总是提示404错误信息，百度后发现原来要设置yum源。<br>在安装完CentOS后一般需要修改yum源，才能够在安装更新rpm包时获得比较理想的速度。国内比较快的有163源、sohu源。这里以163源为例子。<br>1.cd /etc/yum.repos.d</p>
+<p>2.mv CentOS-Base.repo CentOS-Base.repo.backup</p>
+<p>3.wget <a href="http://mirrors.163.com/.help/CentOS6-Base-163.repo" target="_blank" rel="external">http://mirrors.163.com/.help/CentOS6-Base-163.repo</a></p>
+<p>4.mv CentOS6-Base-163.repo CentOS-Base.repo</p>
+<p>5.yum clean all</p>
+<p>6.yum update<br>如何查看已安装的CentOS版本信息：<br>1: cat /proc/version</p>
+<p>要解压很简单 ：<br>从网络上下载到的源码包， 最常见的是 .tar.gz 包， 还有一部分是 .tar.bz2包</p>
+<p>.tar.gz     格式解压为          tar   -zxvf   xx.tar.gz<br>.tar.bz2   格式解压为          tar   -jxvf    xx.tar.bz2</p>
+<p>先装openssl-devel<br>yum install openssl-devel<br>yum update openssl<br>Yum install  -y Gcc </p>
+<p>安装apache</p>
+<p>tar xzf httpd-2.4.2.tar.gz<br>tar xzf apr-1.4.6.tar.gz<br>./configure –prefix=/usr/local/apr<br>tar xzf apr-util-1.4.1.tar.gz</p>
+<p>2、移动apr到srclib<br>mv apr-1.4.6 httpd-2.4.2/srclib/apr<br>mv apr-util-1.4.1 httpd-2.4.2/srclib/apr-util</p>
+<p>3、安装apache-2.4<br>cd /tmp/httpd-2.4.2<br>./configure                           \<br>        –with-apr=/usr/local/apr           \<br>        –with-apr-util=/usr/local/apr-util \<br>        –prefix=/usr/local/apache \<br>        –sysconfdir=/etc/httpd24  \<br>        –enable-so                \<br>        –enable-ssl               \<br>        –enable-cgi               \<br>        –enable-rewrite           \<br>        –with-zlib                \<br>        –with-pcre                \<br>        –with-mpm=prefork         \<br>        –enable-modules=most      \<br>        –enable-mpms-shared=all<br>make &amp;&amp; make install<br>////////////////////////////////////////////////<br>以下作参考<br>cp -f build/rpm/httpd.init /etc/init.d/httpd<br>chmod +x /etc/init.d/httpd<br>chkconfig –add httpd<br>chkconfig httpd on<br>cd /etc<br>mv httpd httpd_old<br>ln -s /usr/local/apache/ httpd<br>cd /usr/sbin/<br>ln -fs /usr/local/apache/bin/httpd<br>ln -fs /usr/local/apache/bin/apachectl<br>cd /var/log<br>rm -rf httpd/<br>ln -s /usr/local/apache/logs httpd<br>安装php7.0<br>○1.安装php7.0<br>先执行查看老版本的yum list installed | grep php</p>
+<p>[root@centos-jwth ~]# yum list installed | grep php<br>php.x86_64                           5.3.3-48.el6_8                     @updates<br>php-cli.x86_64                       5.3.3-48.el6_8                     @updates<br>php-common.x86_64                    5.3.3-48.el6_8                     @updates<br>php-gd.x86_64                        5.3.3-48.el6_8                     @updates<br>php-pdo.x86_64                       5.3.3-48.el6_8                     @updates<br>php-pear.noarch                      1:1.9.4-5.el6                      @base<br>php-xml.x86_64                       5.3.3-48.el6_8                     @updates<br>○2.执行卸载老版本<br>[root@centos-jwth ~]# yum remove php.x86_64 php-cli.x86_64 php-common.x86_64 php-gd.x86_64 php-pdo.x86_64 php-pear.noarch php-xml.x86_64<br>配置新版本源路径</p>
+<p> rpm -Uvh <a href="http://mirror.webtatic.com/yum/el5/latest.rpm" target="_blank" rel="external">http://mirror.webtatic.com/yum/el5/latest.rpm</a>    ##CentOs5.版本<br>rpm -Uvh <a href="http://mirror.webtatic.com/yum/el6/latest.rpm" target="_blank" rel="external">http://mirror.webtatic.com/yum/el6/latest.rpm</a>    ##CentOs 6.x版本<br>rpm -Uvh <a href="https://mirror.webtatic.com/yum/el7/epel-release.rpm" target="_blank" rel="external">https://mirror.webtatic.com/yum/el7/epel-release.rpm</a>   ##CentOs 7.X版本<br>rpm -Uvh <a href="https://mirror.webtatic.com/yum/el7/webtatic-release.rpm" target="_blank" rel="external">https://mirror.webtatic.com/yum/el7/webtatic-release.rpm</a><br>如果想删除上面安装的包，重新安装<br>rpm -qa | grep webstatic<br>rpm –e 包名<br>○3.执行源安装更新<br>[root@centos-jwth~]# rpm  -Uvh <a href="http://mirror.webtatic.com/yum/el6/latest.rpm" target="_blank" rel="external">http://mirror.webtatic.com/yum/el6/latest.rpm</a><br>4.运行yum install<br>  yum install php55w.x86_64 php55w-cli.x86_64 php55w-common.x86_64 php55w-gd.x86_64 php55w-ldap.x86_64 php55w-mbstring.x86_64 php55w-mcrypt.x86_64 php55w-mysql.x86_64 php55w-pdo.x86_64</p>
+<p>yum install php56w.x86_64 php56w-cli.x86_64 php56w-common.x86_64 php56w-gd.x86_64 php56w-ldap.x86_64 php56w-mbstring.x86_64 php56w-mcrypt.x86_64 php56w-mysql.x86_64 php56w-pdo.x86_64</p>
+<p>注：如果想升级到5.6把上面的55w换成56w就可以了。</p>
+<p>yum install php70w.x86_64 php70w-cli.x86_64 php70w-common.x86_64 php70w-gd.x86_64 php70w-ldap.x86_64 php70w-mbstring.x86_64 php70w-mcrypt.x86_64 php70w-mysql.x86_64 php70w-pdo.x86_64<br>○4执行安装<br>[root@centos-jwth~]# yum install php70w.x86_64 php70w-cli.x86_64 php70w-common.x86_64 php70w-gd.x86_64 php70w-ldap.x86_64 php70w-mbstring.x86_64 php70w-mcrypt.x86_64 php70w-mysql.x86_64 php70w-pdo.x86_64</p>
+<p>报错缺少对应的 libmcrypt.so<br>执行如下然后再次执行○4</p>
+<p>[root@centos-jwth~]# rpm -ivh <a href="http://mirrors.yun-idc.com/epel/6/x86_64/epel-release-6-8.noarch.rpm" target="_blank" rel="external">http://mirrors.yun-idc.com/epel/6/x86_64/epel-release-6-8.noarch.rpm</a></p>
+<p>[root@centos-jwth ~]# yum install libmcrypt-devel<br>4.安装PHP FPM</p>
+<p>yum install php55w-fpm </p>
+<p>yum install php56w-fpm </p>
+<p>yum install php70w-fpm<br>执行安装</p>
+<p>[root@centos-jwth~]# yum install php70w-fpm</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/js/base64/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.089Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://chengweigao.github.io/2017/09/19/linux/6.5centos64/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/静态github个人首页制作密集/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.085Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/适应安卓ios/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.083Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+<nav id="article-nav">
+  
+    <a href="/2017/09/19/linux/apache和nginx配置/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/19/linux/2017-8-7vim/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/路由追踪/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.081Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/架构搭建/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.079Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+        
+        
+    </div>
+</aside>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/数据库主从复制/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.066Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/我的文章/github个人主页markddown在线文档建立手段/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.052Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/virtualBox/盘容量调整/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.047Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/正在学习中2017-8-5/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.041Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/09/19/PYTHON/2017-8-8scrapy爬虫框架上手/" class="archive-article-date">
-  	<time datetime="2017-09-19T07:54:23.040Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2017/09/page/2/">2</a><a class="page-number" href="/archives/2017/09/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2017/09/page/5/">5</a><a class="extend next" rel="next" href="/archives/2017/09/page/2/">Next &raquo;</a>
-    </nav>
+  
+
+  
+
+  
+  <div id="gitment-ctn"></div> 
+<link rel="stylesheet" href="//imsun.github.io/gitment/style/default.css">
+<script src="//imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  id: "https://chengweigao.github.io/2017/09/19/linux/6.5centos64/",
+  owner: 'chengweigao',
+  repo: 'chengweigao.github.io',
+  oauth: {
+    client_id: 'bec5a6c09caa2ad8e7f0',
+    client_secret: '2da15ec3d9c19e7100774431aa110c33ea96eb0a',
+  },
+})
+gitment.render('gitment-ctn')
+</script>
   
 
 
@@ -396,8 +377,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

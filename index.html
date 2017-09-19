@@ -146,27 +146,153 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Hello-World-1" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-我的文章/js/base64" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/19/Hello-World-1/">Hello World</a>
-    </h1>
-  
-
-        
-        <a href="/2017/09/19/Hello-World-1/" class="archive-article-date">
-  	<time datetime="2017-09-19T06:22:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
         
+        var Base64 = {
+            // 转码表
+            table : [
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+                'I', 'J', 'K', 'L', 'M', 'N', 'O' ,'P',
+                'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+                'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+                'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+                'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+                'w', 'x', 'y', 'z', '0', '1', '2', '3',
+                '4', '5', '6', '7', '8', '9', '+', '/'
+            ],
+            UTF16ToUTF8 : function(str) {
+                var res = [], len = str.length;
+                for (var i = 0; i < len; i++) {
+                    var code = str.charCodeAt(i);
+                    if (code > 0x0000 && code <= 0x007f)="" {="" 单字节，这里并不考虑0x0000，因为它是空字节="" u+00000000="" –="" u+0000007f="" 0xxxxxxx="" res.push(str.charat(i));="" }="" else="" if="" (code="">= 0x0080 && code <= 0x07ff)="" {="" 双字节="" u+00000080="" –="" u+000007ff="" 110xxxxx="" 10xxxxxx="" var="" byte1="0xC0" |="" ((code="">> 6) & 0x1F);
+                        // 10xxxxxx
+                        var byte2 = 0x80 | (code & 0x3F);
+                        res.push(
+                            String.fromCharCode(byte1),
+                            String.fromCharCode(byte2)
+                        );
+                    } else if (code >= 0x0800 && code <= 0xffff)="" {="" 三字节="" u+00000800="" –="" u+0000ffff="" 1110xxxx="" 10xxxxxx="" var="" byte1="0xE0" |="" ((code="">> 12) & 0x0F);
+                        // 10xxxxxx
+                        var byte2 = 0x80 | ((code >> 6) & 0x3F);
+                        // 10xxxxxx
+                        var byte3 = 0x80 | (code & 0x3F);
+                        res.push(
+                            String.fromCharCode(byte1),
+                            String.fromCharCode(byte2),
+                            String.fromCharCode(byte3)
+                        );
+                    } else if (code >= 0x00010000 && code <= 0x001fffff)="" {="" 四字节="" u+00010000="" –="" u+001fffff="" 11110xxx="" 10xxxxxx="" }="" else="" if="" (code="">= 0x00200000 && code <= 0x03ffffff)="" {="" 五字节="" u+00200000="" –="" u+03ffffff="" 111110xx="" 10xxxxxx="" }="" else="" **="" if="" (code="">= 0x04000000 && code <= 0x7fffffff)*="" {="" 六字节="" u+04000000="" –="" u+7fffffff="" 1111110x="" 10xxxxxx="" }="" return="" res.join('');="" },="" utf8toutf16="" :="" function(str)="" var="" res="[]," len="str.length;" i="0;" for="" (var="" <="" len;="" i++)="" code="str.charCodeAt(i);" 对第一个字节进行判断="" if="" (((code="">> 7) & 0xFF) == 0x0) {
+                        // 单字节
+                        // 0xxxxxxx
+                        res.push(str.charAt(i));
+                    } else if (((code >> 5) & 0xFF) == 0x6) {
+                        // 双字节
+                        // 110xxxxx 10xxxxxx
+                        var code2 = str.charCodeAt(++i);
+                        var byte1 = (code & 0x1F) << 6;
+                        var byte2 = code2 & 0x3F;
+                        var utf16 = byte1 | byte2;
+                        res.push(Sting.fromCharCode(utf16));
+                    } else if (((code >> 4) & 0xFF) == 0xE) {
+                        // 三字节
+                        // 1110xxxx 10xxxxxx 10xxxxxx
+                        var code2 = str.charCodeAt(++i);
+                        var code3 = str.charCodeAt(++i);
+                        var byte1 = (code << 4) | ((code2 >> 2) & 0x0F);
+                        var byte2 = ((code2 & 0x03) << 6) | (code3 & 0x3F);
+                        utf16 = ((byte1 & 0x00FF) << 8) | byte2
+                        res.push(String.fromCharCode(utf16));
+                    } else if (((code >> 3) & 0xFF) == 0x1E) {
+                        // 四字节
+                        // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+                    } else if (((code >> 2) & 0xFF) == 0x3E) {
+                        // 五字节
+                        // 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+                    } else /** if (((code >> 1) & 0xFF) == 0x7E)*/ {
+                        // 六字节
+                        // 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+                    }
+                }
+
+                return res.join('');
+            },
+            encode : function(str) {
+                if (!str) {
+                    return '';
+                }
+                var utf8    = this.UTF16ToUTF8(str); // 转成UTF8
+                var i = 0; // 遍历索引
+                var len = utf8.length;
+                var res = [];
+                while (i < len) {
+                    var c1 = utf8.charCodeAt(i++) & 0xFF;
+                    res.push(this.table[c1 >> 2]);
+                    // 需要补2个=
+                    if (i == len) {
+                        res.push(this.table[(c1 & 0x3) << 4]);
+                        res.push('==');
+                        break;
+                    }
+                    var c2 = utf8.charCodeAt(i++);
+                    // 需要补1个=
+                    if (i == len) {
+                        res.push(this.table[((c1 & 0x3) << 4) | ((c2 >> 4) & 0x0F)]);
+                        res.push(this.table[(c2 & 0x0F) << 2]);
+                        res.push('=');
+                        break;
+                    }
+                    var c3 = utf8.charCodeAt(i++);
+                    res.push(this.table[((c1 & 0x3) << 4) | ((c2 >> 4) & 0x0F)]);
+                    res.push(this.table[((c2 & 0x0F) << 2) | ((c3 & 0xC0) >> 6)]);
+                    res.push(this.table[c3 & 0x3F]);
+                }
+
+                return res.join('');
+            },
+            decode : function(str) {
+                if (!str) {
+                    return '';
+                }
+
+                var len = str.length;
+                var i   = 0;
+                var res = [];
+
+                while (i < len) {
+                    code1 = this.table.indexOf(str.charAt(i++));
+                    code2 = this.table.indexOf(str.charAt(i++));
+                    code3 = this.table.indexOf(str.charAt(i++));
+                    code4 = this.table.indexOf(str.charAt(i++));
+
+                    c1 = (code1 << 2) | (code2 >> 4);
+                    c2 = ((code2 & 0xF) << 4) | (code3 >> 2);
+                    c3 = ((code3 & 0x3) << 6) | code4;
+
+                    res.push(String.fromCharCode(c1));
+
+                    if (code3 != 64) {
+                        res.push(String.fromCharCode(c2));
+                    }
+                    if (code4 != 64) {
+                        res.push(String.fromCharCode(c3));
+                    }
+
+                }
+
+                return this.UTF8ToUTF16(res.join(''));
+            }
+        };
+
+
+
+
+
+// Base64.encode();
+// Base64.decode();</=></=></=></=></=></=>
       
 
       
@@ -178,7 +304,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/19/Hello-World-1/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/09/19/我的文章/js/base64/">展开全文 >></a>
         </p>
       
 
@@ -208,28 +334,163 @@
 
 
   
-    <article id="post-卧槽" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-我的文章/静态github个人首页制作密集" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/19/卧槽/">我擦</a>
-    </h1>
-  
-
-        
-        <a href="/2017/09/19/卧槽/" class="archive-article-date">
-  	<time datetime="2017-09-19T06:20:59.910Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>试试不会死哦</p>
+        <p>1,首先粘上自制的python脚本  通过这个来生成文档json 请自己注意缩进</p>
+<pre><code>#!/usr/bin/env python
+import os
+import json
+import sys
 
+reload(sys)
+sys.setdefaultencoding(&apos;utf8&apos;)
+#过滤对应不显示文件
+listOver = [&apos;_config.yml&apos;, &apos;gitBush.sh&apos;, &apos;dirToJson.py&apos;, &apos;index.html&apos;, &apos;.idea&apos;, &apos;.git&apos;,&apos;dir.md&apos;,&apos;dir.js&apos;]
+def thefileTree(mm):
+    a = {}
+    mm1 = os.listdir(mm)
+
+    for i in mm1:
+
+        if i in listOver:
+            continue
+        if os.path.isdir(mm + i + &apos;/&apos;):
+            dirname = mm + i + &apos;/&apos;
+            a[dirname] = (thefileTree(dirname))
+        else:
+            dirname = mm + i
+                a[dirname] = i
+
+        return a
+def writeToFile(mm):
+jsonStr = json.dumps(mm)
+f = open(&apos;dir.md&apos;, &apos;w&apos;)
+f.write(&quot;var a=&quot; + jsonStr)
+
+
+xx = thefileTree(&apos;./&apos;)
+# print xx
+writeToFile(xx)
+</code></pre><p>2,再粘上朕的git提交代码   前提是已经配置好了git的密码账户  可以直接git操作并不用输入密码</p>
+<pre><code>#!/bin/bash
+#by chengwigao
+#使用脚本生成js文档目录
+python dirToJson.py;
+#git提交文件删除文件
+git add -A;
+#定义提交备注
+DATEFORMATTYPE1=$(date +%Y%m%d%H%M);
+git commit -m &quot;${DATEFORMATTYPE1}&quot;;
+#推送提交
+git push;
+#多次提交只为保证文件一致
+git add .;
+#定义提交备注
+DATEFORMATTYPE1=$(date +%Y%m%d%H%M);
+git commit -m &quot;${DATEFORMATTYPE1}&quot;;
+#推送提交
+git push;
+</code></pre><p>3,再贴上index代码   由于个人对设计欠缺   代码凑合只为可以预览 切记https  引入js http的cdn会挂的</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;title&gt;chengweigao&apos;S Pages&lt;/title&gt;
+&lt;!--读取文档json--&gt;
+&lt;script src=&quot;dir.md&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://code.jquery.com/jquery-2.0.0.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://cdn.bootcss.com/pagedown/1.0/Markdown.Converter.js&quot;&gt;&lt;/script&gt;
+&lt;!-- 最新版本的 Bootstrap 核心 CSS 文件 --&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css&quot;
+  integrity=&quot;sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u&quot; crossorigin=&quot;anonymous&quot;&gt;
+
+&lt;!-- 可选的 Bootstrap 主题文件（一般不用引入） --&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css&quot;
+  integrity=&quot;sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp&quot; crossorigin=&quot;anonymous&quot;&gt;
+
+&lt;!-- 最新的 Bootstrap 核心 JavaScript 文件 --&gt;
+&lt;script src=&quot;https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js&quot;
+integrity=&quot;sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa&quot;
+crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+
+
+&lt;div class=&quot;row&quot;&gt;
+&lt;div id=&quot;list&quot; class=&quot;col-md-2&quot; style=&quot;overflow: auto&quot;&gt;
+
+&lt;/div&gt;
+&lt;div id=&quot;myDiv&quot; class=&quot;col-md-10&quot;  style=&quot;overflow: auto;border: 2px dotted black;padding: 20px; border-radius:20px &quot;&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;script&gt;
+/*将文档做成列表*/
+function writeUl(a, ax) {
+if (!ax) {
+
+var str = &apos;&lt;ul class=&quot;sidebar-menu list-group&quot;&gt;&apos;;
+} else {
+var str = &apos;&lt;ul class=&quot;treeview-menu&quot; style=&quot;display: none&quot;&gt;&apos;;
+}
+
+$.each(a, function (x, y) {
+if ((typeof(y)) == &quot;string&quot;) {
+str += &apos;&lt;li class=&quot;list-group-item&quot; onclick=&quot;dothe(&apos; + &quot;&apos;&quot; + x + &quot;&apos;&quot; + &apos;,this)&quot; &gt;&apos; + y + &apos;&lt;/li&gt;&apos;;
+} else {
+str += &apos;&lt;li class=&quot;list-group-item&quot; value=&quot;0&quot; onclick=&quot;doSeeSon(this)&quot;&gt;&apos; + x;
+str += writeUl(y, 1);
+str += &quot;&lt;/li&gt;&quot;;
+}
+})
+str += &quot;&lt;/ul&gt;&quot;;
+return str
+}
+var liList = writeUl(a);
+/*点击展示列表内容*/
+function dothe(x,a) {
+
+if($(a).parent().parent().attr(&apos;value&apos;)==1){
+$(a).parent().parent().attr(&apos;value&apos;,0);
+}
+document.title= x+&quot;来自chengweigao&apos;S Pages&quot;;
+
+htmlobj = $.ajax({url: x, async: false});
+var converter = new Markdown.Converter();
+var htm = converter.makeHtml(htmlobj.responseText);
+$(&apos;#myDiv&apos;).html(htm);
+
+
+}
+function doSeeSon(a){
+
+if($(a).attr(&quot;value&quot;)!=1){
+$(a).attr(&quot;value&quot;,1);
+$(a).children(&quot;ul&quot;).show(500);
+}else{
+$(a).attr(&quot;value&quot;,0);
+$(a).children(&quot;ul&quot;).hide(500);
+}
+
+}
+//展示列表
+$(&quot;#list&quot;).html(liList);
+   $(function(){
+   $(&quot;#myDiv&quot;).css(&apos;height&apos;,window.screen.availHeight);
+   $(&quot;#list&quot;).css(&apos;height&apos;,window.screen.availHeight);
+
+   })
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
       
 
       
@@ -241,7 +502,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/19/卧槽/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/09/19/我的文章/静态github个人首页制作密集/">展开全文 >></a>
         </p>
       
 
@@ -271,27 +532,83 @@
 
 
   
-    <article id="post-Hello-World-0" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-我的文章/适应安卓ios" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/19/Hello-World-0/">Hello World</a>
-    </h1>
-  
-
-        
-        <a href="/2017/09/19/Hello-World-0/" class="archive-article-date">
-  	<time datetime="2017-09-19T06:19:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <pre><code>&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=320,maximum-scale=1.0,user-scalable=no&quot;&gt;
+ &lt;link rel=&quot;stylesheet&quot; href=&quot;/css/bootstrap.min.css&quot;&gt;
+&lt;!-- //   &lt;meta content=&quot;user-scalable=0;&quot; name=&quot;viewport&quot; /&gt;--&gt;
+
+&lt;title&gt;&lt;?php echo $data-&gt;title ?&gt;&lt;/title&gt;
+&lt;style&gt;
+
+*{
+margin: 0;
+padding: 0;
+
+}
+.zoombox{
+/*font-size: 60px !important;*/
+/*//  zoom:2 !important*/
+/*line-height: 80px !important;*/
+}
+.zoombox img{
+width:100% !important
+}
+&lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body style=&quot;background:#8f8f94&quot;&gt;
+&lt;div class=&quot;container-fluid&quot;&gt;
+&lt;div style=&quot;width: 100%;margin: 0 auto;padding:12px;background: #ffffff&quot; &gt;
+&lt;?php   echo $data-&gt;content; ?&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;http://code.jquery.com/jquery-1.11.0.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+var browser={
+versions:function(){
+var u = navigator.userAgent, app = navigator.appVersion;
+return {//移动终端浏览器版本信息
+trident: u.indexOf(&apos;Trident&apos;) &gt; -1, //IE内核
+presto: u.indexOf(&apos;Presto&apos;) &gt; -1, //opera内核
+webKit: u.indexOf(&apos;AppleWebKit&apos;) &gt; -1, //苹果、谷歌内核
+gecko: u.indexOf(&apos;Gecko&apos;) &gt; -1 &amp;&amp; u.indexOf(&apos;KHTML&apos;) == -1, //火狐内核
+mobile: !!u.match(/AppleWebKit.*Mobile.*/)||!!u.match(/AppleWebKit/), //是否为移动终端
+ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+android: u.indexOf(&apos;Android&apos;) &gt; -1 || u.indexOf(&apos;Linux&apos;) &gt; -1, //android终端或者uc浏览器
+iPhone: u.indexOf(&apos;iPhone&apos;) &gt; -1 || u.indexOf(&apos;Mac&apos;) &gt; -1, //是否为iPhone或者QQHD浏览器
+iPad: u.indexOf(&apos;iPad&apos;) &gt; -1, //是否iPad
+webApp: u.indexOf(&apos;Safari&apos;) == -1 //是否web应该程序，没有头部与底部
+};
+}(),
+language:(navigator.browserLanguage || navigator.language).toLowerCase()
+}
+
+
+$(function() {
+
+if(browser.versions.iPhone){
+$(&quot;.container-fluid&quot;).addClass(&apos;zoombox&apos;);
+}
+$(&quot;.container-fluid&quot;).addClass(&apos;zoombox&apos;);
+var colorlist=[&apos;red&apos;,&apos;yellow&apos;,&apos;blue&apos;,&apos;green&apos;,&apos;#c0c0c0&apos;,&apos;#8f8f94&apos;,&apos;#ffffff&apos;,&apos;#cccccc&apos;];
+$(&quot;body&quot;).css(&apos;background&apos;,colorlist[Math.ceil(Math.random()*6)])
+});
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
       
 
       
@@ -303,7 +620,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/19/Hello-World-0/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/09/19/我的文章/适应安卓ios/">展开全文 >></a>
         </p>
       
 
@@ -333,36 +650,81 @@
 
 
   
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-我的文章/路由追踪" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/19/hello-world/">Hello World</a>
-    </h1>
-  
-
-        
-        <a href="/2017/09/19/hello-world/" class="archive-article-date">
-  	<time datetime="2017-09-19T06:17:04.851Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-19</time>
-</a>
-        
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+        <pre><code>flush privileges;刷新mysql权限
+linux测网速软件
+pip安装
+speedtest是用python写的，没使用过pip的需要先安装pip，
+pip安装：https://pip.pypa.io/en/stable/installing/
+#开启epel源
+yum install python-pip –y
+安装speedtest-cli
+pip install speedtest-cli
 
+speedtest-cli –h
+/usr/bin/speedtest-cli –share
+/usr/bin/speedtest-cli –list
+一般在windows 来判断网络连通性用ping 和tracert,ping的话可以来判断丢包率，tracert可以用来跟踪路由，在Linux中有一个更好的网络连通性判断工具，它可以结合ping nslookup tracert 来判断网络的相关特性,这个命令就是mtr
+[root@10.10.90.97 ~]# mtr -h
+usage: mtr [-hvrctglspni46] [--help] [--version] [--report]
+[--report-cycles=COUNT] [--curses] [--gtk]
+[--raw] [--split] [--no-dns] [--address interface]
+[--psize=bytes/-s bytes]
+[--interval=SECONDS] HOSTNAME [PACKETSIZE]
+
+mtr -h 提供帮助命令
+mtr -v 显示mtr的版本信息
+mtr -r 已报告模式显示
+[root@10.10.90.97 ~]# mtr -r 202.108.33.94
+FOCUS9097 Snt: 10 Loss% Last Avg Best Wrst StDev
+220.181.61.252 0.0% 6.8 3.3 1.8 7.4 2.2
+220.181.17.217 0.0% 0.4 0.5 0.4 0.7 0.1
+220.181.16.17 0.0% 0.6 0.5 0.5 0.6 0.0
+202.97.53.14 10.0% 0.7 0.7 0.7 0.8 0.0
+219.158.35.1 0.0% 0.8 0.8 0.8 0.9 0.0
+219.158.5.81 0.0% 1.2 1.3 1.2 1.6 0.1
+123.126.0.138 0.0% 1.2 1.1 1.1 1.3 0.1
+61.148.153.126 0.0% 1.9 10.5 1.5 89.9 27.9
+61.148.143.22 0.0% 1.5 1.6 1.5 1.7 0.0
+210.74.178.198 0.0% 1.6 1.6 1.5 1.9 0.1
+202.108.33.94 0.0% 1.5 1.5 1.4 1.5 0.0
+
+报告说明：
+第一列:显示的是IP地址和本机域名，这点和tracert很像
+第二列:snt:10 设置每秒发送数据包的数量，默认值是10 可以通过参数 -c来指定。
+[root@10.10.90.97 ~]# mtr -r -c 15 202.108.33.94
+FOCUS9097 Snt: 15 Loss% Last Avg Best Wrst StDev
+220.181.61.252 0.0% 1.9 3.4 1.8 12.9 3.1
+220.181.17.217 0.0% 0.5 0.5 0.4 0.8 0.1
+220.181.16.17 0.0% 0.5 0.6 0.5 2.3 0.5
+202.97.53.14 0.0% 0.7 0.7 0.7 0.7 0.0
+219.158.35.1 0.0% 0.9 0.8 0.8 0.9 0.0
+219.158.5.81 0.0% 1.3 2.8 1.2 22.8 5.5
+123.126.0.138 0.0% 1.1 1.1 1.1 1.2 0.0
+61.148.153.126 0.0% 13.8 7.4 1.6 60.4 15.5
+61.148.143.22 0.0% 1.7 1.6 1.5 1.8 0.1
+210.74.178.198 0.0% 1.6 1.6 1.4 1.7 0.1
+202.108.33.94 0.0% 1.5 1.5 1.4 1.7 0.1
+
+其中-c的说明是：–report-cycles COUNT
+•    第三列:是显示的每个对应IP的丢包率
+•    第四列:显示的最近一次的返回时延
+•    第五列:是平均值 这个应该是发送ping包的平均时延
+•    第六列:是最好或者说时延最短的
+•    第七列:是最差或者说时延最常的
+•    第八列:是标准偏差
+接下来接着说相关参数：
+1.    mtr -s 用来指定ping数据包的大小
+2.    mtr -n no-dns不对IP地址做域名解析
+3.    mtr -a 来设置发送数据包的IP地址 这个对一个主机由多个IP地址是有用的
+4.    mtr -i 使用这个参数来设置ICMP返回之间的要求默认是1秒
+5.    mtr -4 IPv4
+6.    mtr -6 IPv6
+</code></pre>
       
 
       
@@ -374,7 +736,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/19/hello-world/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/09/19/我的文章/路由追踪/">展开全文 >></a>
         </p>
       
 
@@ -404,6 +766,493 @@
 
 
   
+    <article id="post-我的文章/架构搭建" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="新项目架构搭建要点"><a href="#新项目架构搭建要点" class="headerlink" title="新项目架构搭建要点"></a>新项目架构搭建要点</h1><ol>
+<li>项目所选框架及对应的项目数量</li>
+<li>数据库的建设</li>
+<li>环境的搭建</li>
+<li>用户中心的考虑  用户字段的范围及第三方登录的策略设计</li>
+<li>Api 后台等基类规范</li>
+<li>模块化的开发模式（是每个模块包含单独的前后台api,还是前后台api细分模块）</li>
+<li>文件上传基类的开发   文件压缩基类开发   下载基类开发</li>
+<li>第三方登录支付的整合<h1 id="站点优化"><a href="#站点优化" class="headerlink" title="站点优化"></a>站点优化</h1></li>
+<li>关注站点外联资源，css字体等国外资源会拉慢网页展示速度</li>
+<li>使用缓存   本地开发使用文件缓存  线上使用memcache或者redis</li>
+<li>注意备份站点资源，及是备份，</li>
+<li>优化项目逻辑，合理实现项目</li>
+</ol>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/我的文章/架构搭建/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-我的文章/数据库主从复制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><div class="post"><br>        <h1 class="postTitle"><br>            <a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/rwxwsblog/p/4542417.html" target="_blank" rel="external">mysql主从复制实现数据库同步</a><br>        </h1><br>        <div class="clear"></div><br>        <div class="postBody"><br>            <div id="cnblogs_post_body"><p>　　mysql主从复制相信已经用得很多了，但是由于工作原因一直没怎么用过。趁着这段时间相对空闲，也就自己实现一遍。尽管互联网上已有大把类似的文章，但是自身实现的仍然值得记录。</p></div></div></div></p>
+<p style="margin-left: 30px;"><span style="color: #ff0000; font-size: 16px;"><strong>环境:</strong></span></p><br><p style="margin-left: 60px;"><br>主服务器:centos 6.0 mysql 5.1.67-log IP:192.168.0.107<br><br>从服务器:centos 6.0 mysql 5.1.67-log IP:192.168.0.109<br><br>主服务器test数据库</p><br><div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><br></span></div><br><pre><span style="color: #0000ff;">CREATE</span> <span style="color: #0000ff;">TABLE</span><span style="color: #000000;"> <code>menber</code> (<br><code>name</code> </span><span style="color: #0000ff;">varchar</span>(<span style="color: #800000; font-weight: bold;">255</span>) <span style="color: #0000ff;">DEFAULT</span> <span style="color: #0000ff;">NULL</span> <span style="color: #0000ff;">default</span> <span style="color: #ff0000;">‘’</span><span style="color: #000000;">,<br><code>id</code> </span><span style="color: #0000ff;">int</span>(<span style="color: #800000; font-weight: bold;">11</span>) <span style="color: #808080;">NOT</span> <span style="color: #0000ff;">NULL</span><span style="color: #000000;"> AUTO_INCREMENT,<br></span><span style="color: #0000ff;">PRIMARY</span> <span style="color: #0000ff;">KEY</span><span style="color: #000000;"> (<code>id</code>)<br>) ENGINE</span><span style="color: #808080;">=</span>MyISAM AUTO_INCREMENT<span style="color: #808080;">=</span><span style="color: #800000; font-weight: bold;">1</span> <span style="color: #0000ff;">DEFAULT</span> CHARSET<span style="color: #808080;">=</span><span style="color: #000000;">latin1;<br></span><span style="color: #0000ff;">insert</span> <span style="color: #0000ff;">into</span> <code>menber</code> (<code>name</code>, <code>id</code>) <span style="color: #0000ff;">values</span>(<span style="color: #ff0000;">‘</span><span style="color: #ff0000;">zhangsan</span><span style="color: #ff0000;">‘</span>,<span style="color: #ff0000;">‘</span><span style="color: #ff0000;">1</span><span style="color: #ff0000;">‘</span><span style="color: #000000;">);<br></span><span style="color: #0000ff;">insert</span> <span style="color: #0000ff;">into</span> <code>menber</code> (<code>name</code>, <code>id</code>) <span style="color: #0000ff;">values</span>(<span style="color: #ff0000;">‘</span><span style="color: #ff0000;">lisi</span><span style="color: #ff0000;">‘</span>,<span style="color: #ff0000;">‘</span><span style="color: #ff0000;">2</span><span style="color: #ff0000;">‘</span><span style="color: #000000;">);<br></span><span style="color: #0000ff;">insert</span> <span style="color: #0000ff;">into</span> <code>menber</code> (<code>name</code>, <code>id</code>) <span style="color: #0000ff;">values</span>(<span style="color: #ff0000;">‘</span><span style="color: #ff0000;">王五</span><span style="color: #ff0000;">‘</span>,<span style="color: #ff0000;">‘</span><span style="color: #ff0000;">3</span><span style="color: #ff0000;">‘</span>);</pre><br><br><p style="margin-left: 30px;"><span style="background-color: #c0c0c0;"><strong>mysql默认配置文件，如不特殊指定默认为/etc/my.cnf</strong></span></p><br><p style="margin-left: 30px;"><span style="background-color: #c0c0c0;"><strong><strong>mysql</strong>配置文件查找顺序：<span style="color: #ff0000;">/etc/my.cnf</span> <span style="color: #993300;">/etc/mysql/my.cnf</span> ~/.my.cnf</strong></span></p><br><p style="margin-left: 30px;"><span style="color: #ff0000;"><strong>配置：</strong></span></p><br><p style="margin-left: 30px;"><span style="color: #ff0000;"><strong>一、主服务器</strong></span></p><br><p style="margin-left: 60px;">1.1、创建一个复制用户，具有replication&nbsp;slave&nbsp;权限。</p><br><div class="cnblogs_code"><br><pre>mysql<span style="color: #808080;">&gt;</span><span style="color: #0000ff;">grant</span> <span style="color: #0000ff;">replication</span> slave <span style="color: #0000ff;">on</span> <span style="color: #808080;"><em></em></span>.<span style="color: #808080;"></span> <span style="color: #0000ff;">to</span> <span style="color: #ff0000;">‘</span><span style="color: #ff0000;">repl</span><span style="color: #ff0000;">‘</span>@<span style="color: #ff0000;">‘</span><span style="color: #ff0000;">192.168.0.109</span><span style="color: #ff0000;">‘</span> identified <span style="color: #0000ff;">by</span> <span style="color: #ff0000;">‘</span><span style="color: #ff0000;">repl</span><span style="color: #ff0000;">‘</span><span style="color: #000000;">;<br>mysql</span><span style="color: #808080;">&gt;</span>flush <span style="color: #0000ff;">privileges</span>;</pre><br></div><br><p style="margin-left: 60px;">1.2、编辑my.cnf文件</p><br><div class="cnblogs_code"><br><pre><span style="color: #0000ff;">vi</span> /etc/my.cnf</pre><br></div><br><p style="margin-left: 60px;">添加</p><br><p style="margin-left: 60px;">　　server-id=107</p><br><p style="margin-left: 60px;">并开启log-bin二进制日志文件（<span style="color: #ff0000;"><strong>Mysql<span style="font-family: 宋体;">需要有</span>/var/lib/mysql/目录的读写权限【可通过chown&nbsp;-R&nbsp;mysql:mysql&nbsp;/var/lib/mysql命令进行更改】</strong></span>）</p><br><p style="margin-left: 60px;">　　log-bin=/var/lib/mysql/mysql-bin</p><br><div class="cnblogs_code"><br><pre><span style="color: #000000;"><span style="color: #ff0000;"><strong>#指定绝对路径，否者会出现mysql运行show master status;时无法查看日志情况</strong></span><br>mysql</span><span style="color: #808080;">&gt;</span><span style="color: #000000;"> show master status;<br>Empty </span><span style="color: #0000ff;">set</span> (<span style="color: #800000; font-weight: bold;">0.00</span><span style="color: #000000;"> sec)<br>mysql</span><span style="color: #808080;">&gt;</span> show <span style="color: #0000ff;">binary</span><span style="color: #000000;"> logs;<br>ERROR </span><span style="color: #800000; font-weight: bold;">1381</span> (HY000): You are <span style="color: #808080;">not</span> using <span style="color: #0000ff;">binary</span> logging</pre><br></div><br><p style="margin-left: 30px;">其他扩展配置项：　</p><br><p style="margin-left: 60px;"><span style="background-color: #c0c0c0;">binlog-do-db=mysql1 #需要备份的数据库名，如果备份多个数据库，重复设置这个选项 即可</span><br><span style="background-color: #c0c0c0;">binlog-ignore-db=mysql2  #不需要备份的数据库名，如果备份多个数据库，重复设置这 个选项即可</span><br><span style="background-color: #c0c0c0;">log-slave-updates=1   #这个参数一定要加上，否则不会给更新的记录些到二进制文件 里</span><br><span style="background-color: #c0c0c0;">slave-skip-errors=1     #是跳过错误，继续执行复制操作(可选)</span></p><br><p style="margin-left: 60px;">1.3、重启mysql数据库</p><br><div class="cnblogs_code"><br><pre>service mysqld restart</pre><br></div><br><p style="margin-left: 60px;"><span style="line-height: 1.5;">1.4、设置读锁</span></p><br><div class="cnblogs_code"><br><pre>mysql&gt;flush tables with read lock;</pre><br></div><br><p style="margin-left: 60px;"><span style="line-height: 1.5;">1.5、得到binlog日志文件名和偏移量（<span style="color: #ff0000;"><strong>此处记住File名称和Position值，后面slave服务器配置时需要用到</strong></span>）</span></p>
+
+<pre>mysql<span style="color: #808080;">&gt;</span><span style="color: #000000;"> show master status;
+</span><span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">----------------+----------+--------------+------------------+</span>
+<span style="color: #808080;">|</span> <span style="color: #0000ff;">File</span>             <span style="color: #808080;">|</span> Position <span style="color: #808080;">|</span> Binlog_Do_DB <span style="color: #808080;">|</span> Binlog_Ignore_DB <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">----------------+----------+--------------+------------------+</span>
+<span style="color: #808080;">|</span> mysql<span style="color: #808080;">-</span>bin.<span style="color: #800000; font-weight: bold;">000001</span> <span style="color: #808080;">|</span>      <span style="color: #800000; font-weight: bold;">713</span> <span style="color: #808080;">|</span>              <span style="color: #808080;">|</span>                  <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">----------------+----------+--------------+------------------+</span>
+<span style="color: #800000; font-weight: bold;">1</span> row <span style="color: #808080;">in</span> <span style="color: #0000ff;">set</span> (<span style="color: #800000; font-weight: bold;">0.00</span> sec)</pre>
+
+<p>　　　　</p><br><p style="margin-left: 60px;">1.6、备份要同步的数据库</p><br><div class="cnblogs_code"><br><pre>mysqldump test <span style="color: #808080;">&gt;</span> test.sql</pre><br></div><br><p style="margin-left: 60px;"><span style="line-height: 1.5;">1.7、解锁</span></p><br><div class="cnblogs_code"><br><pre>mysql<span style="color: #808080;">&gt;</span>unlock tables;</pre><br></div><br><p>　　　　</p><br><p style="margin-left: 30px;"><span style="color: #ff0000;"><strong>二、从服务器（192.168.0.109）</strong></span></p><br><p style="margin-left: 60px;">将master（192.168.0.107）备份的数据库数据恢复到slave从服务器（192.168.0.109）</p><br><p style="margin-left: 30px;">2.1、编辑my.cnf文件</p><br><div class="cnblogs_code"><br><pre><span style="color: #0000ff;">vi</span> /etc/my.cnf</pre><br></div><br><p style="margin-left: 60px;">添加</p><br><p style="margin-left: 90px;">server-id=109</p><br><p style="margin-left: 30px;">2.2、重启从数据库</p><br><div class="cnblogs_code"><br><pre>service mysqld restart</pre><br></div><br><p style="margin-left: 30px;">2.3、对从数据库进行相应设置</p><br><p style="margin-left: 30px;">　　<span style="color: #ff0000;"><strong>此处要注意logfile的名称和position的值，其余host、user和password为主数据库设置的账号和密码</strong></span></p><br><div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码" target="_blank" rel="external"></a></span></div><br><p>mysql&gt; stop slave;<br>Query OK, 0 rows affected (0.00 sec)</p><br><p>mysql&gt; change master to <br>    　　&nbsp;-&gt; master_host=’192.168.0.107’,<br>    　　&nbsp;-&gt; master_user=’repl’,<br>　　&nbsp;-&gt; master_password=’repl’,<br>    　　&nbsp;-&gt; master_log_file=’mysql-bin.000001’,<br>    　　&nbsp;-&gt; master_log_pos=713;</p><br><p>mysql&gt; start slave;<br>Query OK, 0 rows affected (0.00 sec)</p><br><p>mysql&gt; show slave status\G;<br><strong><strong><strong><strong><strong><strong><em>*</em></strong></strong></strong></strong></strong></strong> 1. row <strong><strong><strong><strong><strong><strong><em>*</em></strong></strong></strong></strong></strong></strong><br>               Slave_IO_State: Waiting for master to send event<br>                  Master_Host: 192.168.0.107<br>                  Master_User: repl<br>                  Master_Port: 3306<br>                Connect_Retry: 60<br>              Master_Log_File: mysql-bin.000001<br>          Read_Master_Log_Pos: 1079<br>               Relay_Log_File: mysqld-relay-bin.000004<br>                Relay_Log_Pos: 251<br>        Relay_Master_Log_File: mysql-bin.000001<br>             <span style="color: #ff0000;"><strong>Slave_IO_Running: Yes</strong></span><br><span style="color: #ff0000;"><strong>            Slave_SQL_Running: Yes</strong></span><br>              Replicate_Do_DB: <br>          Replicate_Ignore_DB: <br>           Replicate_Do_Table: <br>       Replicate_Ignore_Table: <br>      Replicate_Wild_Do_Table: <br>  Replicate_Wild_Ignore_Table: <br>                   Last_Errno: 0<br>                   Last_Error: <br>                 Skip_Counter: 0<br>          Exec_Master_Log_Pos: 1079<br>              Relay_Log_Space: 407<br>              Until_Condition: None<br>               Until_Log_File: <br>                Until_Log_Pos: 0<br>           Master_SSL_Allowed: No<br>           Master_SSL_CA_File: <br>           Master_SSL_CA_Path: <br>              Master_SSL_Cert: <br>            Master_SSL_Cipher: <br>               Master_SSL_Key: <br>        Seconds_Behind_Master: 0<br>Master_SSL_Verify_Server_Cert: No<br>                Last_IO_Errno: 0<br>                Last_IO_Error: <br>               Last_SQL_Errno: 0<br>               Last_SQL_Error: <br>1 row in set (0.00 sec)</p><br><p>ERROR: <br>No query specified</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p style="margin-left: 60px;">在这里主要是看:</p><br><p style="margin-left: 60px;"><span style="color: #ff0000;"><strong>　　Slave_IO_Running=Yes</strong></span><br><span style="color: #ff0000;"><strong>　　Slave_SQL_Running=Yes</strong></span></p><br><p style="margin-left: 60px;"><span style="color: #ff0000;"><strong><span style="line-height: 1.5;">如果出现Slave_IO_Running:&nbsp;No或Slave_SQL_Running:&nbsp;NO，<span style="color: #000000;">需要重做2.3、对从数据库进行相应设置</span></span></strong></span></p><br><p style="margin-left: 30px;"><span style="color: #ff0000; font-size: 16px;"><strong>三、测试：</strong></span><br>　　上述项配置完以后可查看master和slave上线程的状态。在master上，你可以看到slave的I/O线程创建的连接：在master上输入show processlist\G;</p>
+
+<pre>mysql<span style="color: #808080;">&gt;</span><span style="color: #000000;"> show processlist\G;
+</span><span style="color: #808080;">***************************</span> <span style="color: #800000; font-weight: bold;">1</span>. row <span style="color: #808080;">***************************</span><span style="color: #000000;">
+     Id: </span><span style="color: #800000; font-weight: bold;">4</span>
+   <span style="color: #ff00ff;">User</span><span style="color: #000000;">: root
+   Host: localhost
+     db: </span><span style="color: #0000ff;">NULL</span><span style="color: #000000;">
+Command: Query
+   Time: </span><span style="color: #800000; font-weight: bold;">0</span><span style="color: #000000;">
+  State: </span><span style="color: #0000ff;">NULL</span><span style="color: #000000;">
+   Info: show processlist
+</span><span style="color: #808080;">***************************</span> <span style="color: #800000; font-weight: bold;">2</span>. row <span style="color: #808080;">***************************</span><span style="color: #000000;">
+     Id: </span><span style="color: #800000; font-weight: bold;">19</span>
+   <span style="color: #ff00ff;">User</span><span style="color: #000000;">: repl
+   Host: </span><span style="color: #800000; font-weight: bold;">192.168</span>.<span style="color: #800000; font-weight: bold;">0.109</span>:<span style="color: #800000; font-weight: bold;">42337</span><span style="color: #000000;">
+     db: </span><span style="color: #0000ff;">NULL</span><span style="color: #000000;">
+Command: Binlog </span><span style="color: #0000ff;">Dump</span><span style="color: #000000;">
+   Time: </span><span style="color: #800000; font-weight: bold;">183</span><span style="color: #000000;">
+  State: Has sent </span><span style="color: #808080;">all</span> binlog <span style="color: #0000ff;">to</span> slave; waiting <span style="color: #0000ff;">for</span> binlog <span style="color: #0000ff;">to</span><span style="color: #000000;"> be updated
+   Info: </span><span style="color: #0000ff;">NULL</span>
+<span style="color: #800000; font-weight: bold;">2</span> rows <span style="color: #808080;">in</span> <span style="color: #0000ff;">set</span> (<span style="color: #800000; font-weight: bold;">0.00</span><span style="color: #000000;"> sec)
+
+ERROR: 
+No query specified</span></pre>
+
+<p>　　3.1、在主数据库：192.168.0.107上添加新数据</p><br><div class="cnblogs_code"><br><pre><span style="color: #0000ff;">insert</span> <span style="color: #0000ff;">into</span> <code>menber</code> (<code>name</code>) <span style="color: #0000ff;">values</span>(<span style="color: #ff0000;">‘</span><span style="color: #ff0000;">李八</span><span style="color: #ff0000;">‘</span>);<span style="color: #0000ff;">insert</span> <span style="color: #0000ff;">into</span> <code>menber</code> (<code>name</code>) <span style="color: #0000ff;">values</span>(<span style="color: #ff0000;">‘</span><span style="color: #ff0000;">苍井空</span><span style="color: #ff0000;">‘</span>);</pre><br></div><br><p style="margin-left: 30px;">3.2从数据库：<span style="font-family: Arial;">192.168.0.109</span><span style="font-family: 宋体;">上查看数据库</span></p>
+
+<pre>mysql<span style="color: #808080;">&gt;</span> <span style="color: #0000ff;">select</span> <span style="color: #808080;">*</span> <span style="color: #0000ff;">from</span><span style="color: #000000;"> menber;
+</span><span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">---------+----+</span>
+<span style="color: #808080;">|</span> name      <span style="color: #808080;">|</span> id <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">---------+----+</span>
+<span style="color: #808080;">|</span> zhangsan  <span style="color: #808080;">|</span>  <span style="color: #800000; font-weight: bold;">1</span> <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> lisi      <span style="color: #808080;">|</span>  <span style="color: #800000; font-weight: bold;">2</span> <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> 王五    <span style="color: #808080;">|</span>  <span style="color: #800000; font-weight: bold;">3</span> <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> 李八    <span style="color: #808080;">|</span>  <span style="color: #800000; font-weight: bold;">4</span> <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> 苍井空 <span style="color: #808080;">|</span>  <span style="color: #800000; font-weight: bold;">5</span> <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">---------+----+</span>
+<span style="color: #800000; font-weight: bold;">5</span> rows <span style="color: #808080;">in</span> <span style="color: #0000ff;">set</span> (<span style="color: #800000; font-weight: bold;">0.02</span> sec)</pre>
+
+<p>　　此时数据已经成功复制到slave从数据库192.168.0.109上。</p></div><div id="MySignature" style="display: block;"><p><br></p><p></p>
+
+
+
+<p>  <pre><br>  错误消息<br>    mysql&gt; show slave staus;</pre></p>
+<pre><code>Last_IO_Error: Fatal error: The slave I/O thread stops because master and slave have equal MySQL server UUIDs; 
+these UUIDs must be different for replication to work.
+</code></pre><p>2、查看主从的server_id变量<br>    master_mysql&gt; show variables like ‘server_id’;<br>    +—————+——-+<br>    | Variable_name | Value |<br>    +—————+——-+<br>    | server_id| 33|<br>    +—————+——-+</p>
+<pre><code>slave_mysql&gt; show variables like &apos;server_id&apos;;
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| server_id| 11|
++---------------+-------+
+</code></pre><p>– 从上面的情形可知，主从mysql已经使用了不同的server_id</p>
+<p>3、解决故障</p>
+<p>###查看auto.cnf文件<br>    [root@dbsrv1 ~] cat /data/mysqldata/auto.cnf  ### 主上的uuid<br>    [auto]<br>    server-uuid=62ee10aa-b1f7-11e4-90ae-080027615026</p>
+<pre><code>[root@dbsrv2 ~]# more /data/mysqldata/auto.cnf ###从上的uuid，果然出现了重复，原因是克隆了虚拟机，只改server_id不行
+[auto]
+server-uuid=62ee10aa-b1f7-11e4-90ae-080027615026
+
+[root@dbsrv2 ~]# mv /data/mysqldata/auto.cnf  /data/mysqldata/auto.cnf.bk  ###重命名该文件
+[root@dbsrv2 ~]# service mysql restart  ###重启mysql
+Shutting down MySQL.[  OK  ]
+Starting MySQL.[  OK  ]
+[root@dbsrv2 ~]# more /data/mysqldata/auto.cnf  ###重启后自动生成新的auto.cnf文件，即新的UUID
+[auto]
+server-uuid=6ac0fdae-b5d7-11e4-a9f3-0800278ce5c9
+</code></pre><p>###再次查看slave的状态已经正常<br>    [root@dbsrv1 ~]# mysql -uroot -pxxx -e “show slave status\G”|grep Running<br>    Warning: Using a password on the command line interface can be insecure.<br>    Slave_IO_Running: Yes<br>    Slave_SQL_Running: Yes<br>      Slave_SQL_Running_State: Slave has read all relay log; waiting for the slave I/O thread to update it</p>
+</div></div>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/我的文章/数据库主从复制/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-我的文章/github个人主页markddown在线文档建立手段" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>大家好：我想做个静态在线个人笔记，却又不想申请服务器，所以我通过linux python js html  github markdown实现了这个</p>
+<p>静态个人笔记<a href="https://chengweigao.github.io">https://chengweigao.github.io</a></p>
+<p>先谈必须，</p>
+<p>1，首先linux 系统不限本地虚拟机 系统上必须环境  git  python</p>
+<p>2，github账户，并建立已用户名开头的仓库</p>
+<p>3，克隆用户名开头的仓库到linux本地，上传markdown文档到git目录   使用对应python生成的脚本生成js</p>
+<p>4，建立对应的index.html,通过js处理脚本json展示，并通过异步建立在线markdown文件展示</p>
+<p>5，建立git脚本  掉用python脚本，并提交推送文档到远端</p>
+<p>6，远端根据json会自动更新</p>
+<p>使用的时候只需将markdown文档上传到git仓库目录   并执行git自动提交bash脚本<br>参照脚本</p>
+<p><a href="https://chengweigao.github.io/我的文章/静态github个人首页制作密集.md">静态github个人首页制作密集.md</a></p>
+<p><a href="https://github.com/chengweigao/chengweigao.github.com" target="_blank" rel="external">仓库地址</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/我的文章/github个人主页markddown在线文档建立手段/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-virtualBox/盘容量调整" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>virtualBox的盘容量调整</p>
+<p>VBoxManage</p>
+<p>cd “C:\Program Files\Oracle\VirtualBox”</p>
+<p>重新调整大小磁盘大小为80G：</p>
+<p>VBoxManage modifyhd “C:\Users\Chris\VirtualBox VMs\Windows 7\Windows 7.vdi” –-resize 81920</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/virtualBox/盘容量调整/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-PYTHON/正在学习中2017-8-5" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>#waiting  soon</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/PYTHON/正在学习中2017-8-5/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-PYTHON/2017-8-8scrapy爬虫框架上手" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天来装一下python的爬虫框架</p>
+<p>但是对于我的centos7+python2.7.5，报了下面的错误</p>
+<pre><code> src/twisted/test/raiser.c:4:20: 致命错误：Python.h：没有那个文件或目录
+ #include &quot;Python.h&quot;编译中断。
+error: command &apos;gcc&apos; failed with exit status 1
+
+----------------------------------------
+Command &quot;/usr/bin/python2 -u -c &quot;import setuptools, tokenize;
+__file__=&apos;/tmp/pip-build-hXIdgq/twisted/setup.py&apos;;
+f=getattr(tokenize, &apos;open&apos;, open)(__file__);
+code=f.read().replace(&apos;\r\n&apos;, &apos;\n&apos;);
+f.close();
+exec(compile(code, __file__, &apos;exec&apos;))&quot; install --record /tmp/pip-pJOp2_-record/install-record.txt --single-version-externally-managed --compile&quot; failed with error code 1 in /tmp/pip-build-hXIdgq/twisted/
+</code></pre><p>于是需要先安装python-devel</p>
+<p>sudo yum install python-devel　　</p>
+<p>#注意这里不是python-dev</p>
+<p>安装pip </p>
+<p> yum install python-pip</p>
+<p>再安装 Twisted 模块限制版本所以必须使用==</p>
+<p> pip install Twisted==13.1.0</p>
+<p>安装Scrapy</p>
+<p> pip install Scrapy</p>
+<p>开始创建爬虫项目</p>
+<pre><code>scrapy startproject tutorial
+这将创建一个tutorial以下内容目录：
+
+tutorial/
+scrapy.cfg            # deploy configuration file
+
+tutorial/             # project&apos;s Python module, you&apos;ll import your code from here
+    __init__.py
+
+    items.py          # project items definition file
+
+    pipelines.py      # project pipelines file
+
+    settings.py       # project settings file
+
+    spiders/          # a directory where you&apos;ll later put your spiders
+        __init__.py
+</code></pre><p>将如下demo创建保存到tutorial/spiders目录下  注意缩进</p>
+<pre><code>import scrapy
+class QuotesSpider(scrapy.Spider):
+    name = &quot;quotes&quot;
+
+    def start_requests(self):
+        urls = [
+            &apos;http://quotes.toscrape.com/page/1/&apos;,
+            &apos;http://quotes.toscrape.com/page/2/&apos;,
+        ]
+        for url in urls:
+            yield scrapy.Request(url=url, callback=self.parse)
+
+    def parse(self, response):
+        page = response.url.split(&quot;/&quot;)[-2]
+        filename = &apos;quotes-%s.html&apos; % page
+        with open(filename, &apos;wb&apos;) as f:
+            f.write(response.body)
+        self.log(&apos;Saved file %s&apos; % filename)
+</code></pre><p>把我们的蜘蛛的工作 cd tutorial/  ，去项目的顶层目录并运行：</p>
+<pre><code>scrapy crawl quotes
+</code></pre><p>该命令将蜘蛛的名称quotes我们只是说，能把一些要求quotes.toscrape.com域你会得到一个outputsimilar这：</p>
+<pre><code>(omitted for brevity)
+2016-12-16 21:24:05 [scrapy.core.engine] INFO: Spider opened
+2016-12-16 21:24:05 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2016-12-16 21:24:05 [scrapy.extensions.telnet] DEBUG: Telnet console listening on 127.0.0.1:6023
+2016-12-16 21:24:05 [scrapy.core.engine] DEBUG: Crawled (404) &lt;GET http://quotes.toscrape.com/robots.txt&gt; (referer: None)
+2016-12-16 21:24:05 [scrapy.core.engine] DEBUG: Crawled (200) &lt;GET http://quotes.toscrape.com/page/1/&gt; (referer: None)
+2016-12-16 21:24:05 [scrapy.core.engine] DEBUG: Crawled (200) &lt;GET http://quotes.toscrape.com/page/2/&gt; (referer: None)
+2016-12-16 21:24:05 [quotes] DEBUG: Saved file quotes-1.html
+2016-12-16 21:24:05 [quotes] DEBUG: Saved file quotes-2.html
+2016-12-16 21:24:05 [scrapy.core.engine] INFO: Closing spider (finished)
+</code></pre><p>现在，检查当前目录中的文件。你应该注意到两newfiles已创建：quotes-1.html和quotes-2.html内容，与各自的URL，我们parse方法指示</p>
+<p>文章参照<a href="http://scrapy-chs.readthedocs.io/zh_CN/0.24/intro/tutorial.html" target="_blank" rel="external">http://scrapy-chs.readthedocs.io/zh_CN/0.24/intro/tutorial.html</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/19/PYTHON/2017-8-8scrapy爬虫框架上手/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    </nav>
   
 
 
