@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        * {
+
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #canvas2 {
+            border: 1px solid red;
+
+            background: #f0f0f0;
+
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body style="margin: 100px auto;text-align: center">
+
+
+<canvas id="canvas2" width="200" height="200" data-score='20'></canvas>
+<script>
+
+    function draw(id) {
+
+        /*取画布*/
+        this.canvas = document.getElementById(id);
+        var xxxx = this.canvas.attributes['data-score'].value;
+        //判断限定值大于就为100
+        if (xxxx > 100) {
+            xxxx = 100;
+
+        }
+        this.ctx = canvas.getContext('2d');
+        /*获取canvas宽高  作为中心点依据*/
+        this.cWidth = this.canvas.width;
+        this.cHeight = this.canvas.height;
+        /*清楚画布*/
+        this.ctx.clearRect(0, 0, this.cWidth, this.cHeight);
+        /*开始起点角度*/
+        this.beginDeg = 135;
+        /*结束角度  */
+        this.overDeg = 45;
+        /*圆半径   边与中心点距离*/
+        this.r = this.cWidth / 2 - 10;
+        /*实际的度数*/
+        this.deg = 360 - 45 - 45;
+
+        this.bigBorderWidth = Math.max(this.cWidth / 100, 5);
+        /*先画园*/
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = '#ffffff';
+        this.ctx.lineWidth = this.bigBorderWidth;
+        this.ctx.arc(this.cWidth / 2, this.cHeight / 2, this.r, this.beginDeg * Math.PI / 180, this.overDeg * Math.PI / 180, false);
+        this.ctx.stroke();
+        this.ctx.save();
+
+
+        /*画基线参照圆点*/
+        this.ctx.translate(this.cWidth / 2, this.cHeight / 2);
+        /*根据刻度旋转到起点*/
+        this.ctx.rotate((( this.beginDeg - 27)) * Math.PI / 180);
+
+        for (var i = 0; i < 11; i++) {
+            /*旋转刻度划线*/
+            this.ctx.rotate(((this.deg) / 10) * Math.PI / 180);
+            this.ctx.beginPath();
+            this.ctx.lineWidth = 2;
+            this.ctx.strokeStyle = 'pink';
+            /*划线起点位置*/
+            this.ctx.moveTo(this.r - 10, 0);
+            /*划线终点位置*/
+            this.ctx.lineTo(this.r, 0);
+
+            this.ctx.fillStyle = 'black';
+            this.ctx.font = '10px Microsoft yahei';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'bottom';
+            this.ctx.stroke();
+
+
+        }
+        /*复位保存*/
+        this.ctx.restore();
+        this.ctx.save();
+
+
+        for (var i = 0; i < 11; i++) {
+            /*求弧度*/
+            hudu = ((this.deg / 10) * i + 180 + this.overDeg) * Math.PI / 180;
+            /*计算上下位置*/
+            var x = (this.cHeight / 2 ) + Math.sin(hudu) * (this.r - 15);
+            /*计算左右位置*/
+            var y = (this.cWidth / 2) - Math.cos(hudu) * (this.r - 15);
+            this.ctx.font = '10px Microsoft yahei';
+            this.ctx.fillStyle = 'black';
+            /*文字垂直居中*/
+
+            this.ctx.textBaseline = 'middle';
+            this.ctx.textAlign = 'center';
+            /*写数字*/
+            this.ctx.fillText(10 * i, x, y);
+        }
+
+        /*画圆的参数，圆的*/
+        /*
+         *
+         *  弧度的计算 度数*Math.PI/180
+         参数	描述
+         x	圆的中心的 x 坐标。
+         y	圆的中心的 y 坐标。
+         r	圆的半径。
+         sAngle	起始角，以弧度计。（弧的圆形的三点钟位置是 0 度）。
+         eAngle	结束角，以弧度计。
+         counterclockwise	可选。规定应该逆时针还是顺时针绘图。False = 顺时针，true = 逆时针。
+         * */
+        /*画结果线*/
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = 'green';
+        this.ctx.lineWidth = this.bigBorderWidth;
+        this.ctx.arc(this.cWidth / 2, this.cHeight / 2, this.r, this.beginDeg * Math.PI / 180, ( this.beginDeg + xxxx * (270 / 100)) * Math.PI / 180, false);
+        this.ctx.stroke();
+        this.ctx.restore();
+        this.ctx.save();
+        /*写数字*/
+        this.ctx.fillStyle = 'black';
+        this.ctx.font = '20px Microsoft yahei';
+        /*文字垂直居中*/
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(xxxx, this.cWidth / 2, this.cHeight / 2);
+
+
+    }
+
+    draw('canvas2');
+
+
+</script>
+</body>
+</html>
