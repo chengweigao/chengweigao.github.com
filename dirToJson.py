@@ -12,8 +12,8 @@ def thefileTree(mm):
 
     for i in mm1:
 
-        print type(i)
-        print i
+        #print type(i)
+        #print i
         if i in listOver:
             continue
         if os.path.isdir(mm + i + '/'):
