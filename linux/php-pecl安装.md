@@ -1,3 +1,4 @@
+
 Pecl安装命令
 
 查找是否已经集成到pecl
@@ -11,5 +12,6 @@ Pecl安装命令
 安装新的
 
      Pecl install   扩展名
+
 
 
