@@ -16,7 +16,7 @@ def thefileTree(mm):
     for i in mm1:
 
         # print type(i)
-        i = i.encode('gbk')
+        i = i.encode('utf-8')
         # print i
         if i in listOver:
             continue
