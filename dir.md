@@ -37,11 +37,12 @@ var a={
     "./JS/2017-08-09js获取屏幕宽高.md": "2017-08-09js获取屏幕宽高.md"
   }, 
   "./Mysql/": {
+    "./Mysql/mysql数据酷密码重置.md": "mysql数据酷密码重置.md", 
+    "./Mysql/mysql安装.md": "mysql安装.md", 
+    "./Mysql/储存过程储存函及慢查询优化.md": "储存过程储存函及慢查询优化.md", 
     "./Mysql/pdo或phpMyAdmin2002错误.md": "pdo或phpMyAdmin2002错误.md", 
     "./Mysql/排名查询rownum实现.md": "排名查询rownum实现.md", 
-    "./Mysql/储存过程储存函及慢查询优化.md": "储存过程储存函及慢查询优化.md", 
-    "./Mysql/mysql数据酷密码重置.md": "mysql数据酷密码重置.md", 
-    "./Mysql/mysql安装.md": "mysql安装.md"
+    "./Mysql/慢查询binlog日志.md": "慢查询binlog日志.md"
   }, 
   "./dos/": {
     "./dos/文件夹树生成dos.md": "文件夹树生成dos.md", 
