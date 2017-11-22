@@ -38,10 +38,11 @@ var a={
   }, 
   "./Mysql/": {
     "./Mysql/mysql数据酷密码重置.md": "mysql数据酷密码重置.md", 
-    "./Mysql/mysql安装.md": "mysql安装.md", 
+    "./Mysql/mysql导出数据库字典.md": "mysql导出数据库字典.md", 
     "./Mysql/储存过程储存函及慢查询优化.md": "储存过程储存函及慢查询优化.md", 
     "./Mysql/pdo或phpMyAdmin2002错误.md": "pdo或phpMyAdmin2002错误.md", 
     "./Mysql/排名查询rownum实现.md": "排名查询rownum实现.md", 
+    "./Mysql/mysql安装.md": "mysql安装.md", 
     "./Mysql/慢查询binlog日志.md": "慢查询binlog日志.md"
   }, 
   "./dos/": {
