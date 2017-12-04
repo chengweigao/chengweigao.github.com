@@ -3,6 +3,7 @@ var a={
   "./PHP/": {
     "./PHP/json_encode.md": "json_encode.md", 
     "./PHP/workermen.md": "workermen.md", 
+    "./PHP/phpExcel操作.md": "phpExcel操作.md", 
     "./PHP/php目录树json.md": "php目录树json.md"
   }, 
   "./virtualBox/": {
@@ -76,6 +77,7 @@ var a={
     "./linux/Centoshhvm.md": "Centoshhvm.md", 
     "./linux/htaccess.md": "htaccess.md", 
     "./linux/php7-Mondodb.md": "php7-Mondodb.md", 
+    "./linux/安卓包下载变成txt.md": "安卓包下载变成txt.md", 
     "./linux/6.5centos64.md": "6.5centos64.md", 
     "./linux/linux内存释放.md": "linux内存释放.md", 
     "./linux/freeBsd.md": "freeBsd.md", 
