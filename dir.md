@@ -1,9 +1,10 @@
 var a={
   "./080220322695.html": "080220322695.html", 
   "./PHP/": {
+    "./PHP/phpExcel操作.md": "phpExcel操作.md", 
     "./PHP/json_encode.md": "json_encode.md", 
     "./PHP/workermen.md": "workermen.md", 
-    "./PHP/phpExcel操作.md": "phpExcel操作.md", 
+    "./PHP/composer.md": "composer.md", 
     "./PHP/php目录树json.md": "php目录树json.md"
   }, 
   "./virtualBox/": {
@@ -38,6 +39,7 @@ var a={
     "./JS/2017-08-09js获取屏幕宽高.md": "2017-08-09js获取屏幕宽高.md"
   }, 
   "./Mysql/": {
+    "./Mysql/数据库主从复制.md": "数据库主从复制.md", 
     "./Mysql/mysql数据酷密码重置.md": "mysql数据酷密码重置.md", 
     "./Mysql/mysql导出数据库字典.md": "mysql导出数据库字典.md", 
     "./Mysql/储存过程储存函及慢查询优化.md": "储存过程储存函及慢查询优化.md", 
