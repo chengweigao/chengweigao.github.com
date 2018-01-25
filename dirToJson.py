@@ -10,7 +10,7 @@ from urllib import quote
 reload(sys)
 sys.setdefaultencoding('gbk')
 #过滤不需要的文件
-listOver = ['_config.yml', 'gitBush.sh', 'dirToJson.py', 'index.html', '.idea', '.git', 'dir.md', 'dir.js','go']
+listOver = ['_config.yml', 'gitBush.sh', 'dirToJson.py', 'index.html', '.idea', '.git', 'dir.md', 'dir.js','go','myimg']
 
 
 def thefileTree(mm):
