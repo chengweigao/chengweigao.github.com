@@ -26,10 +26,7 @@ var a={
     "./HTML+CSS/2.html": "2.html", 
     "./HTML+CSS/chart.html": "chart.html"
   }, 
-  "./PYTHON/": {
-    "./PYTHON/正在学习中2017-8-5.md": "正在学习中2017-8-5.md", 
-    "./PYTHON/2017-8-8scrapy爬虫框架上手.md": "2017-8-8scrapy爬虫框架上手.md"
-  }, 
+  "./版本控制": "版本控制", 
   "./JS/": {
     "./JS/canvas渐变色图表.md": "canvas渐变色图表.md", 
     "./JS/datepicker无法加载使用问题.md": "datepicker无法加载使用问题.md", 
@@ -37,6 +34,10 @@ var a={
   }, 
   "./baidu_verify_ipiS9afjWf.html": "baidu_verify_ipiS9afjWf.html", 
   "./favicon.ico": "favicon.ico", 
+  "./PYTHON/": {
+    "./PYTHON/正在学习中2017-8-5.md": "正在学习中2017-8-5.md", 
+    "./PYTHON/2017-8-8scrapy爬虫框架上手.md": "2017-8-8scrapy爬虫框架上手.md"
+  }, 
   "./status.gif": "status.gif", 
   "./linux/": {
     "./linux/ntpupdate时间更新.md": "ntpupdate时间更新.md", 
