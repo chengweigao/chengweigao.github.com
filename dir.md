@@ -11,7 +11,6 @@ var a={
   "./virtualBox/": {
     "./virtualBox/盘容量调整.md": "盘容量调整.md"
   }, 
-  "./新建文件夹": "新建文件夹", 
   "./.gitignore": ".gitignore", 
   "./HTML+CSS/": {
     "./HTML+CSS/chart.js": "chart.js", 
@@ -54,6 +53,7 @@ var a={
     "./linux/centos7防火墙.md": "centos7防火墙.md", 
     "./linux/6.5centos64.md": "6.5centos64.md", 
     "./linux/docker入门.md": "docker入门.md", 
+    "./linux/vagrant扩容.md": "vagrant扩容.md", 
     "./linux/tar备份系统.md": "tar备份系统.md", 
     "./linux/apache和nginx配置.md": "apache和nginx配置.md", 
     "./linux/docker上手.md": "docker上手.md", 
